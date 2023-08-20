@@ -1,0 +1,46 @@
+package com.megajuegos.independencia.dto.response;
+
+import com.megajuegos.independencia.dto.response.util.PlayerDataCardsUtil;
+import com.megajuegos.independencia.entities.data.CapitanData;
+import lombok.Builder;
+import lombok.Data;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Data @Builder
+public class CapitanResponse {
+
+    private Long id;
+    private Integer reserva;
+    private List<ArmyResponse> ejercito;
+    private Integer disciplina;
+    private CampResponse campamento;
+    private List<ActionCardResponse> actionCards;
+    private List<BattleCardFullResponse> battleCards;
+
+    public static CapitanResponse toDtoResponse(CapitanData entity){
+
+        PlayerDataCardsUtil util = new PlayerDataCardsUtil(entity);
+
+        return CapitanResponse.builder()
+                .id(entity.getId())
+                .reserva(entity.getReserva())
+                .ejercito(entity.getEjercito()
+                        .stream()
+                        .map(ArmyResponse::toDtoResponse)
+                        .collect(Collectors.toList()))
+                .disciplina(entity.getDisciplina())
+                .campamento(CampResponse.toDtoResponse(entity.getCamp()))
+                .actionCards(util.getActionCardList()
+                        .stream()
+                        .map(ActionCardResponse::toDtoResponse)
+                        .collect(Collectors.toList()))
+                .battleCards(util.getBattleCardList()
+                        .stream()
+                        .map(BattleCardFullResponse::toFullResponse)
+                        .collect(Collectors.toList()))
+                .build();
+
+    }
+}
