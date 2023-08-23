@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.service.impl;
 
+import com.megajuegos.independencia.dto.request.control.NewMarketCardRequest;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 import com.megajuegos.independencia.entities.Battle;
 import com.megajuegos.independencia.entities.Congreso;
@@ -39,6 +40,7 @@ public class ControlServiceImpl implements ControlService {
     private final UserUtil userUtil;
     private final PersonalPriceRepository priceRepository;
     private final CongresoRepository congresoRepository;
+    private final CityRepository cityRepository;
 
     @Override
     public String advanceTurn(Long gameDataId) {
@@ -85,28 +87,16 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
-    public String createAndGiveMarketCard(Long playerDataId) {
-        PlayerData playerData = playerDataRepository.findById(playerDataId)
+    public String createAndGiveMarketCard(NewMarketCardRequest request) {
+        PlayerData playerData = playerDataRepository.findById(request.getPlayerId())
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
 
-        if(playerData instanceof GobernadorData){
+        playerData.getCards().add(MarketCard.builder()
+                        .nombreCiudad(cityRepository.findByName(request.getCityName()).orElseThrow(() -> new CityNotFoundException()).getName())
+                        .level(request.getLevel())
+                .build());
 
-            GobernadorData gobernadorData = (GobernadorData) playerData;
-
-            gobernadorData.getCards().addAll(
-                    Arrays.asList(
-                            MarketCard.builder()
-                                    .nombreCiudad(gobernadorData.getCity().getName())
-                                    .level(2)
-                                    .build(),
-                            MarketCard.builder()
-                                    .nombreCiudad(gobernadorData.getCity().getName())
-                                    .level(1)
-                                    .build()
-                    )
-            );
-            playerDataRepository.save(gobernadorData);
-        }
+        playerDataRepository.save(playerData);
 
         return CARD_CREATED_GIVEN;
     }

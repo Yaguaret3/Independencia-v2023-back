@@ -1,9 +1,9 @@
 package com.megajuegos.independencia.controller;
 
+import com.megajuegos.independencia.dto.request.control.NewMarketCardRequest;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 import com.megajuegos.independencia.service.ControlService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +25,8 @@ public class ControlController {
         return ResponseEntity.ok(service.createAndGiveRepresentationCard(playerDataId));
     }
     @PostMapping("/create-give-market-card")
-    public ResponseEntity<String> createAndGiveMarketCard(@RequestParam Long playerDataId){
-        return ResponseEntity.ok(service.createAndGiveMarketCard(playerDataId));
+    public ResponseEntity<String> createAndGiveMarketCard(@RequestBody NewMarketCardRequest request){
+        return ResponseEntity.ok(service.createAndGiveMarketCard(request));
     }
     @PostMapping("/create-assign-personal-prices")
     public ResponseEntity<String> createAndAssignPersonalPrice(@RequestParam Long playerDataId){

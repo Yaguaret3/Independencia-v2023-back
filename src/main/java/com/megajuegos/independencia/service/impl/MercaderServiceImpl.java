@@ -4,6 +4,7 @@ import com.megajuegos.independencia.dto.request.mercader.*;
 import com.megajuegos.independencia.dto.response.MercaderResponse;
 import com.megajuegos.independencia.dto.response.tiny.GameDataTinyResponse;
 import com.megajuegos.independencia.entities.PersonalPrice;
+import com.megajuegos.independencia.entities.Route;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.card.MarketCard;
 import com.megajuegos.independencia.entities.card.ResourceCard;
@@ -17,6 +18,7 @@ import com.megajuegos.independencia.exceptions.PaymentNotPossibleException;
 import com.megajuegos.independencia.exceptions.PlayerNotFoundException;
 import com.megajuegos.independencia.exceptions.PriceNotFoundException;
 import com.megajuegos.independencia.repository.CardRepository;
+import com.megajuegos.independencia.repository.RouteRepository;
 import com.megajuegos.independencia.repository.UserIndependenciaRepository;
 import com.megajuegos.independencia.repository.data.MercaderDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
@@ -27,10 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.management.InstanceNotFoundException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +42,7 @@ public class MercaderServiceImpl implements MercaderService {
     private final UserUtil userUtil;
     private final MercaderDataRepository mercaderDataRepository;
     private final PlayerDataRepository playerDataRepository;
+    private final RouteRepository routeRepository;
 
     @Override
     public MercaderResponse getData() {
@@ -104,9 +104,9 @@ public class MercaderServiceImpl implements MercaderService {
             validateRoute(route, route.get(0), 0, mercaderData);
         }
 
-        // 1) guardar ruta en algún lado para que sea atacable por milicia
-        // 2) establecer puntaje comercial provisorio
-        // 3) marcar cartas como jugadas?
+        mercaderData.setRoutes(savedRoutes(request));
+        routeRepository.saveAll(mercaderData.getRoutes());
+        playerDataRepository.save(mercaderData);
     }
 
     @Override
@@ -203,6 +203,30 @@ public class MercaderServiceImpl implements MercaderService {
                 subregion.setSuccesfullyPlayed(false);
             }
         }
+    }
+
+    private List<Route> savedRoutes(TradeRoutesRequest request) throws InstanceNotFoundException {
+
+        List<Route> routes = new ArrayList<>();
+        for(SingleTradeRouteRequest singleTradeRouteRequest : request.getSingleTradeRouteRequests()){
+
+            List<SubRegionEnum> subRegionList = new ArrayList<>();
+            long provisionalTradeScore = 0L;
+            for(MarketCitySubregionRequest subregion : singleTradeRouteRequest.getSubregions()){
+                SubRegionEnum sre = SubRegionEnum.getById(subregion.getId().intValue());
+                subRegionList.add(sre);
+                if(subregion.getCityMarketCardId() != null){
+                    MarketCard card = (MarketCard) cardRepository.findById(subregion.getCityMarketCardId()).orElseThrow(() -> new CardNotFoundException());
+                    provisionalTradeScore += card.getLevel().longValue();
+                }
+            }
+
+            routes.add(Route.builder()
+                            .subregions(subRegionList)
+                            .tradeScore(provisionalTradeScore)
+                    .build());
+        }
+        return routes;
     }
 
 }

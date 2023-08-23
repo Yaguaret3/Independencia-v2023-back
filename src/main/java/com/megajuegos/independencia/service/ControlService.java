@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.service;
 
+import com.megajuegos.independencia.dto.request.control.NewMarketCardRequest;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 
 import javax.management.InstanceNotFoundException;
@@ -13,7 +14,7 @@ public interface ControlService {
     GameDataFullResponse getFullData();
     String solveBattle(Long battle);
     String createAndGiveRepresentationCard(Long playerDataId) throws InstanceNotFoundException;
-    String createAndGiveMarketCard(Long playerDataId);
+    String createAndGiveMarketCard(NewMarketCardRequest request);
     String createAndAssignPersonalPrice(Long playerDataId);
     String assignCongressPresident(Long revolucionarioId);
 }
