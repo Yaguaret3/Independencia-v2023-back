@@ -3,6 +3,7 @@ package com.megajuegos.independencia.service.impl;
 import com.megajuegos.independencia.dto.request.mercader.*;
 import com.megajuegos.independencia.dto.response.MercaderResponse;
 import com.megajuegos.independencia.dto.response.tiny.GameDataTinyResponse;
+import com.megajuegos.independencia.entities.GameSubRegion;
 import com.megajuegos.independencia.entities.PersonalPrice;
 import com.megajuegos.independencia.entities.Route;
 import com.megajuegos.independencia.entities.card.Card;
@@ -13,11 +14,9 @@ import com.megajuegos.independencia.entities.data.PlayerData;
 import com.megajuegos.independencia.enums.PersonalPricesEnum;
 import com.megajuegos.independencia.enums.ResourceTypeEnum;
 import com.megajuegos.independencia.enums.SubRegionEnum;
-import com.megajuegos.independencia.exceptions.CardNotFoundException;
-import com.megajuegos.independencia.exceptions.PaymentNotPossibleException;
-import com.megajuegos.independencia.exceptions.PlayerNotFoundException;
-import com.megajuegos.independencia.exceptions.PriceNotFoundException;
+import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.CardRepository;
+import com.megajuegos.independencia.repository.GameSubRegionRepository;
 import com.megajuegos.independencia.repository.RouteRepository;
 import com.megajuegos.independencia.repository.UserIndependenciaRepository;
 import com.megajuegos.independencia.repository.data.MercaderDataRepository;
@@ -43,6 +42,7 @@ public class MercaderServiceImpl implements MercaderService {
     private final MercaderDataRepository mercaderDataRepository;
     private final PlayerDataRepository playerDataRepository;
     private final RouteRepository routeRepository;
+    private final GameSubRegionRepository subregionRepository;
 
     @Override
     public MercaderResponse getData() {
@@ -91,20 +91,19 @@ public class MercaderServiceImpl implements MercaderService {
     }
 
     @Override
-    public void playTradeRoutes(TradeRoutesRequest request) throws InstanceNotFoundException {
+    public void playTradeRoutes(TradeRoutesRequest request) {
 
         MercaderData mercaderData = mercaderDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
         Integer turno = mercaderData.getGameData().getTurno();
 
-        Integer tradeScore = 0;
-        for(SingleTradeRouteRequest singleTradeRouteRequest : request.getSingleTradeRouteRequests()){
+       for(SingleTradeRouteRequest singleTradeRouteRequest : request.getSingleTradeRouteRequests()){
             List<MarketCitySubregionRequest> route = singleTradeRouteRequest.getSubregions();
             route.sort(Comparator.comparing(MarketCitySubregionRequest::getPosition));
             validateRoute(route, route.get(0), 0, mercaderData);
         }
 
-        mercaderData.setRoutes(savedRoutes(request));
+        mercaderData.setRoutes(savedRoutes(request, mercaderData));
         routeRepository.saveAll(mercaderData.getRoutes());
         playerDataRepository.save(mercaderData);
     }
@@ -165,13 +164,13 @@ public class MercaderServiceImpl implements MercaderService {
      */
 
     private void validateRoute(List<MarketCitySubregionRequest> route, MarketCitySubregionRequest subregion,
-                                  Integer index, MercaderData mercaderData) throws InstanceNotFoundException {
+                                  Integer index, MercaderData mercaderData) {
 
         //En el caso de que el item no sea el último
         if(index < route.size()-1){
 
-            SubRegionEnum currentSubregion = SubRegionEnum.getById(subregion.getId().intValue());
-            SubRegionEnum nextSubregion = SubRegionEnum.getById(route.get(subregion.getPosition().intValue()).getId().intValue());
+            SubRegionEnum currentSubregion = subregionRepository.findById(subregion.getId()).orElseThrow(() -> new SubRegionNotFoundException()).getSubRegionEnum();
+            SubRegionEnum nextSubregion = subregionRepository.findById(route.get(subregion.getPosition().intValue()).getId()).orElseThrow(() -> new SubRegionNotFoundException()).getSubRegionEnum();
 
             //Si el siguiente no es adyacente
             if(!currentSubregion.getAdyacentes().contains(nextSubregion)){
@@ -205,28 +204,36 @@ public class MercaderServiceImpl implements MercaderService {
         }
     }
 
-    private List<Route> savedRoutes(TradeRoutesRequest request) throws InstanceNotFoundException {
+    private List<Route> savedRoutes(TradeRoutesRequest request, MercaderData mercaderData) {
 
-        List<Route> routes = new ArrayList<>();
-        for(SingleTradeRouteRequest singleTradeRouteRequest : request.getSingleTradeRouteRequests()){
+        return request.getSingleTradeRouteRequests().stream()
+                .map(r -> {
 
-            List<SubRegionEnum> subRegionList = new ArrayList<>();
-            long provisionalTradeScore = 0L;
-            for(MarketCitySubregionRequest subregion : singleTradeRouteRequest.getSubregions()){
-                SubRegionEnum sre = SubRegionEnum.getById(subregion.getId().intValue());
-                subRegionList.add(sre);
-                if(subregion.getCityMarketCardId() != null){
-                    MarketCard card = (MarketCard) cardRepository.findById(subregion.getCityMarketCardId()).orElseThrow(() -> new CardNotFoundException());
-                    provisionalTradeScore += card.getLevel().longValue();
-                }
-            }
+                    List<GameSubRegion> subregions = subregionRepository.findAllById(r.getSubregions().stream().map(MarketCitySubregionRequest::getId).collect(Collectors.toList()));
+                    Long provisionTradeScore = r.getSubregions().stream()
+                            .filter(marketSubregion -> marketSubregion.getCityMarketCardId() != null)
+                            .map(marketSubregion -> (MarketCard) cardRepository.findById(marketSubregion.getCityMarketCardId()).orElseThrow(() -> new CardNotFoundException()))
+                            .mapToLong(MarketCard::getLevel)
+                            .sum();
 
-            routes.add(Route.builder()
-                            .subregions(subRegionList)
-                            .tradeScore(provisionalTradeScore)
-                    .build());
-        }
-        return routes;
+                    removeCards(r.getSubregions(), mercaderData);
+
+                    return Route.builder()
+                            .subregions(subregions)
+                            .tradeScore(provisionTradeScore)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    private void removeCards(List<MarketCitySubregionRequest> marketSubregion, MercaderData mercaderData) {
+
+        List<Card> cards = cardRepository.findAllById(marketSubregion.stream()
+                        .map(MarketCitySubregionRequest::getCityMarketCardId)
+                        .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
+
+        cards.forEach(mercaderData.getCards()::remove);
     }
 
 }

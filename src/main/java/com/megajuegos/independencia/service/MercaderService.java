@@ -14,7 +14,7 @@ public interface MercaderService {
     MercaderResponse getData();
     GameDataTinyResponse getGameData();
     void giveResources(GiveResourcesRequest request);
-    void playTradeRoutes(TradeRoutesRequest request) throws InstanceNotFoundException;
+    void playTradeRoutes(TradeRoutesRequest request);
     void buyResources(ResourceRequest request);
     void upgradePrices(PricesRequest request) throws InstanceNotFoundException;
 }

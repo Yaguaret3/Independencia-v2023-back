@@ -36,7 +36,7 @@ public class MercaderController {
     }
 
     @PostMapping("/play-trade-routes")
-    public void playTradeRoutes(@Valid @RequestBody TradeRoutesRequest request) throws InstanceNotFoundException {
+    public void playTradeRoutes(@Valid @RequestBody TradeRoutesRequest request) {
         service.playTradeRoutes(request);
     }
 

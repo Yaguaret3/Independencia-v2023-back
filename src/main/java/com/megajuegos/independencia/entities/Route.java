@@ -18,8 +18,8 @@ public class Route {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ElementCollection
-    private List<SubRegionEnum> subregions;
+    @ManyToMany
+    private List<GameSubRegion> subregions;
     private Long tradeScore;
 
 }

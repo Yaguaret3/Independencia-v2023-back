@@ -4,6 +4,8 @@ import com.megajuegos.independencia.enums.SubRegionEnum;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,12 +21,13 @@ public class GameSubRegion {
     @OneToOne
     private City city;
     private SubRegionEnum subRegionEnum;
-
+    @ManyToMany
+    @NotNull
+    private List<GameSubRegion> adjacent;
     private String nombre;
     @Column(columnDefinition = "TEXT")
     private String area;
     private String color;
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gameSubRegion")
     private Set<Army> ejercitos;

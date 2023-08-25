@@ -12,10 +12,7 @@ import com.megajuegos.independencia.enums.RepresentationEnum;
 import com.megajuegos.independencia.exceptions.CityNotFoundException;
 import com.megajuegos.independencia.exceptions.GameDataNotFoundException;
 import com.megajuegos.independencia.exceptions.PlayerNotFoundException;
-import com.megajuegos.independencia.repository.CityRepository;
-import com.megajuegos.independencia.repository.CongresoRepository;
-import com.megajuegos.independencia.repository.GameDataRepository;
-import com.megajuegos.independencia.repository.UserIndependenciaRepository;
+import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
 import com.megajuegos.independencia.service.SettingService;
@@ -40,6 +37,7 @@ public class SettingServiceImpl implements SettingService {
     private final GobernadorDataRepository gobernadorDataRepository;
     private final PlayerDataRepository playerDataRepository;
     private final CongresoRepository congresoRepository;
+    private final GameSubRegionRepository gameSubregionRepository;
 
     @Override
     @Transactional
@@ -51,6 +49,8 @@ public class SettingServiceImpl implements SettingService {
                         .gameRegions(createRegions())
                         .build()
         );
+
+        addAdjacentSubregions();
 
         congresoRepository.save(
                 Congreso.builder()
@@ -160,6 +160,7 @@ public class SettingServiceImpl implements SettingService {
                                                         .area(s.getArea())
                                                         .color(s.getColor())
                                                         .city(city)
+                                                        .adjacent(new ArrayList<>())
                                                         .build();
                                             })
                                             .collect(Collectors.toSet())
@@ -192,5 +193,14 @@ public class SettingServiceImpl implements SettingService {
                 ((RevolucionarioData) playerData).setCongreso(congreso);
             }
         }
+    }
+
+
+
+    private void addAdjacentSubregions() {
+
+        List<GameSubRegion> subregions = gameSubregionRepository.findAll();
+        subregions.forEach(r -> r.getAdjacent().addAll(gameSubregionRepository.findAllBySubRegionEnumIn(r.getSubRegionEnum().getAdyacentes())));
+        gameSubregionRepository.saveAll(subregions);
     }
 }

@@ -872,15 +872,6 @@ public enum SubRegionEnum {
         this.city = city;
     }
 
-    public static SubRegionEnum getById(Integer id) throws InstanceNotFoundException {
-        for (SubRegionEnum e : SubRegionEnum.values()){
-            if(Objects.equals(e.getId(), id)){
-                return e;
-            }
-        }
-        throw new InstanceNotFoundException("No existe una subregión con esa id");
-    }
-
     public abstract List<SubRegionEnum> getAdyacentes();
 
 

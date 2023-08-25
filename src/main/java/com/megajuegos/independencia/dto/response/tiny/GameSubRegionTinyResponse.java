@@ -17,6 +17,7 @@ public class GameSubRegionTinyResponse {
     private String nombre;
     private String area;
     private String color;
+    private List<GameSubRegionTinyResponse> adjacent;
     private List<ArmyTinyResponse> ejercitos;
     private List<CampTinyResponse> campamentos;
     private List<BattleTinyResponse> batallas;
@@ -28,16 +29,19 @@ public class GameSubRegionTinyResponse {
                 .nombre(entity.getNombre())
                 .area(entity.getArea())
                 .color(entity.getColor())
-                .ejercitos(entity.getEjercitos()
-                        .stream()
+                .adjacent(entity.getAdjacent().stream()
+                        .map(a -> GameSubRegionTinyResponse.builder()
+                                .id(a.getId())
+                                .nombre(a.getNombre())
+                                .build())
+                        .collect(Collectors.toList()))
+                .ejercitos(entity.getEjercitos().stream()
                         .map(ArmyTinyResponse::toTinyResponse)
                         .collect(Collectors.toList()))
-                .campamentos(entity.getCampamentos()
-                        .stream()
+                .campamentos(entity.getCampamentos().stream()
                         .map(CampTinyResponse::toTinyResponse)
                         .collect(Collectors.toList()))
-                .batallas(entity.getBatallas()
-                        .stream()
+                .batallas(entity.getBatallas().stream()
                         .map(BattleTinyResponse::toTinyResponse)
                         .collect(Collectors.toList()))
                 .build();
