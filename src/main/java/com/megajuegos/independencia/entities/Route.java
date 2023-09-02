@@ -1,6 +1,5 @@
 package com.megajuegos.independencia.entities;
 
-import com.megajuegos.independencia.enums.SubRegionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +20,6 @@ public class Route {
     @ManyToMany
     private List<GameSubRegion> subregions;
     private Long tradeScore;
+    private Integer turn;
 
 }

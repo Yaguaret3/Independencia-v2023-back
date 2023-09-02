@@ -1,6 +1,7 @@
 package com.megajuegos.independencia.entities.data;
 
 import com.megajuegos.independencia.entities.GameRegion;
+import com.megajuegos.independencia.enums.PhaseEnum;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,9 +26,9 @@ public class GameData {
     @JoinColumn(name = "gameData")
     private Set<GameRegion> gameRegions;
 
-    private Integer turno=0;
+    private Integer turno;
 
-    private Long nextEndOfTurn=0L;
+    private Long nextEndOfTurn;
 
-    private String fase="";
+    private PhaseEnum fase;
 }

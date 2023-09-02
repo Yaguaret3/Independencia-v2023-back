@@ -1,6 +1,7 @@
 package com.megajuegos.independencia.dto.response.tiny;
 
 import com.megajuegos.independencia.entities.GameSubRegion;
+import com.megajuegos.independencia.entities.data.MercaderData;
 import com.megajuegos.independencia.enums.SubRegionEnum;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class GameSubRegionTinyResponse {
     private List<ArmyTinyResponse> ejercitos;
     private List<CampTinyResponse> campamentos;
     private List<BattleTinyResponse> batallas;
+    private List<PlayerDataTinyResponse> merchants;
 
     public static GameSubRegionTinyResponse toTinyResponse(GameSubRegion entity){
         return GameSubRegionTinyResponse.builder()
@@ -45,5 +47,14 @@ public class GameSubRegionTinyResponse {
                         .map(BattleTinyResponse::toTinyResponse)
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    public GameSubRegionTinyResponse reveal(List<MercaderData> merchants){
+
+        this.setMerchants(merchants
+                .stream()
+                .map(PlayerDataTinyResponse::toTinyResponse)
+                .collect(Collectors.toList()));
+        return this;
     }
 }

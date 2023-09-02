@@ -1,6 +1,8 @@
 package com.megajuegos.independencia.dto.response.tiny;
 
 import com.megajuegos.independencia.entities.data.GameData;
+import com.megajuegos.independencia.entities.data.MercaderData;
+import com.megajuegos.independencia.enums.PhaseEnum;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,7 +18,7 @@ public class GameDataTinyResponse {
     private List<GameRegionTinyResponse> gameRegions;
     private Integer turno;
     private Long nextEndOfTurn;
-    private String fase;
+    private PhaseEnum fase;
 
     public static GameDataTinyResponse toTinyResponse(GameData entity){
         return GameDataTinyResponse.builder()

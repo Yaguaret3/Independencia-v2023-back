@@ -1,6 +1,8 @@
 package com.megajuegos.independencia.dto.response.tiny;
 
 import com.megajuegos.independencia.entities.GameRegion;
+import com.megajuegos.independencia.entities.GameSubRegion;
+import com.megajuegos.independencia.entities.data.MercaderData;
 import lombok.Builder;
 import lombok.Data;
 

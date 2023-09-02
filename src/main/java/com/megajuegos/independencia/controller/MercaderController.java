@@ -1,9 +1,6 @@
 package com.megajuegos.independencia.controller;
 
-import com.megajuegos.independencia.dto.request.mercader.GiveResourcesRequest;
-import com.megajuegos.independencia.dto.request.mercader.PricesRequest;
-import com.megajuegos.independencia.dto.request.mercader.ResourceRequest;
-import com.megajuegos.independencia.dto.request.mercader.TradeRoutesRequest;
+import com.megajuegos.independencia.dto.request.mercader.*;
 import com.megajuegos.independencia.dto.response.MercaderResponse;
 import com.megajuegos.independencia.dto.response.tiny.GameDataTinyResponse;
 import com.megajuegos.independencia.service.MercaderService;
@@ -36,7 +33,7 @@ public class MercaderController {
     }
 
     @PostMapping("/play-trade-routes")
-    public void playTradeRoutes(@Valid @RequestBody TradeRoutesRequest request) {
+    public void playTradeRoutes(@Valid @RequestBody SingleTradeRouteRequest request) {
         service.playTradeRoutes(request);
     }
 
