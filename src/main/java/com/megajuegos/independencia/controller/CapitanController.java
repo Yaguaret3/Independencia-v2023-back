@@ -4,10 +4,7 @@ import com.megajuegos.independencia.dto.request.capitan.*;
 import com.megajuegos.independencia.dto.response.CapitanResponse;
 import com.megajuegos.independencia.service.CapitanService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
 import javax.validation.Valid;
@@ -34,6 +31,11 @@ public class CapitanController {
         service.buyBattleCards(request);
     }
 
+    @PostMapping("/move")
+    public void move(@RequestBody MovementRequest request){
+        service.move(request);
+    }
+
     @PostMapping ("/play-action-cards")
     public void playActionCards(@Valid ActionRequest request){
         service.playActionRequest(request);
@@ -52,11 +54,6 @@ public class CapitanController {
     @PostMapping("/upgrade-camp")
     public void upgradeCamp(@Valid BuyRequest request){
         service.upgradeCamp(request);
-    }
-
-    @PostMapping("/spend-discipline")
-    public void spendDiscipline(@Valid DisciplineRequest request){
-        service.spendDiscipline(request);
     }
 
 }

@@ -4,6 +4,7 @@ import com.megajuegos.independencia.exceptions.RegionNotFoundException;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -63,6 +64,12 @@ public enum RegionEnum {
                                 SubRegionEnum.BANDA_ORIENTAL,
                                 SubRegionEnum.MONTEVIDEO,
                                 SubRegionEnum.MALDONADO);
+        }
+
+        @Override
+        public List<RegionEnum> getAdyacentes() {
+            return Arrays.asList(RegionEnum.LITORAL,
+                                RegionEnum.CORDOBA_DEL_TUCUMAN);
         }
     },
     LITORAL(2,
@@ -125,6 +132,11 @@ public enum RegionEnum {
                                 SubRegionEnum.GUAYRA,
                                 SubRegionEnum.ALTO_PARAGUAY);
         }
+
+        @Override
+        public List<RegionEnum> getAdyacentes() {
+            return Collections.singletonList(RegionEnum.RIO_DE_LA_PLATA);
+        }
     },
     CORDOBA_DEL_TUCUMAN(3,
             "Córdoba del Tucumán",
@@ -179,6 +191,12 @@ public enum RegionEnum {
                                 SubRegionEnum.SAN_LUIS,
                                 SubRegionEnum.SAN_JUAN,
                                 SubRegionEnum.SIERRAS);
+        }
+
+        @Override
+        public List<RegionEnum> getAdyacentes() {
+            return Arrays.asList(RegionEnum.RIO_DE_LA_PLATA,
+                                RegionEnum.SALTA_DEL_TUCUMAN);
         }
     },
     SALTA_DEL_TUCUMAN(4,
@@ -240,6 +258,12 @@ public enum RegionEnum {
                                 SubRegionEnum.SALTA,
                                 SubRegionEnum.JUJUY,
                                 SubRegionEnum.TARIJA);
+        }
+
+        @Override
+        public List<RegionEnum> getAdyacentes() {
+            return Arrays.asList(RegionEnum.ALTO_PERU,
+                                RegionEnum.CORDOBA_DEL_TUCUMAN);
         }
     },
     ALTO_PERU(5,
@@ -324,6 +348,11 @@ public enum RegionEnum {
                                 SubRegionEnum.MOXOS,
                                 SubRegionEnum.LA_PAZ);
         }
+
+        @Override
+        public List<RegionEnum> getAdyacentes() {
+            return Collections.singletonList(RegionEnum.SALTA_DEL_TUCUMAN);
+        }
     },
     CHILE(6,
             "Chile",
@@ -375,6 +404,11 @@ public enum RegionEnum {
                                 SubRegionEnum.OCEANO_PACIFICO,
                                 SubRegionEnum.COQUIMBO,
                                 SubRegionEnum.COPIAPO);
+        }
+
+        @Override
+        public List<RegionEnum> getAdyacentes() {
+            return Collections.emptyList();
         }
     };
 
@@ -437,4 +471,5 @@ public enum RegionEnum {
     }
 
     public abstract List<SubRegionEnum> getSubRegions();
+    public abstract List<RegionEnum> getAdyacentes();
 }

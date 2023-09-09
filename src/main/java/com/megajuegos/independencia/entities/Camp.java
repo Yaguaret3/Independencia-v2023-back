@@ -17,8 +17,13 @@ public class Camp {
     private Long id;
     private Integer nivel=0;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "gameRegion")
+    private GameRegion gameRegion;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gameSubRegion")
     private GameSubRegion gameSubRegion;
+
+
     @OneToOne(mappedBy = "camp")
     private CapitanData capitanData;
 }

@@ -13,7 +13,9 @@ public enum ActionTypeEnum {
     MOVIMIENTO(1, "Movimiento", "", 0, ""),
     ATAQUE(2, "Ataque", "", 0, ""),
     DEFENSA(3, "Defensa", "", 0, ""),
-    REACCION(4, "Reaccion", "", 0, "");
+    REACCION(4, "Reaccion", "", 0, ""),
+    DESPLIEGUE(5, "Despliegue", "", 0, ""),
+    ACAMPE(6, "Acampar", "", 0, "");
 
     private Integer id;
     private String nombre;

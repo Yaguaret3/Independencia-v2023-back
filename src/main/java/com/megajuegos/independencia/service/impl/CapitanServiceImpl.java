@@ -2,10 +2,7 @@ package com.megajuegos.independencia.service.impl;
 
 import com.megajuegos.independencia.dto.request.capitan.*;
 import com.megajuegos.independencia.dto.response.CapitanResponse;
-import com.megajuegos.independencia.entities.Battle;
-import com.megajuegos.independencia.entities.DisciplineSpent;
-import com.megajuegos.independencia.entities.GameSubRegion;
-import com.megajuegos.independencia.entities.UserIndependencia;
+import com.megajuegos.independencia.entities.*;
 import com.megajuegos.independencia.entities.card.ActionCard;
 import com.megajuegos.independencia.entities.card.BattleCard;
 import com.megajuegos.independencia.entities.card.Card;
@@ -14,13 +11,9 @@ import com.megajuegos.independencia.entities.data.MercaderData;
 import com.megajuegos.independencia.enums.ActionTypeEnum;
 import com.megajuegos.independencia.enums.BattleTypeEnum;
 import com.megajuegos.independencia.enums.PersonalPricesEnum;
-import com.megajuegos.independencia.exceptions.BattleNotFoundException;
-import com.megajuegos.independencia.exceptions.GameAreaNotFoundException;
-import com.megajuegos.independencia.exceptions.PaymentNotPossibleException;
-import com.megajuegos.independencia.exceptions.PlayerNotFoundException;
-import com.megajuegos.independencia.repository.BattleRepository;
-import com.megajuegos.independencia.repository.GameSubRegionRepository;
-import com.megajuegos.independencia.repository.UserIndependenciaRepository;
+import com.megajuegos.independencia.enums.PhaseEnum;
+import com.megajuegos.independencia.exceptions.*;
+import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.CapitanDataRepository;
 import com.megajuegos.independencia.service.CapitanService;
 import com.megajuegos.independencia.service.PaymentService;
@@ -41,6 +34,8 @@ public class CapitanServiceImpl implements CapitanService {
     private final PaymentService paymentService;
     private final UserUtil userUtil;
     private final CapitanDataRepository capitanDataRepository;
+    private final CardRepository cardRepository;
+    private final GameRegionRepository gameRegionRepository;
 
     @Override
     public CapitanResponse getData() {
@@ -121,7 +116,23 @@ public class CapitanServiceImpl implements CapitanService {
         CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
 
-        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.CAMP))) throw new PaymentNotPossibleException();
+        if(!PhaseEnum.MOVING.equals(capitanData.getGameData().getFase())){
+            throw new IncorrectPhaseException();
+        }
+
+        Card card = capitanData.getCards().stream()
+                .filter(c -> c.getId().equals(request.getCampCardId()))
+                .findFirst()
+                .orElseThrow(() -> new CardNotFoundException());
+
+        if(!(card instanceof ActionCard)){
+            throw new IncorrectCardTypeException();
+        }
+
+        ActionCard actionCard = (ActionCard) card;
+        if(!ActionTypeEnum.ACAMPE.equals(actionCard.getTipoAccion())){
+            throw new IncorrectActionTypeException();
+        }
 
         GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getNewAreaId())
                 .orElseThrow(() -> new GameAreaNotFoundException());
@@ -144,20 +155,37 @@ public class CapitanServiceImpl implements CapitanService {
     }
 
     @Override
-    public void spendDiscipline(DisciplineRequest request) {
+    public void move(MovementRequest request) {
+
         CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
+        Integer turno = capitanData.getGameData().getTurno();
 
-        if (!paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.DISCIPLINE_SPENT)) throw new PaymentNotPossibleException();
+        if(!PhaseEnum.MOVING.equals(capitanData.getGameData().getFase())){
+            throw new IncorrectPhaseException();
+        }
 
-        Battle battle = battleRepository.findById(request.getBattle())
-                .orElseThrow(() -> new BattleNotFoundException());
+        Card card = capitanData.getCards().stream()
+                .filter(c -> c.getId().equals(request.getCardId()))
+                .findFirst()
+                .orElseThrow(() -> new CardNotFoundException());
+        if(!(card instanceof ActionCard)){
+            throw new IncorrectCardTypeException();
+        }
+        ActionCard actionCard = (ActionCard) card;
+        if(!ActionTypeEnum.MOVIMIENTO.equals(actionCard.getTipoAccion())){
+            throw new IncorrectActionTypeException();
+        }
 
-        battle.getDisciplinaUsada().add(DisciplineSpent.builder()
-                        .capitanId(capitanData.getId())
-                        .disciplineSpent(request.getPayment().getDisciplina())
-                        .build());
-        capitanDataRepository.save(capitanData);
-        battleRepository.save(battle);
+        GameRegion regionTo =  gameRegionRepository.findById(request.getRegionToId())
+                .orElseThrow(() -> new RegionNotFoundException());
+
+        if(!capitanData.getCamp().getGameRegion().getRegionEnum().getAdyacentes().contains(regionTo.getRegionEnum())){
+            throw new RegionNotAdjacentException();
+        }
+
+        actionCard.setTurnWhenPlayed(turno);
+        actionCard.setAlreadyPlayed(true);
+        cardRepository.save(actionCard);
     }
 }

@@ -7,6 +7,6 @@ import lombok.Data;
 @Data @Builder
 public class CampRequest {
 
-    private PaymentRequestUtil payment;
+    private Long campCardId;
     private Long newAreaId;
 }

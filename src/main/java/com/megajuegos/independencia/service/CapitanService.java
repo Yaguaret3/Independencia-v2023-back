@@ -14,5 +14,6 @@ public interface CapitanService {
     void playBattleCards(BattleRequest request);
     void makeCamp(CampRequest request);
     void upgradeCamp(BuyRequest request);
-    void spendDiscipline(DisciplineRequest request);
+
+    void move(MovementRequest request);
 }
