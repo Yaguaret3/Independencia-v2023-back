@@ -4,6 +4,7 @@ import com.megajuegos.independencia.enums.RegionEnum;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,5 +21,8 @@ public class GameRegion {
     private RegionEnum regionEnum;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private Set<GameSubRegion> subRegions;
+    private List<GameSubRegion> subRegions;
+
+    @OneToMany
+    private List<Action> defenseActions;
 }

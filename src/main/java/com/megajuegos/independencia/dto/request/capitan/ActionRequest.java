@@ -7,4 +7,5 @@ import lombok.Data;
 public class ActionRequest {
 
     private Long cardId;
+    private Long subregionId;
 }

@@ -22,8 +22,5 @@ public class Army {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gameArea")
     private GameSubRegion gameSubRegion;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinTable(name = "ejercitos_con_batallas_join")
-    private Set<Battle> batallas;
-    private Integer cantidad=0;
+    private boolean isNew;
 }

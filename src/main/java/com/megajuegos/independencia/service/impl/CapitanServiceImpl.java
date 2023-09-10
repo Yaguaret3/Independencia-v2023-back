@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.management.InstanceNotFoundException;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Service
@@ -81,14 +82,37 @@ public class CapitanServiceImpl implements CapitanService {
                 .orElseThrow(() -> new PlayerNotFoundException());
         Integer turno = capitanData.getGameData().getTurno();
 
-        for(Card card : capitanData.getCards()){
+        Card card = capitanData.getCards().stream()
+                .filter(c -> c.getId()
+                        .equals(request.getCardId()))
+                .findFirst().orElseThrow(() -> new CardNotFoundException());
 
-            if(Objects.equals(card.getId(), request.getCardId())){
-                ActionCard actionCard = (ActionCard) card;
-                actionCard.setTurnWhenPlayed(turno);
-                actionCard.setAlreadyPlayed(true);
-            }
+        if(!(card instanceof ActionCard)){
+            throw new IncorrectCardTypeException();
         }
+
+        ActionCard actionCard = (ActionCard) card;
+
+        if(Arrays.asList(ActionTypeEnum.ACAMPE, ActionTypeEnum.MOVIMIENTO, ActionTypeEnum.REACCION).contains(actionCard.getTipoAccion())){
+            throw new IncorrectPhaseException();
+        }
+
+        switch(actionCard.getTipoAccion()){
+            case DESPLIEGUE:
+                deploy(request.getSubregionId(), capitanData);
+                break;
+            case ATAQUE:
+                attack(request.getSubregionId(), capitanData);
+                break;
+            case DEFENSA:
+                defend(capitanData);
+                break;
+            default:
+                throw new IncorrectActionTypeException();
+        }
+
+        actionCard.setTurnWhenPlayed(turno);
+        actionCard.setAlreadyPlayed(true);
         capitanDataRepository.save(capitanData);
     }
 
@@ -108,49 +132,6 @@ public class CapitanServiceImpl implements CapitanService {
                 battleCard.setAlreadyPlayed(true);
             }
         }
-        capitanDataRepository.save(capitanData);
-    }
-
-    @Override
-    public void makeCamp(CampRequest request) {
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
-                .orElseThrow(() -> new PlayerNotFoundException());
-
-        if(!PhaseEnum.MOVING.equals(capitanData.getGameData().getFase())){
-            throw new IncorrectPhaseException();
-        }
-
-        Card card = capitanData.getCards().stream()
-                .filter(c -> c.getId().equals(request.getCampCardId()))
-                .findFirst()
-                .orElseThrow(() -> new CardNotFoundException());
-
-        if(!(card instanceof ActionCard)){
-            throw new IncorrectCardTypeException();
-        }
-
-        ActionCard actionCard = (ActionCard) card;
-        if(!ActionTypeEnum.ACAMPE.equals(actionCard.getTipoAccion())){
-            throw new IncorrectActionTypeException();
-        }
-
-        GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getNewAreaId())
-                .orElseThrow(() -> new GameAreaNotFoundException());
-
-        capitanData.getCamp().setGameSubRegion(gameSubRegion);
-
-        capitanDataRepository.save(capitanData);
-    }
-
-    @Override
-    public void upgradeCamp(BuyRequest request) {
-
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
-                .orElseThrow(() -> new PlayerNotFoundException());
-
-        if (!paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.CAMP)) throw new PaymentNotPossibleException();
-
-        capitanData.getCamp().setNivel(capitanData.getCamp().getNivel()+1);
         capitanDataRepository.save(capitanData);
     }
 
@@ -187,5 +168,65 @@ public class CapitanServiceImpl implements CapitanService {
         actionCard.setTurnWhenPlayed(turno);
         actionCard.setAlreadyPlayed(true);
         cardRepository.save(actionCard);
+    }
+
+    @Override
+    public void makeCamp(CampRequest request) {
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        if(!PhaseEnum.MOVING.equals(capitanData.getGameData().getFase())){
+            throw new IncorrectPhaseException();
+        }
+
+        Card card = capitanData.getCards().stream()
+                .filter(c -> c.getId().equals(request.getCampCardId()))
+                .findFirst()
+                .orElseThrow(() -> new CardNotFoundException());
+
+        if(!(card instanceof ActionCard)){
+            throw new IncorrectCardTypeException();
+        }
+
+        ActionCard actionCard = (ActionCard) card;
+        if(!ActionTypeEnum.ACAMPE.equals(actionCard.getTipoAccion())){
+            throw new IncorrectActionTypeException();
+        }
+
+        GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getNewAreaId())
+                .orElseThrow(() -> new GameAreaNotFoundException());
+
+        capitanData.getCamp().setGameSubRegion(gameSubRegion);
+
+        capitanDataRepository.save(capitanData);
+    }
+
+    private void deploy(Long subregionId, CapitanData capitanData){
+        GameSubRegion gameSubRegionDeploy = gameSubRegionRepository.findById(subregionId)
+                .orElseThrow(() -> new SubRegionNotFoundException());
+        gameSubRegionDeploy.getEjercitos().add(Army.builder()
+                .capitanData(capitanData)
+                .gameSubRegion(gameSubRegionDeploy)
+                .build());
+        gameSubRegionRepository.save(gameSubRegionDeploy);
+    }
+    private void attack(Long subregionId, CapitanData capitanData){
+        GameSubRegion gameSubRegionAttack = gameSubRegionRepository.findById(subregionId)
+                .orElseThrow(() -> new SubRegionNotFoundException());
+        gameSubRegionAttack.getAttackActions().add(Action.builder()
+                .capitanId(capitanData)
+                .actionType(ActionTypeEnum.ATAQUE)
+                .solved(false)
+                .build());
+        gameSubRegionRepository.save(gameSubRegionAttack);
+    }
+    private void defend(CapitanData capitanData){
+        GameRegion gameRegion = capitanData.getCamp().getGameRegion();
+        gameRegion.getDefenseActions().add(Action.builder()
+                .capitanId(capitanData)
+                .actionType(ActionTypeEnum.DEFENSA)
+                .solved(false)
+                .build());
+        gameRegionRepository.save(gameRegion);
     }
 }

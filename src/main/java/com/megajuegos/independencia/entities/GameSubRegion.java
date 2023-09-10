@@ -30,10 +30,13 @@ public class GameSubRegion {
     private String color;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gameSubRegion")
-    private Set<Army> ejercitos;
+    private List<Army> ejercitos;
     @OneToMany(mappedBy = "gameSubRegion")
-    private Set<Camp> campamentos;
+    private List<Camp> campamentos;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gameSubRegion")
-    private Set<Battle> batallas;
+    private List<Battle> batallas;
+    @OneToMany
+    @JoinColumn
+    private List<Action> attackActions;
 }

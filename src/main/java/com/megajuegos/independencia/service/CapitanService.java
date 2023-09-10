@@ -13,7 +13,6 @@ public interface CapitanService {
     void playActionRequest(ActionRequest request);
     void playBattleCards(BattleRequest request);
     void makeCamp(CampRequest request);
-    void upgradeCamp(BuyRequest request);
 
     void move(MovementRequest request);
 }

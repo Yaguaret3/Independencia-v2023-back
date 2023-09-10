@@ -51,9 +51,4 @@ public class CapitanController {
         service.makeCamp(request);
     }
 
-    @PostMapping("/upgrade-camp")
-    public void upgradeCamp(@Valid BuyRequest request){
-        service.upgradeCamp(request);
-    }
-
 }
