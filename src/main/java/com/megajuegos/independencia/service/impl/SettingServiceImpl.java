@@ -163,7 +163,7 @@ public class SettingServiceImpl implements SettingService {
                                                         .adjacent(new ArrayList<>())
                                                         .build();
                                             })
-                                            .collect(Collectors.toSet())
+                                            .collect(Collectors.toList())
                             )
                             .build());
                 }

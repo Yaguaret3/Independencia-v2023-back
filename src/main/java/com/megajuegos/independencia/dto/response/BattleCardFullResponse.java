@@ -10,7 +10,6 @@ public class BattleCardFullResponse {
     private Long id;
     private Boolean alreadyPlayed;
     private Integer turnWhenPlayed;
-    private Long batallaId;
     private Long playerId;
     private String tipoOrdenDeBatalla;
 
@@ -21,7 +20,6 @@ public class BattleCardFullResponse {
                 .playerId(entity.getPlayerData().getId())
                 .alreadyPlayed(entity.getAlreadyPlayed())
                 .turnWhenPlayed(entity.getTurnWhenPlayed())
-                .batallaId(entity.getBatalla().getId())
                 .tipoOrdenDeBatalla(entity.getTipoOrdenDeBatalla().name())
                 .build();
     }

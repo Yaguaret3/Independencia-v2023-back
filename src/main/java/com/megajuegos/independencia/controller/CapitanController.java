@@ -37,18 +37,23 @@ public class CapitanController {
     }
 
     @PostMapping ("/play-action-cards")
-    public void playActionCards(@Valid ActionRequest request){
+    public void playActionCards(@RequestBody @Valid ActionRequest request){
         service.playActionRequest(request);
     }
 
     @PostMapping("/play-battle-cards")
-    public void playBattleCards(@Valid BattleRequest request){
+    public void playBattleCards(@RequestBody @Valid BattleRequest request){
         service.playBattleCards(request);
     }
 
     @PostMapping("/make-camp")
-    public void makeCamp(@Valid CampRequest request){
+    public void makeCamp(@RequestBody @Valid CampRequest request){
         service.makeCamp(request);
+    }
+
+    @PostMapping("/rush")
+    public void rush(@RequestBody @Valid ActionRequest request){
+        service.rush(request);
     }
 
 }

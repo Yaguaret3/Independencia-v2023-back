@@ -15,8 +15,5 @@ import javax.persistence.*;
 @SuperBuilder
 public class BattleCard extends Card {
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "batalla")
-    private Battle batalla;
     private BattleTypeEnum tipoOrdenDeBatalla;
 }

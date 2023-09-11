@@ -1,7 +1,6 @@
 package com.megajuegos.independencia.dto.response;
 
 import com.megajuegos.independencia.dto.response.tiny.BattleCardTinyResponse;
-import com.megajuegos.independencia.dto.response.tiny.DisciplineSpentTinyResponse;
 import com.megajuegos.independencia.entities.Battle;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,6 @@ public class BattleFullResponse {
     private List<ArmyResponse> ejercitos;
     private GameSubRegionFullResponse gameRegion;
     private Integer turnoDeJuego;
-    private List<DisciplineSpentTinyResponse> disciplinaUsada;
     private Boolean active;
 
     public static BattleFullResponse toFullResponse(Battle entity){
@@ -34,10 +32,6 @@ public class BattleFullResponse {
                         .collect(Collectors.toList()))
                 .gameRegion(GameSubRegionFullResponse.toFullResponse(entity.getGameSubRegion()))
                 .turnoDeJuego(entity.getTurnoDeJuego())
-                .disciplinaUsada(entity.getDisciplinaUsada()
-                        .stream()
-                        .map(DisciplineSpentTinyResponse::toTinyResponse)
-                        .collect(Collectors.toList()))
                 .active(entity.getActive())
                 .build();
     }

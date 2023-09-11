@@ -9,13 +9,11 @@ import lombok.Data;
 public class BattleCardTinyResponse {
 
     private Long cardId;
-    private Long battleId;
     private String battleOrderType;
 
     public static BattleCardTinyResponse toTinyResponse(BattleCard entity){
         return BattleCardTinyResponse.builder()
                 .cardId(entity.getId())
-                .battleId(entity.getBatalla().getId())
                 .battleOrderType(entity.getTipoOrdenDeBatalla().name())
                 .build();
     }

@@ -113,7 +113,24 @@ public class CapitanServiceImpl implements CapitanService {
 
         actionCard.setTurnWhenPlayed(turno);
         actionCard.setAlreadyPlayed(true);
-        capitanDataRepository.save(capitanData);
+        cardRepository.save(actionCard);
+    }
+
+    @Override
+    public void rush(ActionRequest request) {
+
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+        Integer turno = capitanData.getGameData().getTurno();
+
+        Card card = capitanData.getCards().stream().filter(c -> c.getId().equals(request.getCardId())).findFirst().orElseThrow(() -> new CardNotFoundException());
+
+        if(!(card instanceof ActionCard)){
+            throw new IncorrectCardTypeException();
+        }
+        card.setTurnWhenPlayed(turno);
+        card.setAlreadyPlayed(true);
+        cardRepository.save(card);
     }
 
     @Override
@@ -123,16 +140,25 @@ public class CapitanServiceImpl implements CapitanService {
                 .orElseThrow(() -> new PlayerNotFoundException());
         Battle battle = battleRepository.findById(request.getBattleId())
                 .orElseThrow(BattleNotFoundException::new);
+        Integer turno = capitanData.getGameData().getTurno();
 
-        for(Card card : capitanData.getCards()){
-
-            if(Objects.equals(card.getId(), request.getCardId())){
-                BattleCard battleCard = (BattleCard) card;
-                battleCard.setBatalla(battle);
-                battleCard.setAlreadyPlayed(true);
-            }
+        if(battle.getEjercitos().stream().anyMatch(b -> b.getCapitanData().equals(capitanData))){
+            throw new IncorrectBattleException();
         }
-        capitanDataRepository.save(capitanData);
+
+        Card card = capitanData.getCards().stream().filter(c -> c.getId().equals(request.getCardId())).findFirst()
+                .orElseThrow(() -> new CardNotFoundException());
+
+        if(!(card instanceof BattleCard)){
+            throw new IncorrectCardTypeException();
+        }
+
+        battle.getCartasDeCombate().add((BattleCard) card);
+
+        battleRepository.save(battle);
+        card.setTurnWhenPlayed(turno);
+        card.setAlreadyPlayed(true);
+        cardRepository.save(card);
     }
 
     @Override
@@ -174,6 +200,7 @@ public class CapitanServiceImpl implements CapitanService {
     public void makeCamp(CampRequest request) {
         CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
+        Integer turno = capitanData.getGameData().getTurno();
 
         if(!PhaseEnum.MOVING.equals(capitanData.getGameData().getFase())){
             throw new IncorrectPhaseException();
@@ -198,6 +225,9 @@ public class CapitanServiceImpl implements CapitanService {
 
         capitanData.getCamp().setGameSubRegion(gameSubRegion);
 
+        actionCard.setTurnWhenPlayed(turno);
+        actionCard.setAlreadyPlayed(true);
+        cardRepository.save(actionCard);
         capitanDataRepository.save(capitanData);
     }
 

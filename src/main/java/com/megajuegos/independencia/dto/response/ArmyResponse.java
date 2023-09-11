@@ -10,15 +10,12 @@ public class ArmyResponse {
     private Long id;
     private Long capitanId;
     private Long gameSubRegion;
-    private Integer cantidad;
-
     public static ArmyResponse toDtoResponse(Army entity){
 
         return ArmyResponse.builder()
                 .id(entity.getId())
                 .capitanId(entity.getCapitanData().getId())
                 .gameSubRegion(entity.getGameSubRegion().getId())
-                .cantidad(entity.getCantidad())
                 .build();
     }
 

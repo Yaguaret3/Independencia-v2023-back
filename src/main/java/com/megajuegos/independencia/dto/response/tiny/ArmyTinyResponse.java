@@ -15,8 +15,6 @@ public class ArmyTinyResponse {
     private Long armyId;
     private Long capitanId;
     private Long gameAreaId;
-    private List<Long> battles;
-    private Integer size;
 
     public static ArmyTinyResponse toTinyResponse(Army entity){
 
@@ -24,11 +22,6 @@ public class ArmyTinyResponse {
                 .armyId(entity.getId())
                 .capitanId(entity.getCapitanData().getId())
                 .gameAreaId(entity.getGameSubRegion().getId())
-                .battles(entity.getBatallas()
-                        .stream()
-                        .map(Battle::getId)
-                        .collect(Collectors.toList()))
-                .size(entity.getCantidad())
                 .build();
     }
 }

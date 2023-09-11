@@ -16,7 +16,6 @@ public class BattleTinyResponse {
     private List<ArmyTinyResponse> armies;
     private Long gameAreaId;
     private Integer turn;
-    private List<DisciplineSpentTinyResponse> disciplineSpent;
     private Boolean active;
 
     public static BattleTinyResponse toTinyResponse(Battle entity){
@@ -33,10 +32,6 @@ public class BattleTinyResponse {
                         .collect(Collectors.toList()))
                 .gameAreaId(entity.getGameSubRegion().getId())
                 .turn(entity.getTurnoDeJuego())
-                .disciplineSpent(entity.getDisciplinaUsada()
-                        .stream()
-                        .map(DisciplineSpentTinyResponse::toTinyResponse)
-                        .collect(Collectors.toList()))
                 .active(entity.getActive())
                 .build();
     }

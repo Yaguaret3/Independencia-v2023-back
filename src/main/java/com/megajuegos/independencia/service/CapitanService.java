@@ -15,4 +15,6 @@ public interface CapitanService {
     void makeCamp(CampRequest request);
 
     void move(MovementRequest request);
+
+    void rush(ActionRequest request);
 }
