@@ -26,6 +26,6 @@ public class Battle {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gameArea")
     private GameSubRegion gameSubRegion;
-    private Integer turnoDeJuego=0;
-    private Boolean active=true;
+    private Integer turnoDeJuego;
+    private Boolean active;
 }

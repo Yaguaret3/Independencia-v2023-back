@@ -2,6 +2,8 @@ package com.megajuegos.independencia.service.impl;
 
 import com.megajuegos.independencia.dto.request.capitan.*;
 import com.megajuegos.independencia.dto.response.CapitanResponse;
+import com.megajuegos.independencia.dto.response.tiny.GameDataTinyCapitanResponse;
+import com.megajuegos.independencia.dto.response.tiny.GameDataTinyResponse;
 import com.megajuegos.independencia.entities.*;
 import com.megajuegos.independencia.entities.card.ActionCard;
 import com.megajuegos.independencia.entities.card.BattleCard;
@@ -43,6 +45,13 @@ public class CapitanServiceImpl implements CapitanService {
         CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
         return CapitanResponse.toDtoResponse(capitanData);
+    }
+
+    @Override
+    public GameDataTinyCapitanResponse getGameData() {
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+        return GameDataTinyCapitanResponse.toDtoResponse(capitanData);
     }
 
     @Override
