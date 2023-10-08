@@ -20,7 +20,7 @@ public class GameDataTinyCapitanResponse {
     private List<PlayerDataTinyResponse> players;
     private GameRegionTinyResponse gameRegion;
     private List<BattleFullResponse> ownBattles;
-
+    private List<GameRegionVeryTinyResponse> gameRegionsTiny;
     private Integer turno;
     private Long nextEndOfTurn;
     private PhaseEnum fase;

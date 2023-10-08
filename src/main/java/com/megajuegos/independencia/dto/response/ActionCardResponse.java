@@ -11,7 +11,7 @@ public class ActionCardResponse {
     private Long playerId;
     private Boolean alreadyPlayed;
     private Integer turnWhenPlayed;
-    private String tipoAccion;
+    private String actionType;
 
     public static ActionCardResponse toDtoResponse(ActionCard entity){
 
@@ -20,7 +20,7 @@ public class ActionCardResponse {
                 .playerId(entity.getPlayerData().getId())
                 .alreadyPlayed(entity.getAlreadyPlayed())
                 .turnWhenPlayed(entity.getTurnWhenPlayed())
-                .tipoAccion(entity.getTipoAccion().name())
+                .actionType(entity.getTipoAccion().name())
                 .build();
     }
 }

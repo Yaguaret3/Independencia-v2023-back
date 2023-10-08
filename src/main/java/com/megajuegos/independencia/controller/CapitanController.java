@@ -18,12 +18,12 @@ public class CapitanController {
 
     private final CapitanService service;
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<CapitanResponse> getData(){
         return ResponseEntity.ok(service.getData());
     }
 
-    @GetMapping("/get-game-data")
+    @GetMapping("/game/")
     public ResponseEntity<GameDataTinyCapitanResponse> getGameData(){
         return ResponseEntity.ok(service.getGameData());
     }
