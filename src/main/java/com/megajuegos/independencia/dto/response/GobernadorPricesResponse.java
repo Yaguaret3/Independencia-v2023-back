@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -19,7 +18,7 @@ public class GobernadorPricesResponse {
     PersonalPriceResponse marketPrice;
     PersonalPriceResponse militiaPrice;
 
-    public static GobernadorPricesResponse toDto(Set<PersonalPrice> entities){
+    public static GobernadorPricesResponse toDto(List<PersonalPrice> entities){
 
         return GobernadorPricesResponse.builder()
                 .buildingPrices(entities.stream()

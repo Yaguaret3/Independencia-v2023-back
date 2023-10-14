@@ -60,7 +60,7 @@ public class CapitanServiceImpl implements CapitanService {
         CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
 
-        if (!paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.ACCION_CARD)) throw new PaymentNotPossibleException();
+        if (!paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.fromId(request.getCardTypeId()))) throw new PaymentNotPossibleException();
 
         ActionTypeEnum actionType = ActionTypeEnum.fromId(request.getCardTypeId());
         capitanData.getCards().add(ActionCard.builder()

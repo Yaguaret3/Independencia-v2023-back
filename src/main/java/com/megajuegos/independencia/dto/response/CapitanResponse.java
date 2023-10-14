@@ -18,6 +18,8 @@ public class CapitanResponse {
     private CampResponse campamento;
     private List<ActionCardResponse> actionCards;
     private List<BattleCardFullResponse> battleCards;
+    private List<ResourceCardResponse> recursos;
+    private CapitanPricesResponse prices;
 
     public static CapitanResponse toDtoResponse(CapitanData entity){
 
@@ -40,6 +42,11 @@ public class CapitanResponse {
                         .stream()
                         .map(BattleCardFullResponse::toFullResponse)
                         .collect(Collectors.toList()))
+                .recursos((util.getResourceCardList()
+                        .stream()
+                        .map(ResourceCardResponse::toDtoResponse)
+                        .collect(Collectors.toList())))
+                .prices(CapitanPricesResponse.toDtoResponse(entity.getPrices()))
                 .build();
 
     }

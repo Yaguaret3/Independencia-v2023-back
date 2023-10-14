@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import javax.management.InstanceNotFoundException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public enum RoleEnum {
         @Override
         public PlayerData createPlayerData() {
 
-            Set<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
+            List<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
                     .filter(p -> p.getRol().equals(this))
                     .map(p -> PersonalPrice.builder()
                             .agropecuaria(0)
@@ -62,7 +63,7 @@ public enum RoleEnum {
                             .comercial(0)
                             .name(p)
                             .build())
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
             return GobernadorData.builder()
                     .milicia(0)
@@ -82,7 +83,7 @@ public enum RoleEnum {
     CAPITAN(5){
         @Override
         public PlayerData createPlayerData() {
-            Set<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
+            List<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
                     .filter(p -> p.getRol().equals(this))
                     .map(p -> PersonalPrice.builder()
                             .comercial(0)
@@ -94,7 +95,7 @@ public enum RoleEnum {
                             .disciplina(0)
                             .name(p)
                             .build())
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
             return CapitanData.builder()
                     .prices(prices)
@@ -114,14 +115,14 @@ public enum RoleEnum {
     MERCADER(6){
         @Override
         public PlayerData createPlayerData() {
-            Set<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
+            List<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
                     .filter(p -> p.getRol().equals(this))
                     .map(p -> PersonalPrice.builder()
                             .plata(0)
                             .puntajeComercial(0)
                             .name(p)
                             .build())
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
             return MercaderData.builder()
                     .prices(prices)

@@ -26,7 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Boolean succesfulPay(PlayerData playerData, PaymentRequestUtil request, PersonalPricesEnum toBuy) {
 
-        Set<PersonalPrice> currentPrices = playerData.getPrices();
+        List<PersonalPrice> currentPrices = playerData.getPrices();
 
         PersonalPrice priceToPay = currentPrices.stream().filter(p -> p.getName() == toBuy).findFirst()
                 .orElseThrow(() -> new PriceNotFoundException());

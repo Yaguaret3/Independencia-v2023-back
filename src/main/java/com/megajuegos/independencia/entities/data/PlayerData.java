@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,7 +30,7 @@ public abstract class PlayerData {
     @JoinColumn(name = "gameData")
     private GameData gameData;
 
-    private String username="";
+    private String username;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "playerData")
@@ -37,5 +38,5 @@ public abstract class PlayerData {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "playerData")
-    private Set<PersonalPrice> prices;
+    private List<PersonalPrice> prices;
 }
