@@ -151,7 +151,11 @@ public class CapitanServiceImpl implements CapitanService {
                 .orElseThrow(BattleNotFoundException::new);
         Integer turno = capitanData.getGameData().getTurno();
 
-        if(battle.getEjercitos().stream().anyMatch(b -> b.getCapitanData().equals(capitanData))){
+        if(!battle.getEjercitoAtaque().getCapitanData().equals(capitanData)
+                                &&
+            !battle.getEjercitoDefensa().getCapitanData().equals(capitanData)
+                                &&
+                battle.getOtrosEjercitos().stream().noneMatch(b -> b.getCapitanData().equals(capitanData))){
             throw new IncorrectBattleException();
         }
 

@@ -12,9 +12,13 @@ import java.util.stream.Collectors;
 public class BattleFullResponse {
 
     private Long id;
-    private List<BattleCardTinyResponse> cartasDeCombate;
-    private List<ArmyResponse> ejercitos;
+    private List<BattleCardFullResponse> cartasDeCombate;
+    private List<ArmyResponse> otrosEjercitos;
+    private ArmyResponse ejercitoAtaque;
+    private ArmyResponse ejercitoDefensa;
     private GameSubRegionFullResponse gameRegion;
+    private Integer ataque;
+    private Integer defensa;
     private Integer turnoDeJuego;
     private Boolean active;
 
@@ -24,12 +28,16 @@ public class BattleFullResponse {
                 .id(entity.getId())
                 .cartasDeCombate(entity.getCartasDeCombate()
                         .stream()
-                        .map(BattleCardTinyResponse::toTinyResponse)
+                        .map(BattleCardFullResponse::toFullResponse)
                         .collect(Collectors.toList()))
-                .ejercitos(entity.getEjercitos()
+                .ejercitoAtaque(ArmyResponse.toDtoResponse(entity.getEjercitoAtaque()))
+                .ejercitoDefensa(ArmyResponse.toDtoResponse(entity.getEjercitoDefensa()))
+                .otrosEjercitos(entity.getOtrosEjercitos()
                         .stream()
                         .map(ArmyResponse::toDtoResponse)
                         .collect(Collectors.toList()))
+                .ataque(entity.getAtaque())
+                .defensa(entity.getDefensa())
                 .gameRegion(GameSubRegionFullResponse.toFullResponse(entity.getGameSubRegion()))
                 .turnoDeJuego(entity.getTurnoDeJuego())
                 .active(entity.getActive())

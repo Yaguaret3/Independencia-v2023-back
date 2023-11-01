@@ -20,9 +20,15 @@ public class Battle {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "batalla")
     private List<BattleCard> cartasDeCombate;
-    @OneToMany
+    @ManyToMany
     @JoinColumn
-    private List<Army> ejercitos;
+    private List<Army> otrosEjercitos;
+    @ManyToOne
+    private Army ejercitoAtaque;
+    @ManyToOne
+    private Army ejercitoDefensa;
+    private Integer ataque;
+    private Integer defensa;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gameArea")
     private GameSubRegion gameSubRegion;

@@ -8,7 +8,7 @@ import java.util.Objects;
 @Getter
 public enum BattleTypeEnum {
 
-    CARGA_DE_INFANTERÍA(1);
+    CARGA_DE_INFANTERIA(1);
 
     private Integer id;
 
