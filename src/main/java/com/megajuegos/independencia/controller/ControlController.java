@@ -65,4 +65,10 @@ public class ControlController {
         return ResponseEntity.ok(service.assignCongressPresident(revolucionarioId));
     }
 
+    @PostMapping("/phase-concluded")
+    public ResponseEntity<Void> concludePhase(){
+        service.concludePhase();
+        return ResponseEntity.ok().build();
+    }
+
 }

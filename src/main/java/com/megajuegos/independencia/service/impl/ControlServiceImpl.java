@@ -5,15 +5,18 @@ import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 import com.megajuegos.independencia.entities.Battle;
 import com.megajuegos.independencia.entities.Congreso;
 import com.megajuegos.independencia.entities.PersonalPrice;
+import com.megajuegos.independencia.entities.UserIndependencia;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.card.MarketCard;
 import com.megajuegos.independencia.entities.card.RepresentationCard;
 import com.megajuegos.independencia.entities.card.ResourceCard;
 import com.megajuegos.independencia.entities.data.*;
+import com.megajuegos.independencia.enums.PhaseEnum;
 import com.megajuegos.independencia.enums.RepresentationEnum;
 import com.megajuegos.independencia.enums.ResourceTypeEnum;
 import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.*;
+import com.megajuegos.independencia.repository.data.ControlDataRepository;
 import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
 import com.megajuegos.independencia.service.ControlService;
@@ -33,6 +36,7 @@ import static com.megajuegos.independencia.util.Messages.*;
 public class ControlServiceImpl implements ControlService {
 
     private final GameDataRepository gameDataRepository;
+    private final ControlDataRepository controlDataRepository;
     private final PlayerDataRepository playerDataRepository;
     private final CardRepository cardRepository;
     private final BattleRepository battleRepository;
@@ -138,6 +142,52 @@ public class ControlServiceImpl implements ControlService {
         congresoRepository.save(congreso);
 
         return CONGRESS_PRESIDENT_ASSIGNED;
+    }
+
+    @Override
+    public void concludePhase() {
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+        GameData gameData = controlData.getGameData();
+
+        if(controlData.getSiguienteFaseSolicitada()){
+           controlData.setSiguienteFaseSolicitada(false);
+           controlDataRepository.save(controlData);
+           return;
+        }
+
+        controlData.setSiguienteFaseSolicitada(true);
+
+        //Chequear si al actualizar controlData cambia también su referencia desde la lista de Controles.
+        List<ControlData> controles = gameData.getPlayers().stream()
+                .filter(ControlData.class::isInstance)
+                .map(p -> (ControlData) p)
+                .collect(Collectors.toList());
+
+        List<ControlData> controlesQueFaltanTerminar = controles.stream()
+                .filter(c -> !c.getSiguienteFaseSolicitada())
+                .collect(Collectors.toList());
+
+        if(controlesQueFaltanTerminar.isEmpty()){
+            switch (gameData.getFase()){
+                case MOVING:
+                    gameData.setFase(PhaseEnum.PLANNING);
+                    break;
+                case PLANNING:
+                    gameData.setFase(PhaseEnum.PLANNING);
+                    break;
+                case REVEALING:
+                    gameData.setTurno(gameData.getTurno() +1);
+                    gameData.setFase(PhaseEnum.MOVING);
+                    break;
+            }
+            gameDataRepository.save(gameData);
+            controles.forEach(c -> c.setSiguienteFaseSolicitada(false));
+            controlDataRepository.saveAll(controles);
+            return;
+        }
+
+        controlDataRepository.save(controlData);
     }
 
     @Override

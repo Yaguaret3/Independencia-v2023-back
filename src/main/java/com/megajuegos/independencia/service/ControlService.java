@@ -17,5 +17,7 @@ public interface ControlService {
     String createAndGiveMarketCard(NewMarketCardRequest request);
     String createAndAssignPersonalPrice(Long playerDataId);
     String assignCongressPresident(Long revolucionarioId);
+
+    void concludePhase();
 }
 

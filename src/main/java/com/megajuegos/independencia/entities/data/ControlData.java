@@ -11,4 +11,6 @@ import javax.persistence.Entity;
 @SuperBuilder
 @NoArgsConstructor
 public class ControlData extends PlayerData{
+
+    private Boolean siguienteFaseSolicitada;
 }
