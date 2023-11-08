@@ -27,4 +27,7 @@ public class Messages {
     public static final String PROPOSAL_CREATED = "Propuesta nueva creada con éxito";
     public static final String VOTED = "Voto enviado de manera exitosa";
     public static final String VOTATION_CLOSED = "Votación cerrada exitosamente";
+    public static final String CITY_UPDATED = "Ciudad actualizada";
+    public static final String BUILDING_REMOVED = "Edificio eliminado";
+    public static final String BUILDING_CREATED = "Edificio creado";
 }

@@ -1,15 +1,11 @@
 package com.megajuegos.independencia.service.impl;
 
+import com.megajuegos.independencia.dto.request.control.ExtraCardRequest;
+import com.megajuegos.independencia.dto.request.control.NewBuildingRequest;
 import com.megajuegos.independencia.dto.request.control.NewMarketCardRequest;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
-import com.megajuegos.independencia.entities.Battle;
-import com.megajuegos.independencia.entities.Congreso;
-import com.megajuegos.independencia.entities.PersonalPrice;
-import com.megajuegos.independencia.entities.UserIndependencia;
-import com.megajuegos.independencia.entities.card.Card;
-import com.megajuegos.independencia.entities.card.MarketCard;
-import com.megajuegos.independencia.entities.card.RepresentationCard;
-import com.megajuegos.independencia.entities.card.ResourceCard;
+import com.megajuegos.independencia.entities.*;
+import com.megajuegos.independencia.entities.card.*;
 import com.megajuegos.independencia.entities.data.*;
 import com.megajuegos.independencia.enums.PhaseEnum;
 import com.megajuegos.independencia.enums.RepresentationEnum;
@@ -22,10 +18,13 @@ import com.megajuegos.independencia.repository.data.PlayerDataRepository;
 import com.megajuegos.independencia.service.ControlService;
 import com.megajuegos.independencia.service.util.UserUtil;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
 import javax.management.InstanceNotFoundException;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,25 +44,6 @@ public class ControlServiceImpl implements ControlService {
     private final PersonalPriceRepository priceRepository;
     private final CongresoRepository congresoRepository;
     private final CityRepository cityRepository;
-
-    @Override
-    public String advanceTurn(Long gameDataId) {
-        GameData gameData = gameDataRepository.findById(gameDataId)
-                .orElseThrow(GameDataNotFoundException::new);
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, 15);
-        Long newTurnInMillis = cal.getTimeInMillis();
-
-        gameData.setTurno(gameData.getTurno()+1);
-        gameData.setNextEndOfTurn(newTurnInMillis);
-
-        //collectTaxes(gameData);
-        //earnDiscipline(gameData);
-
-        gameDataRepository.save(gameData);
-
-        return NEW_TURN_STARTED;
-    }
 
     @Override
     public String createAndGiveResourceCard(Long playerDataId) {
@@ -102,6 +82,22 @@ public class ControlServiceImpl implements ControlService {
 
         playerDataRepository.save(playerData);
 
+        return CARD_CREATED_GIVEN;
+    }
+
+    @Override
+    public String createAndGiveExtraCard(ExtraCardRequest request, Long playerDataId) {
+
+        PlayerData playerData = playerDataRepository.findById(playerDataId)
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
+
+        playerData.getCards().add(ExtraCard.builder()
+                    .bonificacion(request.getBonificacion())
+                    .nombre(request.getNombre())
+                    .descripcion(request.getDescripcion())
+                .build());
+
+        playerDataRepository.save(playerData);
         return CARD_CREATED_GIVEN;
     }
 
@@ -177,7 +173,7 @@ public class ControlServiceImpl implements ControlService {
                     gameData.setFase(PhaseEnum.PLANNING);
                     break;
                 case REVEALING:
-                    gameData.setTurno(gameData.getTurno() +1);
+                    advanceTurn(gameData);
                     gameData.setFase(PhaseEnum.MOVING);
                     break;
             }
@@ -223,7 +219,6 @@ public class ControlServiceImpl implements ControlService {
         playerDataRepository.save(playerData);
         return CARD_REMOVED;
     }
-
     @Override
     public GameDataFullResponse getFullData() {
 
@@ -232,10 +227,62 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
+    public String editCity(Map<String, String> request, Long id) {
+
+        City city = cityRepository.findById(id).orElseThrow(() -> new CityNotFoundException());
+        request.forEach((key, value) -> {
+
+            Field field = ReflectionUtils.findField(City.class, key);
+            field.setAccessible(true);
+            ReflectionUtils.setField(field, city, value);
+        });
+        return CITY_UPDATED;
+    }
+
+    @Override
+    public String removeBuilding(Long cityId, Long buildingId) {
+        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException());
+
+        Building building = city.getBuildings().stream().filter(b -> b.getId().equals(buildingId)).findFirst().orElseThrow(() -> new BuildingNotFoundException());
+
+        city.getBuildings().remove(building);
+        cityRepository.save(city);
+
+        return BUILDING_REMOVED;
+    }
+
+    @Override
+    public String addBuilding(Long cityId, NewBuildingRequest request) {
+        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException());
+
+        city.getBuildings().add(Building.builder()
+                        .buildingType(request.getBuildingType())
+                        .city(city)
+                .build());
+        cityRepository.save(city);
+
+        return BUILDING_CREATED;
+    }
+
+    @Override
     public String solveBattle(Long id) {
 
         Battle battle = battleRepository.findById(id).orElseThrow(BattleNotFoundException::new);
         return null;
+    }
+
+    private void advanceTurn(GameData gameData) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, 15);
+        Long newTurnInMillis = cal.getTimeInMillis();
+
+        gameData.setTurno(gameData.getTurno()+1);
+        gameData.setNextEndOfTurn(newTurnInMillis);
+
+        //collectTaxes(gameData);
+        //earnDiscipline(gameData);
+
+        gameDataRepository.save(gameData);
     }
 
     private void collectTaxes(GameData gameData){
@@ -265,4 +312,6 @@ public class ControlServiceImpl implements ControlService {
             capitan.setDisciplina(capitan.getDisciplina() + capitan.getCamp().getNivel());
         }
     }
+
+
 }

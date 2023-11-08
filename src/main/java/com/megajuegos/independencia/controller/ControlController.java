@@ -1,5 +1,7 @@
 package com.megajuegos.independencia.controller;
 
+import com.megajuegos.independencia.dto.request.control.ExtraCardRequest;
+import com.megajuegos.independencia.dto.request.control.NewBuildingRequest;
 import com.megajuegos.independencia.dto.request.control.NewMarketCardRequest;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 import com.megajuegos.independencia.service.ControlService;
@@ -8,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/control")
@@ -28,14 +31,13 @@ public class ControlController {
     public ResponseEntity<String> createAndGiveMarketCard(@RequestBody NewMarketCardRequest request){
         return ResponseEntity.ok(service.createAndGiveMarketCard(request));
     }
+    @PostMapping("/create-give-extra-card")
+    public ResponseEntity<String> createAndGiveExtraCard(@RequestBody ExtraCardRequest request, @RequestParam Long playerDataId){
+       return ResponseEntity.ok(service.createAndGiveExtraCard(request, playerDataId));
+    }
     @PostMapping("/create-assign-personal-prices")
     public ResponseEntity<String> createAndAssignPersonalPrice(@RequestParam Long playerDataId){
         return ResponseEntity.ok((service.createAndAssignPersonalPrice(playerDataId)));
-    }
-
-    @PostMapping("/advance-turn")
-    public ResponseEntity<String> advanceTurn(@RequestParam Long gameDataId){
-        return ResponseEntity.ok(service.advanceTurn(gameDataId));
     }
 
     @PostMapping("/move-card")
@@ -53,6 +55,18 @@ public class ControlController {
     @GetMapping ("/get-full-data")
     public ResponseEntity<GameDataFullResponse> getFullData(){
         return ResponseEntity.ok(service.getFullData());
+    }
+    @PatchMapping("/{id}/edit-city")
+    public ResponseEntity<String> editCity(@RequestBody Map<String, String> request, @PathVariable Long id){
+        return ResponseEntity.ok(service.editCity(request, id));
+    }
+    @PostMapping("/{cityId}/remove-building")
+    public ResponseEntity<String> removeBuilding(@PathVariable Long cityId, @RequestParam Long buildingId){
+        return ResponseEntity.ok(service.removeBuilding(cityId, buildingId));
+    }
+    @PostMapping("/{cityId}/add-building")
+    public ResponseEntity<String> addBuilding(@PathVariable Long cityId, @RequestBody NewBuildingRequest request){
+        return ResponseEntity.ok(service.addBuilding(cityId, request));
     }
 
     @PostMapping("/solve-battle")

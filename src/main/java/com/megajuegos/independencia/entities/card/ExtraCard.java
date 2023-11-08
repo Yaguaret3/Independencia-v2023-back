@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class ExtraCard extends Card {
 
-    private String nombre="";
-    private String descripcion="";
-    private String bonificacion="";
+    private String nombre;
+    private String descripcion;
+    private String bonificacion;
 }

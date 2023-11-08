@@ -16,11 +16,11 @@ public class City {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name="";
-    private Integer marketLevel=0;
-    private Integer publicOpinion=0;
-    private Integer taxesLevel=0;
-    private Integer prestige=0;
+    private String name;
+    private Integer marketLevel;
+    private Integer publicOpinion;
+    private Integer taxesLevel;
+    private Integer prestige;
     private String diputado;
     @OneToOne(mappedBy = "city")
     private GobernadorData gobernadorData;
