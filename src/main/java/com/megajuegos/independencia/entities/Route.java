@@ -21,5 +21,6 @@ public class Route {
     private List<GameSubRegion> subregions;
     private Long tradeScore;
     private Integer turn;
+    private String comentario;
 
 }

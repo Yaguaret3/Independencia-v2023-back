@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.service;
 
+import com.megajuegos.independencia.dto.request.control.AssignRouteValueRequest;
 import com.megajuegos.independencia.dto.request.control.ExtraCardRequest;
 import com.megajuegos.independencia.dto.request.control.NewBuildingRequest;
 import com.megajuegos.independencia.dto.request.control.NewMarketCardRequest;
@@ -29,5 +30,9 @@ public interface ControlService {
     String removeBuilding(Long cityId, Long buildingId);
 
     String addBuilding(Long cityId, NewBuildingRequest request);
+
+    String assignFinalRouteValue(Long routeId, AssignRouteValueRequest request);
+
+    String updatePrices(Long priceId, Map<String, Integer> request);
 }
 

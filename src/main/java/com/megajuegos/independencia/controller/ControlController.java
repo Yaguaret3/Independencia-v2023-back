@@ -1,9 +1,8 @@
 package com.megajuegos.independencia.controller;
 
-import com.megajuegos.independencia.dto.request.control.ExtraCardRequest;
-import com.megajuegos.independencia.dto.request.control.NewBuildingRequest;
-import com.megajuegos.independencia.dto.request.control.NewMarketCardRequest;
+import com.megajuegos.independencia.dto.request.control.*;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
+import com.megajuegos.independencia.enums.PersonalPricesEnum;
 import com.megajuegos.independencia.service.ControlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +66,16 @@ public class ControlController {
     @PostMapping("/{cityId}/add-building")
     public ResponseEntity<String> addBuilding(@PathVariable Long cityId, @RequestBody NewBuildingRequest request){
         return ResponseEntity.ok(service.addBuilding(cityId, request));
+    }
+    @PatchMapping("/{routeId}/assignFinalValue")
+    public ResponseEntity<String> assignFinalRouteValue(@PathVariable Long routeId, @RequestBody AssignRouteValueRequest request){
+        return ResponseEntity.ok(service.assignFinalRouteValue(routeId, request));
+    }
+
+    @PatchMapping("/{priceId}/update-price")
+    public ResponseEntity<String> updatePrices(@PathVariable Long priceId,
+                                               @RequestBody Map<String, Integer> request){
+        return ResponseEntity.ok(service.updatePrices(priceId, request));
     }
 
     @PostMapping("/solve-battle")

@@ -106,12 +106,16 @@ public class MercaderServiceImpl implements MercaderService {
         playerDataRepository.save(they);
     }
 
+    // Validamos que sean adyacentes
+    // Validamos que las ciudades tengan carta de ciudad
+    // Asignamos bien jugado
+    // Contamos provisoriamente el valor de las ciudades
+    // Dejamos del lado de Control asignar el valor final
     @Override
     public void playTradeRoutes(SingleTradeRouteRequest request) {
 
         MercaderData mercaderData = mercaderDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
-        Integer turno = mercaderData.getGameData().getTurno();
 
         List<MarketCitySubregionRequest> route = request.getSubregions();
         route.sort(Comparator.comparing(MarketCitySubregionRequest::getPosition));

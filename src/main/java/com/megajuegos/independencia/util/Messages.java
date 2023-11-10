@@ -30,4 +30,6 @@ public class Messages {
     public static final String CITY_UPDATED = "Ciudad actualizada";
     public static final String BUILDING_REMOVED = "Edificio eliminado";
     public static final String BUILDING_CREATED = "Edificio creado";
+    public static final String TRADESCORE_ASSIGNED = "Puntaje comercial final asignado";
+    public static final String PRICE_UPDATED = "Precio actualizado";
 }

@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.service.impl;
 
+import com.megajuegos.independencia.dto.request.control.AssignRouteValueRequest;
 import com.megajuegos.independencia.dto.request.control.ExtraCardRequest;
 import com.megajuegos.independencia.dto.request.control.NewBuildingRequest;
 import com.megajuegos.independencia.dto.request.control.NewMarketCardRequest;
@@ -44,6 +45,7 @@ public class ControlServiceImpl implements ControlService {
     private final PersonalPriceRepository priceRepository;
     private final CongresoRepository congresoRepository;
     private final CityRepository cityRepository;
+    private final RouteRepository routeRepository;
 
     @Override
     public String createAndGiveResourceCard(Long playerDataId) {
@@ -262,6 +264,28 @@ public class ControlServiceImpl implements ControlService {
         cityRepository.save(city);
 
         return BUILDING_CREATED;
+    }
+
+    @Override
+    public String assignFinalRouteValue(Long routeId, AssignRouteValueRequest request) {
+        Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException());
+        route.setTradeScore(request.getFinalValue());
+        route.setComentario(request.getComentario());
+        routeRepository.save(route);
+
+        return TRADESCORE_ASSIGNED;
+    }
+
+    @Override
+    public String updatePrices(Long priceId, Map<String, Integer> request) {
+        PersonalPrice price = priceRepository.findById(priceId).orElseThrow(() -> new PriceNotFoundException());
+        request.forEach((key, value) -> {
+
+            Field field = ReflectionUtils.findField(City.class, key);
+            field.setAccessible(true);
+            ReflectionUtils.setField(field, price, value);
+        });
+        return PRICE_UPDATED;
     }
 
     @Override

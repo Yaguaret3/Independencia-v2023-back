@@ -17,12 +17,12 @@ public class PersonalPrice {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private PersonalPricesEnum name;
-    private Integer plata=0;
-    private Integer textil=0;
-    private Integer agropecuaria=0;
-    private Integer metalmecanica=0;
-    private Integer construccion=0;
-    private Integer comercial=0;
-    private Integer puntajeComercial=0;
-    private Integer disciplina=0;
+    private Integer plata;
+    private Integer textil;
+    private Integer agropecuaria;
+    private Integer metalmecanica;
+    private Integer construccion;
+    private Integer comercial;
+    private Integer puntajeComercial;
+    private Integer disciplina;
 }
