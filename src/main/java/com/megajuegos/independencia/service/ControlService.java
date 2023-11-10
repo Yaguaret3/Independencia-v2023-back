@@ -1,9 +1,6 @@
 package com.megajuegos.independencia.service;
 
-import com.megajuegos.independencia.dto.request.control.AssignRouteValueRequest;
-import com.megajuegos.independencia.dto.request.control.ExtraCardRequest;
-import com.megajuegos.independencia.dto.request.control.NewBuildingRequest;
-import com.megajuegos.independencia.dto.request.control.NewMarketCardRequest;
+import com.megajuegos.independencia.dto.request.control.*;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 
 import javax.management.InstanceNotFoundException;
@@ -34,5 +31,11 @@ public interface ControlService {
     String assignFinalRouteValue(Long routeId, AssignRouteValueRequest request);
 
     String updatePrices(Long priceId, Map<String, Integer> request);
+
+    String updateVotation(Long votationId, UpdateVotationRequest request);
+
+    String addVote(Long votationId, NewVoteRequest request);
+
+    String updateVote(Long voteId, UpdateVoteRequest request);
 }
 

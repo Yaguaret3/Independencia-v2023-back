@@ -32,4 +32,7 @@ public class Messages {
     public static final String BUILDING_CREATED = "Edificio creado";
     public static final String TRADESCORE_ASSIGNED = "Puntaje comercial final asignado";
     public static final String PRICE_UPDATED = "Precio actualizado";
+    public static final String VOTATION_UPDATED = "Votación actualizada";
+    public static final String VOTE_ADDED = "Voto creado";
+    public static final String VOTE_UPDATED = "Voto actualizado";
 }

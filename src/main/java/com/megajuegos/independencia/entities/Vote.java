@@ -6,7 +6,7 @@ import com.megajuegos.independencia.enums.VoteTypeEnum;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,5 +22,5 @@ public class Vote {
     private RevolucionarioData revolucionarioData;
     private VoteTypeEnum voteType;
     @OneToMany
-    private Set<RepresentationCard> representacion;
+    private List<RepresentationCard> representacion;
 }

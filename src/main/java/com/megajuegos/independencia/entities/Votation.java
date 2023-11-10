@@ -3,7 +3,7 @@ package com.megajuegos.independencia.entities;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,10 +17,10 @@ public class Votation {
     private Long id;
     private String propuesta;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "votation")
-    private Set<Vote> votes;
+    @JoinColumn
+    private List<Vote> votes;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "congreso")
+    @JoinColumn
     private Congreso congreso;
     private Integer turnoDeJuego;
     private Boolean active;

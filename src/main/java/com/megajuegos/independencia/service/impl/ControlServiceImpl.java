@@ -1,9 +1,6 @@
 package com.megajuegos.independencia.service.impl;
 
-import com.megajuegos.independencia.dto.request.control.AssignRouteValueRequest;
-import com.megajuegos.independencia.dto.request.control.ExtraCardRequest;
-import com.megajuegos.independencia.dto.request.control.NewBuildingRequest;
-import com.megajuegos.independencia.dto.request.control.NewMarketCardRequest;
+import com.megajuegos.independencia.dto.request.control.*;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 import com.megajuegos.independencia.entities.*;
 import com.megajuegos.independencia.entities.card.*;
@@ -46,6 +43,8 @@ public class ControlServiceImpl implements ControlService {
     private final CongresoRepository congresoRepository;
     private final CityRepository cityRepository;
     private final RouteRepository routeRepository;
+    private final VoteRepository voteRepository;
+    private final VotationRepository votationRepository;
 
     @Override
     public String createAndGiveResourceCard(Long playerDataId) {
@@ -286,6 +285,45 @@ public class ControlServiceImpl implements ControlService {
             ReflectionUtils.setField(field, price, value);
         });
         return PRICE_UPDATED;
+    }
+
+    @Override
+    public String updateVotation(Long votationId, UpdateVotationRequest request) {
+        Votation votation = votationRepository.findById(votationId).orElseThrow(() -> new VotationNotFoundException());
+        if(request.getPropuesta() != null){
+            votation.setPropuesta(request.getPropuesta());
+        }
+        if(request.getActive() != null){
+            votation.setActive(request.getActive());
+        }
+        return VOTATION_UPDATED;
+    }
+
+    @Override
+    public String addVote(Long votationId, NewVoteRequest request) {
+        Votation votation = votationRepository.findById(votationId).orElseThrow(() -> new VotationNotFoundException());
+        Vote vote = Vote.builder()
+                .voteType(request.getVoteTypeEnum())
+                .representacion(
+                        Arrays.asList(
+                                RepresentationCard.builder()
+                                        .representacion(request.getRepresentationEnum())
+                                        .build()
+                        )
+                )
+                .build();
+        voteRepository.save(vote);
+        votation.getVotes().add(vote);
+        votationRepository.save(votation);
+        return VOTE_ADDED;
+    }
+
+    @Override
+    public String updateVote(Long voteId, UpdateVoteRequest request) {
+        Vote vote = voteRepository.findById(voteId).orElseThrow(() -> new VoteNotFoundException());
+        vote.setVoteType(request.getVoteType());
+        voteRepository.save(vote);
+        return VOTE_UPDATED;
     }
 
     @Override

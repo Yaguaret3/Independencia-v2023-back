@@ -5,6 +5,7 @@ import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 import com.megajuegos.independencia.enums.PersonalPricesEnum;
 import com.megajuegos.independencia.service.ControlService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +48,7 @@ public class ControlController {
     }
 
     @PostMapping("/remove-card")
-    public ResponseEntity<String> removeCard(@RequestParam (name = "id") Long idCard){
+    public ResponseEntity<String> removeCard(@RequestParam Long idCard){
         return ResponseEntity.ok(service.removeCard(idCard));
     }
 
@@ -76,6 +77,19 @@ public class ControlController {
     public ResponseEntity<String> updatePrices(@PathVariable Long priceId,
                                                @RequestBody Map<String, Integer> request){
         return ResponseEntity.ok(service.updatePrices(priceId, request));
+    }
+
+    @PatchMapping("/{votationId}/update-votation")
+    public ResponseEntity<String> updateVotation(@PathVariable Long votationId, @RequestBody UpdateVotationRequest request){
+        return ResponseEntity.ok(service.updateVotation(votationId, request));
+    }
+    @PostMapping("/{votationId}/add-vote")
+    public ResponseEntity<String> addVote(@PathVariable Long votationId, @RequestBody NewVoteRequest request){
+        return ResponseEntity.ok(service.addVote(votationId, request));
+    }
+    @PatchMapping("/{voteId}/update-vote")
+    public ResponseEntity<String> updateVote(@PathVariable Long voteId, @RequestBody UpdateVoteRequest request){
+        return ResponseEntity.ok(service.updateVote(voteId, request));
     }
 
     @PostMapping("/solve-battle")
