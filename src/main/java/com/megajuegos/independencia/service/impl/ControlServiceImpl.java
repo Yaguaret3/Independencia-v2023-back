@@ -51,6 +51,7 @@ public class ControlServiceImpl implements ControlService {
     private static final int DADO_CUATRO_MAX = 4;
     private static final int DADO_CUATRO_MIN = 1;
     private static final int CERO_DEFAULT = 0;
+    private static final int UN_SOLO_ATACANTE = 1;
 
     @Override
     public String createAndGiveResourceCard(Long playerDataId) {
@@ -373,16 +374,31 @@ public class ControlServiceImpl implements ControlService {
         ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
 
+        //Busca batallas y toma ejércitos involucrados
         Battle battle = battleRepository.findById(request).orElseThrow(() -> new BattleNotFoundException());
-
         List<Army> ejercitosInvolucrados = battle.getCombatientes();
 
-        ejercitosInvolucrados.forEach(e -> {
+        Random random = new Random();
+        List<Integer> valoresAzar = new ArrayList<>();
 
-            e.setValorAzar((int) ((Math.random() * (DADO_CUATRO_MAX - DADO_CUATRO_MIN)) + DADO_CUATRO_MIN));
-            Integer valorProvisorio = e.getValorProvisorio() + e.getMilicias();
-            e.setValorProvisorio(valorProvisorio);
+        //Asigna iniciativa random y tira los dados
+        ejercitosInvolucrados.forEach(e -> {
+            e.setIniciativa(random.nextInt());
+            valoresAzar.add(random.nextInt(DADO_CUATRO_MAX - DADO_CUATRO_MIN) + DADO_CUATRO_MIN);
         });
+
+        //Ordena para hacer coincidir los ejércitos que atacan con los dados mayores
+        ejercitosInvolucrados.sort(Comparator.comparing(Army::isAtaque).thenComparing(Army::getIniciativa));
+        valoresAzar.sort(Comparator.reverseOrder());
+
+        //Asigna valores
+        int index = 0;
+        while(index<ejercitosInvolucrados.size()){
+            Army ejercito = ejercitosInvolucrados.get(index);
+            ejercito.setValorAzar(valoresAzar.get(index));
+            ejercito.setValorProvisorio(ejercito.getValorAzar() + ejercito.getMilicias());
+            index++;
+        }
 
         battleRepository.save(battle);
         return BATTLE_CREATED;

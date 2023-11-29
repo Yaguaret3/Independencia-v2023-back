@@ -28,4 +28,6 @@ public class Army {
     private boolean ataque;
     private Integer valorAzar;
     private Integer valorProvisorio;
+    @Transient
+    private int iniciativa;
 }
