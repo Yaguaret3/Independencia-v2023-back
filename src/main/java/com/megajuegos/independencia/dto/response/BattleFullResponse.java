@@ -1,6 +1,5 @@
 package com.megajuegos.independencia.dto.response;
 
-import com.megajuegos.independencia.dto.response.tiny.BattleCardTinyResponse;
 import com.megajuegos.independencia.entities.Battle;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +12,7 @@ public class BattleFullResponse {
 
     private Long id;
     private List<BattleCardFullResponse> cartasDeCombate;
-    private List<ArmyResponse> combatientes;
+    private List<ArmyFullResponse> combatientes;
     private Integer turnoDeJuego;
     private Boolean active;
 
@@ -22,7 +21,7 @@ public class BattleFullResponse {
         return BattleFullResponse.builder()
                 .id(entity.getId())
                 .combatientes(entity.getCombatientes().stream()
-                        .map(ArmyResponse::toDtoResponse)
+                        .map(ArmyFullResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .turnoDeJuego(entity.getTurnoDeJuego())
                 .active(entity.getActive())

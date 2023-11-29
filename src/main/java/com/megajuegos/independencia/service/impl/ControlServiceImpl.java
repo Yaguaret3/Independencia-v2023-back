@@ -45,6 +45,12 @@ public class ControlServiceImpl implements ControlService {
     private final RouteRepository routeRepository;
     private final VoteRepository voteRepository;
     private final VotationRepository votationRepository;
+    private final ArmyRepository armyRepository;
+    private final GameSubRegionRepository gameSubRegionRepository;
+
+    private static final int DADO_CUATRO_MAX = 4;
+    private static final int DADO_CUATRO_MIN = 1;
+    private static final int CERO_DEFAULT = 0;
 
     @Override
     public String createAndGiveResourceCard(Long playerDataId) {
@@ -327,7 +333,71 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
+    public String createBattle(CreateBattleRequest request) {
+
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+        GameData gameData = controlData.getGameData();
+
+        GameSubRegion gameSubRegionInvolucrada = gameSubRegionRepository.findById(request.getGameSubRegionId())
+                .orElseThrow(() -> new GameAreaNotFoundException());
+
+        List<Army> ejercitosInvolucrados = armyRepository.findAllById(request.getCombatientes().stream()
+                .map(ArmyForBattleRequest::getId)
+                .collect(Collectors.toList()));
+
+        if(!gameSubRegionInvolucrada.getEjercitos().containsAll(ejercitosInvolucrados)){
+            throw new IncorrectBattleException();
+        }
+
+        ejercitosInvolucrados.forEach(e -> {
+            Optional<ArmyForBattleRequest> requestedArmyId = request.getCombatientes().stream()
+                    .filter(a -> a.getId().equals(e.getId()))
+                    .findFirst();
+            e.setAtaque(requestedArmyId.get().isAtaque());
+            e.setMilicias(CERO_DEFAULT);
+        });
+
+        battleRepository.save(Battle.builder()
+                        .active(true)
+                        .turnoDeJuego(gameData.getTurno())
+                        .gameSubRegion(gameSubRegionInvolucrada)
+                        .combatientes(ejercitosInvolucrados)
+                .build());
+        return BATTLE_CREATED;
+    }
+
+    @Override
+    public String asignRandomValuesBattle(Long request) {
+
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        Battle battle = battleRepository.findById(request).orElseThrow(() -> new BattleNotFoundException());
+
+        List<Army> ejercitosInvolucrados = battle.getCombatientes();
+
+        ejercitosInvolucrados.forEach(e -> {
+
+            e.setValorAzar((int) ((Math.random() * (DADO_CUATRO_MAX - DADO_CUATRO_MIN)) + DADO_CUATRO_MIN));
+            Integer valorProvisorio = e.getValorProvisorio() + e.getMilicias();
+            e.setValorProvisorio(valorProvisorio);
+        });
+
+        battleRepository.save(battle);
+        return BATTLE_CREATED;
+    }
+
+    @Override
     public String solveBattle(Long id) {
+
+        /* TODO
+            Hay que ponerle "jugada" a todas las cartas involucradas (AUTO)
+            Hay que ponerle active=false a la batalla (AUTO)
+            Hay que borrar el army de la subregion y de la lista del capitan (CONTROL) ------> (AUTO si recibe idArmyDerrotado + Milicias perdidas)
+            Hay que quitar las milicias perdidas (CONTROL) ------> (AUTO si recibe idArmyDerrotado + Milicias perdidas)
+            Hay que limpiar los armies sobrevivientes (AUTO)
+         */
 
         Battle battle = battleRepository.findById(id).orElseThrow(BattleNotFoundException::new);
         return null;

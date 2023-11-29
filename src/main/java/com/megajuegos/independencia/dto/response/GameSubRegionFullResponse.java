@@ -14,7 +14,7 @@ public class GameSubRegionFullResponse {
     private Long id;
     private String name;
     private CityFullResponse city;
-    private List<ArmyResponse> ejercitos;
+    private List<ArmyFullResponse> ejercitos;
     private List<CampResponse> campamentos;
     private List<BattleFullResponse> batallas;
 
@@ -26,7 +26,7 @@ public class GameSubRegionFullResponse {
                 .city(CityFullResponse.toDtoResponse(entity.getCity()))
                 .ejercitos(entity.getEjercitos()
                         .stream()
-                        .map(ArmyResponse::toDtoResponse)
+                        .map(ArmyFullResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .campamentos(entity.getCampamentos()
                         .stream()

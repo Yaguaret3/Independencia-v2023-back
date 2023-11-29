@@ -24,6 +24,7 @@ public class Army {
 
     @OneToMany
     private List<BattleCard> cartasJugadas;
+    private Integer milicias;
     private boolean ataque;
     private Integer valorAzar;
     private Integer valorProvisorio;

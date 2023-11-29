@@ -4,6 +4,7 @@ import com.megajuegos.independencia.dto.request.control.*;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 
 import javax.management.InstanceNotFoundException;
+import java.util.List;
 import java.util.Map;
 
 public interface ControlService {
@@ -37,5 +38,9 @@ public interface ControlService {
     String addVote(Long votationId, NewVoteRequest request);
 
     String updateVote(Long voteId, UpdateVoteRequest request);
+
+    String createBattle(CreateBattleRequest request);
+
+    String asignRandomValuesBattle(Long request);
 }
 

@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.controller;
 
+import com.megajuegos.independencia.dto.request.capitan.BattleRequest;
 import com.megajuegos.independencia.dto.request.control.*;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 import com.megajuegos.independencia.enums.PersonalPricesEnum;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -90,6 +92,14 @@ public class ControlController {
     @PatchMapping("/{voteId}/update-vote")
     public ResponseEntity<String> updateVote(@PathVariable Long voteId, @RequestBody UpdateVoteRequest request){
         return ResponseEntity.ok(service.updateVote(voteId, request));
+    }
+    @PostMapping("/create-battle")
+    public ResponseEntity<String> createBattle(@RequestBody CreateBattleRequest request){
+        return ResponseEntity.ok(service.createBattle(request));
+    }
+    @PostMapping("/{battleId}/asign-random-values-battle")
+    public ResponseEntity<String> asignRandomValuesBattle(@PathVariable Long request){
+        return ResponseEntity.ok(service.asignRandomValuesBattle(request));
     }
 
     @PostMapping("/solve-battle")

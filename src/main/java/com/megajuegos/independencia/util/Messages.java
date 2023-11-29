@@ -35,4 +35,5 @@ public class Messages {
     public static final String VOTATION_UPDATED = "Votación actualizada";
     public static final String VOTE_ADDED = "Voto creado";
     public static final String VOTE_UPDATED = "Voto actualizado";
+    public static final String BATTLE_CREATED = "Batalla creada";
 }
