@@ -83,7 +83,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
                 .representacion(revolucionarioData.getCards().stream()
                         .filter(RepresentationCard.class::isInstance)
                         .map(RepresentationCard.class::cast)
-                        .collect(Collectors.toSet()))
+                        .collect(Collectors.toList()))
                 .build();
         voteRepository.save(vote);
 

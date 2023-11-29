@@ -12,10 +12,7 @@ import java.util.stream.Collectors;
 public class BattleTinyResponse {
 
     private Long id;
-    private List<BattleCardTinyResponse> battleCards;
-    private List<ArmyTinyResponse> otrosEjercitos;
-    private ArmyTinyResponse ejercitoAtaque;
-    private ArmyTinyResponse ejercitoDefensa;
+    private List<ArmyTinyResponse> combatientes;
     private Long gameAreaId;
     private Integer turn;
     private Boolean active;
@@ -24,16 +21,9 @@ public class BattleTinyResponse {
 
         return BattleTinyResponse.builder()
                 .id(entity.getId())
-                .battleCards(entity.getCartasDeCombate()
-                        .stream()
-                        .map(BattleCardTinyResponse::toTinyResponse)
-                        .collect(Collectors.toList()))
-                .otrosEjercitos(entity.getOtrosEjercitos()
-                        .stream()
+                .combatientes(entity.getCombatientes().stream()
                         .map(ArmyTinyResponse::toTinyResponse)
                         .collect(Collectors.toList()))
-                .ejercitoAtaque(ArmyTinyResponse.toTinyResponse(entity.getEjercitoAtaque()))
-                .ejercitoDefensa(ArmyTinyResponse.toTinyResponse(entity.getEjercitoDefensa()))
                 .gameAreaId(entity.getGameSubRegion().getId())
                 .turn(entity.getTurnoDeJuego())
                 .active(entity.getActive())

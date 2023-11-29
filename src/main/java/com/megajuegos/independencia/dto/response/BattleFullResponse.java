@@ -13,12 +13,7 @@ public class BattleFullResponse {
 
     private Long id;
     private List<BattleCardFullResponse> cartasDeCombate;
-    private List<ArmyResponse> otrosEjercitos;
-    private ArmyResponse ejercitoAtaque;
-    private ArmyResponse ejercitoDefensa;
-    private GameSubRegionFullResponse gameRegion;
-    private Integer ataque;
-    private Integer defensa;
+    private List<ArmyResponse> combatientes;
     private Integer turnoDeJuego;
     private Boolean active;
 
@@ -26,19 +21,9 @@ public class BattleFullResponse {
 
         return BattleFullResponse.builder()
                 .id(entity.getId())
-                .cartasDeCombate(entity.getCartasDeCombate()
-                        .stream()
-                        .map(BattleCardFullResponse::toFullResponse)
-                        .collect(Collectors.toList()))
-                .ejercitoAtaque(ArmyResponse.toDtoResponse(entity.getEjercitoAtaque()))
-                .ejercitoDefensa(ArmyResponse.toDtoResponse(entity.getEjercitoDefensa()))
-                .otrosEjercitos(entity.getOtrosEjercitos()
-                        .stream()
+                .combatientes(entity.getCombatientes().stream()
                         .map(ArmyResponse::toDtoResponse)
                         .collect(Collectors.toList()))
-                .ataque(entity.getAtaque())
-                .defensa(entity.getDefensa())
-                .gameRegion(GameSubRegionFullResponse.toFullResponse(entity.getGameSubRegion()))
                 .turnoDeJuego(entity.getTurnoDeJuego())
                 .active(entity.getActive())
                 .build();

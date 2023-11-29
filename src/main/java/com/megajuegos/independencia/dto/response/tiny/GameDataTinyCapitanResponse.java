@@ -39,11 +39,7 @@ public class GameDataTinyCapitanResponse {
                 .ownBattles(gameRegion.getSubRegions().stream()
                                 .flatMap(sr -> sr.getBatallas().stream())
                                 .filter(b -> (
-                                        capitanData.equals(b.getEjercitoAtaque().getCapitanData())
-                                                ||
-                                        capitanData.equals(b.getEjercitoDefensa().getCapitanData())
-                                                ||
-                                        b.getOtrosEjercitos().stream()
+                                        b.getCombatientes().stream()
                                             .anyMatch(e -> capitanData.equals(e.getCapitanData()))))
                                 .map(BattleFullResponse::toFullResponse)
                                 .collect(Collectors.toList()))

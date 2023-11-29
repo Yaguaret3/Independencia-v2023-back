@@ -151,13 +151,7 @@ public class CapitanServiceImpl implements CapitanService {
                 .orElseThrow(BattleNotFoundException::new);
         Integer turno = capitanData.getGameData().getTurno();
 
-        if(!battle.getEjercitoAtaque().getCapitanData().equals(capitanData)
-                                &&
-            !battle.getEjercitoDefensa().getCapitanData().equals(capitanData)
-                                &&
-                battle.getOtrosEjercitos().stream().noneMatch(b -> b.getCapitanData().equals(capitanData))){
-            throw new IncorrectBattleException();
-        }
+        Army army = battle.getCombatientes().stream().filter(b -> b.getCapitanData().equals(capitanData)).findFirst().orElseThrow(IncorrectBattleException::new);
 
         Card card = capitanData.getCards().stream().filter(c -> c.getId().equals(request.getCardId())).findFirst()
                 .orElseThrow(() -> new CardNotFoundException());
@@ -166,7 +160,7 @@ public class CapitanServiceImpl implements CapitanService {
             throw new IncorrectCardTypeException();
         }
 
-        battle.getCartasDeCombate().add((BattleCard) card);
+        army.getCartasJugadas().add((BattleCard) card);
 
         battleRepository.save(battle);
         card.setTurnWhenPlayed(turno);
