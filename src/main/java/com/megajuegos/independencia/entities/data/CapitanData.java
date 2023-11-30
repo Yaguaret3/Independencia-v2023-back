@@ -2,11 +2,14 @@ package com.megajuegos.independencia.entities.data;
 
 import com.megajuegos.independencia.entities.Army;
 import com.megajuegos.independencia.entities.Camp;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,12 +19,9 @@ import java.util.Set;
 @NoArgsConstructor
 public class CapitanData extends PlayerData {
 
-    private Integer reserva=0;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "capitanData")
-    private Set<Army> ejercito;
-    private Integer disciplina=0;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "camp")
+    private Integer reserva;
+    @OneToMany
+    private List<Army> ejercito;
+    @OneToOne
     private Camp camp;
 }

@@ -13,7 +13,7 @@ public interface ControlService {
     String moveCard(Long from, Long to, Long carta);
     String removeCard(Long idCard);
     GameDataFullResponse getFullData();
-    String solveBattle(Long battle);
+    String solveBattle(SolveBattleRequest request);
     String createAndGiveRepresentationCard(Long playerDataId) throws InstanceNotFoundException;
     String createAndGiveMarketCard(NewMarketCardRequest request);
     String createAndAssignPersonalPrice(Long playerDataId);

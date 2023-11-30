@@ -103,8 +103,8 @@ public class ControlController {
     }
 
     @PostMapping("/solve-battle")
-    public ResponseEntity<String> solveBattle(@RequestParam Long battle){
-        return ResponseEntity.ok(service.solveBattle(battle));
+    public ResponseEntity<String> solveBattle(@RequestBody SolveBattleRequest request){
+        return ResponseEntity.ok(service.solveBattle(request));
     }
 
     @PostMapping("/assign-congress-president")

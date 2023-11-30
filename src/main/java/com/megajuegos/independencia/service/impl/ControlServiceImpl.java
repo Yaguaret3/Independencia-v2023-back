@@ -405,18 +405,61 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
-    public String solveBattle(Long id) {
+    public String solveBattle(SolveBattleRequest request) {
 
-        /* TODO
-            Hay que ponerle "jugada" a todas las cartas involucradas (AUTO)
-            Hay que ponerle active=false a la batalla (AUTO)
-            Hay que borrar el army de la subregion y de la lista del capitan (CONTROL) ------> (AUTO si recibe idArmyDerrotado + Milicias perdidas)
-            Hay que quitar las milicias perdidas (CONTROL) ------> (AUTO si recibe idArmyDerrotado + Milicias perdidas)
-            Hay que limpiar los armies sobrevivientes (AUTO)
-         */
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
 
-        Battle battle = battleRepository.findById(id).orElseThrow(BattleNotFoundException::new);
-        return null;
+        Battle battle = battleRepository.findById(request.getBattleId()).orElseThrow(BattleNotFoundException::new);
+        GameSubRegion gameSubRegion = battle.getGameSubRegion();
+
+        List<Army> ejercitos = battle.getCombatientes();
+        ejercitos.forEach(army -> {
+
+            request.getResultados().forEach(r -> {
+
+                if(Objects.equals(army.getId(), r.getArmyId()) && r.isDestruido()){
+
+                    //Si el ejército fue derrotado...
+                    CapitanData capitanData = army.getCapitanData();
+                    //Resta milicias a la reserva del capitán.
+                    capitanData.setReserva(capitanData.getReserva() - r.getMiliciasPerdidas());
+                    //Quita el ejército de la subregión (y del capitán)
+                    capitanData.getEjercito().remove(army);
+                    gameSubRegion.getEjercitos().remove(army);
+
+                }
+                if(Objects.equals(army.getId(), r.getArmyId()) && !r.isDestruido()){
+                    //Si el ejército no fue derrotado, se limpia para otra batalla.
+                    army.setAtaque(false);
+                    army.setIniciativa(0);
+                    army.setMilicias(0);
+                    army.setValorAzar(0);
+                    army.setValorProvisorio(0);
+                    army.setCartasJugadas(new ArrayList<>());
+                }
+            });
+
+            //Se descartan las cartas jugadas
+            army.getCartasJugadas().forEach(c -> {
+                c.setAlreadyPlayed(true);
+                c.setTurnWhenPlayed(controlData.getGameData().getTurno());
+            });
+        });
+
+        //Desactiva la batalla
+        battle.setActive(false);
+
+        gameSubRegionRepository.save(gameSubRegion);
+        cardRepository.saveAll(battle.getCombatientes().stream()
+                .flatMap(c -> c.getCartasJugadas().stream())
+                .collect(Collectors.toList()));
+        battleRepository.save(battle);
+        playerDataRepository.saveAll(battle.getCombatientes().stream()
+                .map(Army::getCapitanData)
+                .collect(Collectors.toList()));
+
+        return BATTLE_SOLVED;
     }
 
     private void advanceTurn(GameData gameData) {
@@ -449,7 +492,7 @@ public class ControlServiceImpl implements ControlService {
     }
     private void earnDiscipline(GameData gameData){
 
-        Set<PlayerData> players = gameData.getPlayers();
+        /*Set<PlayerData> players = gameData.getPlayers();
         List<CapitanData> capitanes = players
                                             .stream()
                                             .filter(CapitanData.class::isInstance)
@@ -458,7 +501,7 @@ public class ControlServiceImpl implements ControlService {
 
         for(CapitanData capitan : capitanes){
             capitan.setDisciplina(capitan.getDisciplina() + capitan.getCamp().getNivel());
-        }
+        }*/
     }
 
 
