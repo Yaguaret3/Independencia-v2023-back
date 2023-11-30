@@ -31,7 +31,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CapitanServiceImpl implements CapitanService {
 
-    private final UserIndependenciaRepository userRepository;
     private final GameSubRegionRepository gameSubRegionRepository;
     private final BattleRepository battleRepository;
     private final PaymentService paymentService;
@@ -39,6 +38,7 @@ public class CapitanServiceImpl implements CapitanService {
     private final CapitanDataRepository capitanDataRepository;
     private final CardRepository cardRepository;
     private final GameRegionRepository gameRegionRepository;
+    private final ArmyRepository armyRepository;
 
     @Override
     public CapitanResponse getData() {
@@ -140,6 +140,24 @@ public class CapitanServiceImpl implements CapitanService {
         card.setTurnWhenPlayed(turno);
         card.setAlreadyPlayed(true);
         cardRepository.save(card);
+    }
+
+    @Override
+    public void assignMilitiaToBattle(Long battleId, Integer milicia) {
+
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        Battle battle = battleRepository.findById(battleId).orElseThrow(() -> new BattleNotFoundException());
+
+        Army army = battle.getCombatientes().stream()
+                .filter(a -> a.getCapitanData().equals(capitanData))
+                .findFirst()
+                .orElseThrow(() -> new IncorrectBattleException());
+
+        army.setMilicias(milicia);
+        armyRepository.save(army);
+
     }
 
     @Override

@@ -47,6 +47,10 @@ public class CapitanController {
     public void playActionCards(@RequestBody @Valid ActionRequest request){
         service.playActionRequest(request);
     }
+    @PostMapping("/assign-militia-battle")
+    public void assignMilitiaToBattle(@RequestParam Long battleId, @RequestParam Integer milicia){
+        service.assignMilitiaToBattle(battleId, milicia);
+    }
 
     @PostMapping("/play-battle-cards")
     public void playBattleCards(@RequestBody @Valid BattleRequest request){

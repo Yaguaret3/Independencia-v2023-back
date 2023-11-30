@@ -19,4 +19,6 @@ public interface CapitanService {
     void move(MovementRequest request);
 
     void rush(ActionRequest request);
+
+    void assignMilitiaToBattle(Long battleId, Integer milicia);
 }
