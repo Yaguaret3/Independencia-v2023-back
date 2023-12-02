@@ -98,15 +98,30 @@ public class ControlController {
         return ResponseEntity.ok(service.createBattle(request));
     }
     @PostMapping("/{battleId}/asign-random-values-battle")
-    public ResponseEntity<String> asignRandomValuesBattle(@PathVariable Long request){
-        return ResponseEntity.ok(service.asignRandomValuesBattle(request));
+    public ResponseEntity<String> asignRandomValuesBattle(@PathVariable Long battleId){
+        return ResponseEntity.ok(service.asignRandomValuesBattle(battleId));
     }
 
     @PostMapping("/solve-battle")
     public ResponseEntity<String> solveBattle(@RequestBody SolveBattleRequest request){
         return ResponseEntity.ok(service.solveBattle(request));
     }
-
+    @PatchMapping("/{armyId}/assign-militia")
+    public ResponseEntity<String> assignMilitia(@PathVariable Long armyId, @RequestBody Integer militia){
+        return ResponseEntity.ok(service.assignMilitia(armyId, militia));
+    }
+    @PatchMapping("/{capitanId}/assign-reserve")
+    public ResponseEntity<String> assignReserve(@PathVariable Long capitanId, @RequestBody Integer militia){
+        return ResponseEntity.ok(service.assignReserve(capitanId, militia));
+    }
+    @DeleteMapping("/{armyId}")
+    public ResponseEntity<String> deleteArmy(@PathVariable Long armyId){
+        return ResponseEntity.ok(service.deleteArmy(armyId));
+    }
+    @PostMapping("/new-army")
+    public ResponseEntity<String> createArmy(@RequestBody NewArmyRequest request){
+        return ResponseEntity.ok(service.createArmy(request));
+    }
     @PostMapping("/assign-congress-president")
     public ResponseEntity<String> assignCongressPresident(@RequestParam Long revolucionarioId){
         return ResponseEntity.ok(service.assignCongressPresident(revolucionarioId));

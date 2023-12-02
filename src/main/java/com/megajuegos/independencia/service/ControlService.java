@@ -41,6 +41,14 @@ public interface ControlService {
 
     String createBattle(CreateBattleRequest request);
 
-    String asignRandomValuesBattle(Long request);
+    String asignRandomValuesBattle(Long battleId);
+
+    String assignMilitia(Long armyId, Integer militia);
+
+    String assignReserve(Long capitanId, Integer militia);
+
+    String deleteArmy(Long armyId);
+
+    String createArmy(NewArmyRequest request);
 }
 

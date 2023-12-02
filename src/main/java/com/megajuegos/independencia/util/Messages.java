@@ -37,4 +37,8 @@ public class Messages {
     public static final String VOTE_UPDATED = "Voto actualizado";
     public static final String BATTLE_CREATED = "Batalla creada";
     public static final String BATTLE_SOLVED = "Batalla terminada";
+    public static final String MILITIA_ASSIGNED = "Milicias asignadas";
+    public static final String RESERVE_ASSIGNED = "Reserva asignada";
+    public static final String ARMY_DELETED = "Ejército destruido";
+    public static final String ARMY_CREATED = "Ejército creado";
 }

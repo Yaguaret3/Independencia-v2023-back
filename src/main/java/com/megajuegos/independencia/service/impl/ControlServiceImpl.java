@@ -10,6 +10,7 @@ import com.megajuegos.independencia.enums.RepresentationEnum;
 import com.megajuegos.independencia.enums.ResourceTypeEnum;
 import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.*;
+import com.megajuegos.independencia.repository.data.CapitanDataRepository;
 import com.megajuegos.independencia.repository.data.ControlDataRepository;
 import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
@@ -38,6 +39,7 @@ public class ControlServiceImpl implements ControlService {
     private final CardRepository cardRepository;
     private final BattleRepository battleRepository;
     private final GobernadorDataRepository gobernadorRepository;
+    private final CapitanDataRepository capitanRepository;
     private final UserUtil userUtil;
     private final PersonalPriceRepository priceRepository;
     private final CongresoRepository congresoRepository;
@@ -369,13 +371,13 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
-    public String asignRandomValuesBattle(Long request) {
+    public String asignRandomValuesBattle(Long battleId) {
 
         ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         //Busca batallas y toma ejércitos involucrados
-        Battle battle = battleRepository.findById(request).orElseThrow(() -> new BattleNotFoundException());
+        Battle battle = battleRepository.findById(battleId).orElseThrow(() -> new BattleNotFoundException());
         List<Army> ejercitosInvolucrados = battle.getCombatientes();
 
         Random random = new Random();
@@ -402,6 +404,57 @@ public class ControlServiceImpl implements ControlService {
 
         battleRepository.save(battle);
         return BATTLE_CREATED;
+    }
+
+    @Override
+    public String assignMilitia(Long armyId, Integer militia) {
+
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        Army army = armyRepository.findById(armyId).orElseThrow(() -> new ArmyNotFoundException());
+        army.setMilicias(militia);
+        armyRepository.save(army);
+        return MILITIA_ASSIGNED;
+    }
+
+    @Override
+    public String assignReserve(Long capitanId, Integer militia) {
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        CapitanData capitanData = capitanRepository.findById(capitanId).orElseThrow(() -> new PlayerNotFoundException());
+        capitanData.setReserva(militia);
+        playerDataRepository.save(capitanData);
+        return RESERVE_ASSIGNED;
+    }
+
+    @Override
+    public String deleteArmy(Long armyId) {
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        armyRepository.deleteById(armyId);
+        return ARMY_DELETED;
+    }
+
+    @Override
+    public String createArmy(NewArmyRequest request) {
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        CapitanData capitanData = capitanRepository.findById(request.getCapitanId()).orElseThrow(() -> new PlayerNotFoundException());
+
+        GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getGameSubRegionId()).orElseThrow(() -> new GameAreaNotFoundException());
+
+        Army army = Army.builder()
+                .gameSubRegion(gameSubRegion)
+                .capitanData(capitanData)
+                .milicias(request.getMilicia())
+                .build();
+
+        armyRepository.save(army);
+        return ARMY_CREATED;
     }
 
     @Override
