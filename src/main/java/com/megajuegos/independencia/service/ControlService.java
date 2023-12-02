@@ -50,5 +50,7 @@ public interface ControlService {
     String deleteArmy(Long armyId);
 
     String createArmy(NewArmyRequest request);
+
+    String moveCamp(MoveCampRequest request);
 }
 

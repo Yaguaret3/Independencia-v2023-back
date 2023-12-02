@@ -41,4 +41,5 @@ public class Messages {
     public static final String RESERVE_ASSIGNED = "Reserva asignada";
     public static final String ARMY_DELETED = "Ejército destruido";
     public static final String ARMY_CREATED = "Ejército creado";
+    public static final String CAMP_MOVED = "Campamento movido";
 }

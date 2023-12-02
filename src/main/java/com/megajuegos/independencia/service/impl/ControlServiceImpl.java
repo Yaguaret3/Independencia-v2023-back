@@ -458,6 +458,22 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
+    public String moveCamp(MoveCampRequest request) {
+
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        CapitanData capitanData = capitanRepository.findById(request.getCapitanId()).orElseThrow(() -> new PlayerNotFoundException());
+        GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getGameSubregionId()).orElseThrow(() -> new GameAreaNotFoundException());
+
+        Camp camp = capitanData.getCamp();
+        camp.setGameSubRegion(gameSubRegion);
+
+        capitanRepository.save(capitanData);
+        return CAMP_MOVED;
+    }
+
+    @Override
     public String solveBattle(SolveBattleRequest request) {
 
         ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())

@@ -122,6 +122,10 @@ public class ControlController {
     public ResponseEntity<String> createArmy(@RequestBody NewArmyRequest request){
         return ResponseEntity.ok(service.createArmy(request));
     }
+    @PostMapping("/move-camp")
+    public ResponseEntity<String> moveCamp(@RequestBody MoveCampRequest request){
+        return ResponseEntity.ok(service.moveCamp(request));
+    }
     @PostMapping("/assign-congress-president")
     public ResponseEntity<String> assignCongressPresident(@RequestParam Long revolucionarioId){
         return ResponseEntity.ok(service.assignCongressPresident(revolucionarioId));
