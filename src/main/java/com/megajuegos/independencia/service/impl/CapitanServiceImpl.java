@@ -151,7 +151,7 @@ public class CapitanServiceImpl implements CapitanService {
         Battle battle = battleRepository.findById(battleId).orElseThrow(() -> new BattleNotFoundException());
 
         Army army = battle.getCombatientes().stream()
-                .filter(a -> a.getCapitanData().equals(capitanData))
+                .filter(a -> a.getCapitanData().equals(capitanData) && a.getMilicias().equals(0))
                 .findFirst()
                 .orElseThrow(() -> new IncorrectBattleException());
 
