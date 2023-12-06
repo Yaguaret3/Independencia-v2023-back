@@ -54,7 +54,7 @@ public class ControlController {
         return ResponseEntity.ok(service.removeCard(idCard));
     }
 
-    @GetMapping ("/get-full-data")
+    @GetMapping ("/game")
     public ResponseEntity<GameDataFullResponse> getFullData(){
         return ResponseEntity.ok(service.getFullData());
     }
