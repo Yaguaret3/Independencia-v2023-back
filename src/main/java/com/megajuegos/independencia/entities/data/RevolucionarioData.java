@@ -19,7 +19,7 @@ public class RevolucionarioData extends PlayerData {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "revolucionarioData")
     private List<Vote> votos;
-    private Integer plata=0;
+    private Integer plata;
     @ManyToOne
     @JoinColumn(name = "congreso")
     private Congreso congreso;

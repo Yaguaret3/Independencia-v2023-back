@@ -100,7 +100,6 @@ public enum RoleEnum {
             return CapitanData.builder()
                     .prices(prices)
                     .reserva(0)
-                    .disciplina(0)
                     .build();
         }
 

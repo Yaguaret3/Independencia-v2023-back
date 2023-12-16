@@ -14,9 +14,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class GobernadorData extends PlayerData {
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "city")
+    @OneToOne
+    @JoinColumn
     private City city;
-    private Integer plata=0;
-    private Integer milicia=0;
+    private Integer plata;
+    private Integer milicia;
 }

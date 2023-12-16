@@ -232,8 +232,10 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public GameDataFullResponse getFullData() {
 
-        //return GameDataFullResponse.toFullResponse(getPlayerData().getGameData());
-        return null;
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        return GameDataFullResponse.toFullResponse(controlData.getGameData());
     }
 
     @Override

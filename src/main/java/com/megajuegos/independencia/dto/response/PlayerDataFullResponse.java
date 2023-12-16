@@ -14,6 +14,7 @@ public class PlayerDataFullResponse {
 
     private Long id;
     private String username;
+    private String rol;
     private List<MarketCardResponse> mercados;
     private List<ResourceCardResponse> recursos;
     private List<ExtraCardResponse> extras;
@@ -28,6 +29,7 @@ public class PlayerDataFullResponse {
 
         return PlayerDataFullResponse.builder()
                 .id(entity.getId())
+                .rol(entity.getRol().name())
                 .mercados(util.getMarketCardList()
                         .stream()
                         .map(MarketCardResponse::toDtoResponse)

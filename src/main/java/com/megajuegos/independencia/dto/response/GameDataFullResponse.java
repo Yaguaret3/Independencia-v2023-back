@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class GameDataFullResponse {
 
     private Long id;
-    private List<PlayerDataFullResponse> playerData;
+    private List<PlayerDataFullResponse> playersData;
     private List<GameRegionFullResponse> gameRegions;
     private Integer turno;
     private Long nextEndOfTurn;
@@ -21,7 +21,7 @@ public class GameDataFullResponse {
 
         return GameDataFullResponse.builder()
                 .id(entity.getId())
-                .playerData(entity.getPlayers()
+                .playersData(entity.getPlayers()
                         .stream()
                         .map(PlayerDataFullResponse::toFullResponse)
                         .collect(Collectors.toList()))

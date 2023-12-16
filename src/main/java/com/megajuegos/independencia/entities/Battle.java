@@ -20,7 +20,7 @@ public class Battle {
     private List<Army> combatientes;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gameArea")
+    @JoinColumn
     private GameSubRegion gameSubRegion;
     private Integer turnoDeJuego;
     private Boolean active;
