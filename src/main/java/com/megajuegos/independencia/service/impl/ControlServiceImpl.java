@@ -476,6 +476,49 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
+    public String assignMilitiaToGobernador(Long gobernadorId, Integer militia) {
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        GobernadorData gobernadorData = gobernadorRepository.findById(gobernadorId).orElseThrow(() -> new PlayerNotFoundException());
+        gobernadorData.setMilicia(militia);
+        playerDataRepository.save(gobernadorData);
+        return MILITIA_ASSIGNED;
+    }
+
+    @Override
+    public String assignNewDiputadoToCity(Long cityId, Long diputadoId) throws InstanceNotFoundException {
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException());
+        RevolucionarioData revolucionarioData = (RevolucionarioData) playerDataRepository.findById(diputadoId)
+                                    .orElseThrow(PlayerNotFoundException::new);
+
+        List<RepresentationCard> cards = cardRepository
+                .findRepresentationCardByCity(RepresentationEnum.byNombre(city.getName()))
+                .stream()
+                .filter(r -> !r.getAlreadyPlayed())
+                .collect(Collectors.toList());
+
+        if(cards.isEmpty()){
+            throw new CardNotFoundException();
+        }
+        if(cards.size()>1){
+            throw new MoreThanOneRepresentationCardPerCity();
+        }
+
+        RepresentationCard representationCard = cards.get(0);
+        PlayerData actualPlayer = representationCard.getPlayerData();
+        actualPlayer.getCards().remove(representationCard);
+        revolucionarioData.getCards().add(representationCard);
+
+        city.setDiputado(revolucionarioData.getUsername());
+
+        return NEW_DIPUTADO_ASSIGNED;
+    }
+
+    @Override
     public String solveBattle(SolveBattleRequest request) {
 
         ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())

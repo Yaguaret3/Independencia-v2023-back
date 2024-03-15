@@ -15,13 +15,14 @@ public class RepresentationCardResponse {
     private Long id;
     private String ciudad;
     private Integer poblacion;
-    private Long voteId;
+    private VoteResponse vote;
 
     public static RepresentationCardResponse toDtoResponse(RepresentationCard entity){
         return RepresentationCardResponse.builder()
                 .id(entity.getId())
                 .ciudad(entity.getRepresentacion().getNombre())
                 .poblacion(entity.getRepresentacion().getPoblacion())
+                .vote(VoteResponse.toDtoResponse(entity.getVote()))
                 .build();
     }
 }

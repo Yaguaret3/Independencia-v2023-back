@@ -42,4 +42,5 @@ public class Messages {
     public static final String ARMY_DELETED = "Ejército destruido";
     public static final String ARMY_CREATED = "Ejército creado";
     public static final String CAMP_MOVED = "Campamento movido";
+    public static final String NEW_DIPUTADO_ASSIGNED = "Diputado asignado";
 }

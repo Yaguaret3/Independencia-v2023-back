@@ -4,7 +4,6 @@ import com.megajuegos.independencia.dto.request.control.*;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 
 import javax.management.InstanceNotFoundException;
-import java.util.List;
 import java.util.Map;
 
 public interface ControlService {
@@ -52,5 +51,9 @@ public interface ControlService {
     String createArmy(NewArmyRequest request);
 
     String moveCamp(MoveCampRequest request);
+
+    String assignMilitiaToGobernador(Long gobernadorId, Integer militia);
+
+    String assignNewDiputadoToCity(Long cityId, Long diputadoId) throws InstanceNotFoundException;
 }
 

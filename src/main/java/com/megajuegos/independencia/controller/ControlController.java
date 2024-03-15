@@ -1,17 +1,13 @@
 package com.megajuegos.independencia.controller;
 
-import com.megajuegos.independencia.dto.request.capitan.BattleRequest;
 import com.megajuegos.independencia.dto.request.control.*;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
-import com.megajuegos.independencia.enums.PersonalPricesEnum;
 import com.megajuegos.independencia.service.ControlService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,6 +16,8 @@ import java.util.Map;
 public class ControlController {
 
     private final ControlService service;
+
+    // INIT AND TEST
 
     @PostMapping("/create-give-resource-card")
     public ResponseEntity<String> createAndGiveCard(@RequestParam Long playerDataId){
@@ -58,9 +56,18 @@ public class ControlController {
     public ResponseEntity<GameDataFullResponse> getFullData(){
         return ResponseEntity.ok(service.getFullData());
     }
+
+    @PatchMapping("/{gobernadorId}/assign-reserve")
+    public ResponseEntity<String> assignMilitiaToGobernador(@PathVariable Long gobernadorId, @RequestBody Integer militia){
+        return ResponseEntity.ok(service.assignMilitiaToGobernador(gobernadorId, militia));
+    }
     @PatchMapping("/{id}/edit-city")
     public ResponseEntity<String> editCity(@RequestBody Map<String, String> request, @PathVariable Long id){
         return ResponseEntity.ok(service.editCity(request, id));
+    }
+    @PostMapping("/{cityId}/assign-diputado")
+    public ResponseEntity<String> assignNewDiputadoToCity(@PathVariable Long cityId, @RequestParam Long diputadoId) throws InstanceNotFoundException {
+        return ResponseEntity.ok(service.assignNewDiputadoToCity(cityId, diputadoId));
     }
     @PostMapping("/{cityId}/remove-building")
     public ResponseEntity<String> removeBuilding(@PathVariable Long cityId, @RequestParam Long buildingId){

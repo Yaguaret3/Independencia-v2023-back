@@ -1,7 +1,10 @@
 package com.megajuegos.independencia.dto.response;
 
 import com.megajuegos.independencia.dto.response.util.PlayerDataCardsUtil;
-import com.megajuegos.independencia.entities.data.PlayerData;
+import com.megajuegos.independencia.entities.Army;
+import com.megajuegos.independencia.entities.Route;
+import com.megajuegos.independencia.entities.Vote;
+import com.megajuegos.independencia.entities.data.*;
 import lombok.Builder;
 import lombok.Data;
 
@@ -23,11 +26,27 @@ public class PlayerDataFullResponse {
     private List<BattleCardFullResponse> battleCards;
     private List<PersonalPriceResponse> prices;
 
+    //Gobernador/Revolucionario
+    private Integer plata;
+    //Gobernador
+    private Integer milicia;
+    private CityFullResponse ciudad;
+    //Capitan
+    private Integer reserva;
+    private List<ArmyFullResponse> armies;
+    //Mercader
+    private Integer puntajeComercial;
+    private Integer puntajeComercialAcumulado;
+    private List<RouteResponse> routes;
+    //Revolucionario
+    private CongresoResponse congreso;
+    private List<VoteResponse> votes;
+
     public static PlayerDataFullResponse toFullResponse(PlayerData entity){
 
         PlayerDataCardsUtil util = new PlayerDataCardsUtil(entity);
 
-        return PlayerDataFullResponse.builder()
+        PlayerDataFullResponse response = PlayerDataFullResponse.builder()
                 .id(entity.getId())
                 .rol(entity.getRol().name())
                 .mercados(util.getMarketCardList()
@@ -58,5 +77,39 @@ public class PlayerDataFullResponse {
                         .map(PersonalPriceResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .build();
+
+        switch (entity.getRol()){
+            case GOBERNADOR:
+                GobernadorData gobernadorData = (GobernadorData) entity;
+                response.setPlata(gobernadorData.getPlata());
+                response.setMilicia(gobernadorData.getMilicia());
+                response.setCiudad(CityFullResponse.toDtoResponse(gobernadorData.getCity()));
+                break;
+            case CAPITAN:
+                CapitanData capitanData = (CapitanData) entity;
+                response.setReserva(capitanData.getReserva());
+                response.setArmies(capitanData.getEjercito().stream()
+                        .map(ArmyFullResponse::toDtoResponse)
+                        .collect(Collectors.toList()));
+                break;
+            case MERCADER:
+                MercaderData mercaderData = (MercaderData) entity;
+                response.setPuntajeComercial(mercaderData.getPuntajeComercial());
+                response.setPuntajeComercialAcumulado(mercaderData.getPuntajeComercialAcumulado());
+                response.setRoutes(mercaderData.getRoutes().stream()
+                        .map(RouteResponse::toDto)
+                        .collect(Collectors.toList()));
+                break;
+            case REVOLUCIONARIO:
+                RevolucionarioData revolucionarioData = (RevolucionarioData) entity;
+                response.setPlata(revolucionarioData.getPlata());
+                response.setVotes(revolucionarioData.getVotos().stream()
+                        .map(VoteResponse::toDtoResponse)
+                        .collect(Collectors.toList()));
+                response.setCongreso(CongresoResponse.toDtoResponse(revolucionarioData.getCongreso()));
+                break;
+            default:
+        }
+        return response;
     }
 }
