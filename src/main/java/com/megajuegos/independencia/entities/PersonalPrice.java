@@ -24,5 +24,4 @@ public class PersonalPrice {
     private Integer construccion;
     private Integer comercial;
     private Integer puntajeComercial;
-    private Integer disciplina;
 }

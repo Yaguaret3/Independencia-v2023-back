@@ -121,7 +121,6 @@ public class ControlServiceImpl implements ControlService {
                                                 .agropecuaria(0)
                                                 .comercial(0)
                                                 .construccion(0)
-                                                .disciplina(0)
                                                 .metalmecanica(0)
                                                 .plata(0)
                                                 .puntajeComercial(0)
@@ -291,7 +290,7 @@ public class ControlServiceImpl implements ControlService {
         PersonalPrice price = priceRepository.findById(priceId).orElseThrow(() -> new PriceNotFoundException());
         request.forEach((key, value) -> {
 
-            Field field = ReflectionUtils.findField(City.class, key);
+            Field field = ReflectionUtils.findField(PersonalPrice.class, key);
             field.setAccessible(true);
             ReflectionUtils.setField(field, price, value);
         });

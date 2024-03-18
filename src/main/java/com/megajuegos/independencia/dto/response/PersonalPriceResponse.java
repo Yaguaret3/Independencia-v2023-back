@@ -22,7 +22,6 @@ public class PersonalPriceResponse {
     private Integer construccion;
     private Integer comercial;
     private Integer puntajeComercial;
-    private Integer disciplina;
 
     public static PersonalPriceResponse toDtoResponse(PersonalPrice entity){
 
@@ -41,7 +40,6 @@ public class PersonalPriceResponse {
                 .construccion(entity.getConstruccion())
                 .comercial(entity.getComercial())
                 .puntajeComercial(entity.getPuntajeComercial())
-                .disciplina(entity.getDisciplina())
                 .build();
     }
 }
