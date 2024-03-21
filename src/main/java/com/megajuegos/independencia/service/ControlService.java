@@ -55,5 +55,7 @@ public interface ControlService {
     String assignMilitiaToGobernador(Long gobernadorId, Integer militia);
 
     String assignNewDiputadoToCity(Long cityId, Long diputadoId) throws InstanceNotFoundException;
+
+    String addPlata(Long playerId, Integer plata);
 }
 

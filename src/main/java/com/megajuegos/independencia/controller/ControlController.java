@@ -77,6 +77,10 @@ public class ControlController {
     public ResponseEntity<String> addBuilding(@PathVariable Long cityId, @RequestBody NewBuildingRequest request){
         return ResponseEntity.ok(service.addBuilding(cityId, request));
     }
+    @PostMapping("/{playerId}/update-plata")
+    public ResponseEntity<String> addBuilding(@PathVariable Long playerId, @RequestBody Integer plata){
+        return ResponseEntity.ok(service.addPlata(playerId, plata));
+    }
     @PatchMapping("/{routeId}/assignFinalValue")
     public ResponseEntity<String> assignFinalRouteValue(@PathVariable Long routeId, @RequestBody AssignRouteValueRequest request){
         return ResponseEntity.ok(service.assignFinalRouteValue(routeId, request));

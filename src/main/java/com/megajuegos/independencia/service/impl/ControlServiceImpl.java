@@ -518,6 +518,27 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
+    public String addPlata(Long playerId, Integer plata) {
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        PlayerData playerData = playerDataRepository.findById(playerId)
+                .orElseThrow(PlayerNotFoundException::new);
+
+        if(playerData instanceof GobernadorData){
+            GobernadorData gobernadorData = (GobernadorData) playerData;
+            gobernadorData.setPlata(plata);
+            playerDataRepository.save(gobernadorData);
+        }
+        if(playerData instanceof RevolucionarioData){
+            RevolucionarioData revolucionarioData = (RevolucionarioData) playerData;
+            revolucionarioData.setPlata(plata);
+            playerDataRepository.save(revolucionarioData);
+        }
+        return PLATA_ASSIGNED;
+    }
+
+    @Override
     public String solveBattle(SolveBattleRequest request) {
 
         ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
