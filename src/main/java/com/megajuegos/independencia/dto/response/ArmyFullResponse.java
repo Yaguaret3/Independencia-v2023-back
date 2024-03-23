@@ -14,6 +14,7 @@ public class ArmyFullResponse {
     private Long capitanId;
     private String capitanName;
     private Long gameSubRegion;
+    private String gameSubRegionName;
     private List<BattleCardFullResponse> cartasJugadas;
     private Integer milicias;
     private boolean ataque;
@@ -26,6 +27,7 @@ public class ArmyFullResponse {
                 .capitanId(entity.getCapitanData().getId())
                 .capitanName(entity.getCapitanData().getUsername())
                 .gameSubRegion(entity.getGameSubRegion().getId())
+                .gameSubRegionName(entity.getGameSubRegion().getNombre())
                 .cartasJugadas(entity.getCartasJugadas().stream()
                         .map(BattleCardFullResponse::toFullResponse)
                         .collect(Collectors.toList()))
