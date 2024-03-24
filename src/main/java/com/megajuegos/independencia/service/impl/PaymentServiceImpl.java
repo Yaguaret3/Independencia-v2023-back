@@ -46,10 +46,6 @@ public class PaymentServiceImpl implements PaymentService {
                 && !gobernadorPaymentIsValid((GobernadorData) playerData, request, priceToPay)){
             return false;
         }
-        if(playerData instanceof CapitanData
-                && !capitanPaymentIsValid((CapitanData) playerData, request, priceToPay)){
-            return false;
-        }
         if(playerData instanceof MercaderData
                 && !mercaderPaymentIsValid((MercaderData) playerData, request, priceToPay)){
             return false;
@@ -75,13 +71,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         return request.getPlata() <= gobernadorData.getPlata()
                 && request.getPlata() >= priceToPay.getPlata();
-    }
-
-    private Boolean capitanPaymentIsValid(CapitanData capitanData,
-                                          PaymentRequestUtil request,
-                                          PersonalPrice priceToPay){
-        return request.getDisciplina() <= capitanData.getDisciplina()
-                && request.getDisciplina() >= priceToPay.getDisciplina();
     }
 
     private Boolean mercaderPaymentIsValid(MercaderData mercaderData,

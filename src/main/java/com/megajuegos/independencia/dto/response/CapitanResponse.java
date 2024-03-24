@@ -14,7 +14,6 @@ public class CapitanResponse {
     private Long id;
     private Integer reserva;
     private List<ArmyFullResponse> ejercito;
-    private Integer disciplina;
     private CampResponse campamento;
     private List<ActionCardResponse> actionCards;
     private List<BattleCardFullResponse> battleCards;
@@ -32,7 +31,7 @@ public class CapitanResponse {
                         .stream()
                         .map(ArmyFullResponse::toDtoResponse)
                         .collect(Collectors.toList()))
-                .disciplina(entity.getDisciplina())
+
                 .campamento(CampResponse.toDtoResponse(entity.getCamp()))
                 .actionCards(util.getActionCardList()
                         .stream()

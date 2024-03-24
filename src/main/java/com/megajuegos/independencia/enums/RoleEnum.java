@@ -40,7 +40,8 @@ public enum RoleEnum {
     CONTROL(3){
         @Override
         public PlayerData createPlayerData() {
-            return null;
+            return ControlData.builder()
+                    .build();
         }
 
         @Override
@@ -92,7 +93,6 @@ public enum RoleEnum {
                             .textil(0)
                             .agropecuaria(0)
                             .plata(0)
-                            .disciplina(0)
                             .name(p)
                             .build())
                     .collect(Collectors.toList());

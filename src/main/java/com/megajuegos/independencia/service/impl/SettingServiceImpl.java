@@ -7,6 +7,7 @@ import com.megajuegos.independencia.entities.card.MarketCard;
 import com.megajuegos.independencia.entities.card.RepresentationCard;
 import com.megajuegos.independencia.entities.data.*;
 import com.megajuegos.independencia.enums.CiudadInitEnum;
+import com.megajuegos.independencia.enums.PhaseEnum;
 import com.megajuegos.independencia.enums.RegionEnum;
 import com.megajuegos.independencia.enums.RepresentationEnum;
 import com.megajuegos.independencia.exceptions.CityNotFoundException;
@@ -46,6 +47,7 @@ public class SettingServiceImpl implements SettingService {
         gameDataRepository.save(
                 GameData.builder()
                         .turno(0)
+                        .fase(PhaseEnum.MOVING)
                         .gameRegions(createRegions())
                         .build()
         );

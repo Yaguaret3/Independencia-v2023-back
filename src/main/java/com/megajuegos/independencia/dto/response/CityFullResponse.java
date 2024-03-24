@@ -34,7 +34,7 @@ public class CityFullResponse {
                 .publicOpinion(entity.getPublicOpinion())
                 .taxesLevel(entity.getTaxesLevel())
                 .prestige(entity.getPrestige())
-                .gobernadorId(entity.getGobernadorData().getId())
+                .gobernadorId(entity.getGobernadorData() == null ? null : entity.getGobernadorData().getId())
                 .buildings(entity.getBuildings().stream()
                         .map(edificio -> new BuildingResponse().toDtoResponse(edificio))
                         .collect(Collectors.toList()))

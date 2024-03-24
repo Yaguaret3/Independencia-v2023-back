@@ -23,7 +23,7 @@ public class GameSubRegionFullResponse {
         return GameSubRegionFullResponse.builder()
                 .id(entity.getId())
                 .name(entity.getSubRegionEnum().name())
-                .city(CityFullResponse.toDtoResponse(entity.getCity()))
+                .city(entity.getCity() == null ? null :CityFullResponse.toDtoResponse(entity.getCity()))
                 .ejercitos(entity.getEjercitos()
                         .stream()
                         .map(ArmyFullResponse::toDtoResponse)
