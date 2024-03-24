@@ -48,6 +48,7 @@ public class PlayerDataFullResponse {
 
         PlayerDataFullResponse response = PlayerDataFullResponse.builder()
                 .id(entity.getId())
+                .username(entity.getUsername())
                 .rol(entity.getRol().name())
                 .mercados(util.getMarketCardList()
                         .stream()
