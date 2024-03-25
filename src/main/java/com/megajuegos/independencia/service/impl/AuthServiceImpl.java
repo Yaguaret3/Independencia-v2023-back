@@ -7,6 +7,7 @@ import com.megajuegos.independencia.dto.response.AuthenticateResponse;
 import com.megajuegos.independencia.entities.UserIndependencia;
 import com.megajuegos.independencia.enums.RoleEnum;
 import com.megajuegos.independencia.exceptions.CredentialsException;
+import com.megajuegos.independencia.exceptions.EmailAlreadyExistsException;
 import com.megajuegos.independencia.repository.UserIndependenciaRepository;
 import com.megajuegos.independencia.service.AuthService;
 import com.megajuegos.independencia.service.util.UserUtil;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,6 +52,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticateResponse register(RegisterRequest request) {
+
+        userRepository.findAll().forEach(u -> {
+            if(u.getEmail().equalsIgnoreCase(request.getEmail())){
+                throw new EmailAlreadyExistsException(request.getEmail());
+            }
+        });
 
         String encodedPass = passwordEncoder.encode(request.getPassword());
 

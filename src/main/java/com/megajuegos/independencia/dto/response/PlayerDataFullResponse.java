@@ -84,7 +84,7 @@ public class PlayerDataFullResponse {
                 GobernadorData gobernadorData = (GobernadorData) entity;
                 response.setPlata(gobernadorData.getPlata());
                 response.setMilicia(gobernadorData.getMilicia());
-                response.setCiudad(CityFullResponse.toDtoResponse(gobernadorData.getCity()));
+                response.setCiudad(gobernadorData.getCity() == null ? null : CityFullResponse.toDtoResponse(gobernadorData.getCity()));
                 break;
             case CAPITAN:
                 CapitanData capitanData = (CapitanData) entity;

@@ -22,7 +22,7 @@ public class RepresentationCardResponse {
                 .id(entity.getId())
                 .ciudad(entity.getRepresentacion().getNombre())
                 .poblacion(entity.getRepresentacion().getPoblacion())
-                .vote(VoteResponse.toDtoResponse(entity.getVote()))
+                .vote(entity.getVote() == null ? null : VoteResponse.toDtoResponse(entity.getVote()))
                 .build();
     }
 }
