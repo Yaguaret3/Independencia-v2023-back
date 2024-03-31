@@ -18,7 +18,7 @@ public class BattleCardFullResponse {
         return BattleCardFullResponse.builder()
                 .id(entity.getId())
                 .playerId(entity.getPlayerData().getId())
-                .alreadyPlayed(entity.getAlreadyPlayed())
+                .alreadyPlayed(entity.isAlreadyPlayed())
                 .turnWhenPlayed(entity.getTurnWhenPlayed())
                 .battleOrderType(entity.getTipoOrdenDeBatalla().name())
                 .build();

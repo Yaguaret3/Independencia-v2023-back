@@ -57,12 +57,12 @@ public class ControlController {
         return ResponseEntity.ok(service.getFullData());
     }
 
-    @PatchMapping("/{gobernadorId}/assign-reserve")
-    public ResponseEntity<String> assignMilitiaToGobernador(@PathVariable Long gobernadorId, @RequestBody Integer militia){
-        return ResponseEntity.ok(service.assignMilitiaToGobernador(gobernadorId, militia));
+    @PostMapping("/{gobernadorId}/assign-reserve")
+    public ResponseEntity<String> assignMilitiaToGobernador(@PathVariable Long gobernadorId, @RequestBody SoleValueRequest militia){
+        return ResponseEntity.ok(service.assignMilitiaToGobernador(gobernadorId, militia.getNewValue()));
     }
-    @PatchMapping("/{id}/edit-city")
-    public ResponseEntity<String> editCity(@RequestBody Map<String, String> request, @PathVariable Long id){
+    @PostMapping("/{id}/edit-city")
+    public ResponseEntity<String> editCity(@RequestBody Map<String, Integer> request, @PathVariable Long id){
         return ResponseEntity.ok(service.editCity(request, id));
     }
     @PostMapping("/{cityId}/assign-diputado")
@@ -78,21 +78,21 @@ public class ControlController {
         return ResponseEntity.ok(service.addBuilding(cityId, request));
     }
     @PostMapping("/{playerId}/update-plata")
-    public ResponseEntity<String> addBuilding(@PathVariable Long playerId, @RequestBody Integer plata){
-        return ResponseEntity.ok(service.addPlata(playerId, plata));
+    public ResponseEntity<String> addBuilding(@PathVariable Long playerId, @RequestBody SoleValueRequest plata){
+        return ResponseEntity.ok(service.addPlata(playerId, plata.getNewValue()));
     }
-    @PatchMapping("/{routeId}/assignFinalValue")
+    @PostMapping("/{routeId}/assignFinalValue")
     public ResponseEntity<String> assignFinalRouteValue(@PathVariable Long routeId, @RequestBody AssignRouteValueRequest request){
         return ResponseEntity.ok(service.assignFinalRouteValue(routeId, request));
     }
 
-    @PatchMapping("/{priceId}/update-price")
+    @PostMapping("/{priceId}/update-price")
     public ResponseEntity<String> updatePrices(@PathVariable Long priceId,
                                                @RequestBody Map<String, Integer> request){
         return ResponseEntity.ok(service.updatePrices(priceId, request));
     }
 
-    @PatchMapping("/{votationId}/update-votation")
+    @PostMapping("/{votationId}/update-votation")
     public ResponseEntity<String> updateVotation(@PathVariable Long votationId, @RequestBody UpdateVotationRequest request){
         return ResponseEntity.ok(service.updateVotation(votationId, request));
     }
@@ -100,7 +100,7 @@ public class ControlController {
     public ResponseEntity<String> addVote(@PathVariable Long votationId, @RequestBody NewVoteRequest request){
         return ResponseEntity.ok(service.addVote(votationId, request));
     }
-    @PatchMapping("/{voteId}/update-vote")
+    @PostMapping("/{voteId}/update-vote")
     public ResponseEntity<String> updateVote(@PathVariable Long voteId, @RequestBody UpdateVoteRequest request){
         return ResponseEntity.ok(service.updateVote(voteId, request));
     }
@@ -117,13 +117,13 @@ public class ControlController {
     public ResponseEntity<String> solveBattle(@RequestBody SolveBattleRequest request){
         return ResponseEntity.ok(service.solveBattle(request));
     }
-    @PatchMapping("/{armyId}/assign-militia")
-    public ResponseEntity<String> assignMilitia(@PathVariable Long armyId, @RequestBody Integer militia){
-        return ResponseEntity.ok(service.assignMilitia(armyId, militia));
+    @PostMapping("/{armyId}/assign-militia")
+    public ResponseEntity<String> assignMilitia(@PathVariable Long armyId, @RequestBody SoleValueRequest militia){
+        return ResponseEntity.ok(service.assignMilitia(armyId, militia.getNewValue()));
     }
-    @PatchMapping("/{capitanId}/assign-reserve")
-    public ResponseEntity<String> assignReserve(@PathVariable Long capitanId, @RequestBody Integer militia){
-        return ResponseEntity.ok(service.assignReserve(capitanId, militia));
+    @PostMapping("/{capitanId}/assign-reserve")
+    public ResponseEntity<String> assignReserve(@PathVariable Long capitanId, @RequestBody SoleValueRequest militia){
+        return ResponseEntity.ok(service.assignReserve(capitanId, militia.getNewValue()));
     }
     @DeleteMapping("/{armyId}")
     public ResponseEntity<String> deleteArmy(@PathVariable Long armyId){

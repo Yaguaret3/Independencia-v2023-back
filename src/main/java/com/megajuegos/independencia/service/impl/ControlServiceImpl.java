@@ -238,7 +238,7 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
-    public String editCity(Map<String, String> request, Long id) {
+    public String editCity(Map<String, Integer> request, Long id) {
 
         City city = cityRepository.findById(id).orElseThrow(() -> new CityNotFoundException());
         request.forEach((key, value) -> {
@@ -247,6 +247,7 @@ public class ControlServiceImpl implements ControlService {
             field.setAccessible(true);
             ReflectionUtils.setField(field, city, value);
         });
+        cityRepository.save(city);
         return CITY_UPDATED;
     }
 
@@ -497,7 +498,7 @@ public class ControlServiceImpl implements ControlService {
         List<RepresentationCard> cards = cardRepository
                 .findRepresentationCardByCity(RepresentationEnum.byNombre(city.getName()))
                 .stream()
-                .filter(r -> !r.getAlreadyPlayed())
+                .filter(r -> !r.isAlreadyPlayed())
                 .collect(Collectors.toList());
 
         if(cards.isEmpty()){
@@ -513,6 +514,10 @@ public class ControlServiceImpl implements ControlService {
         revolucionarioData.getCards().add(representationCard);
 
         city.setDiputado(revolucionarioData.getUsername());
+
+        cityRepository.save(city);
+        playerDataRepository.save(actualPlayer);
+        playerDataRepository.save(revolucionarioData);
 
         return NEW_DIPUTADO_ASSIGNED;
     }

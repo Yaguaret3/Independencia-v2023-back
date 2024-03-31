@@ -18,7 +18,7 @@ public class ActionCardResponse {
         return ActionCardResponse.builder()
                 .id(entity.getId())
                 .playerId(entity.getPlayerData().getId())
-                .alreadyPlayed(entity.getAlreadyPlayed())
+                .alreadyPlayed(entity.isAlreadyPlayed())
                 .turnWhenPlayed(entity.getTurnWhenPlayed())
                 .actionType(entity.getTipoAccion().name())
                 .build();

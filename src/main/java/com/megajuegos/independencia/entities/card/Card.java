@@ -22,7 +22,7 @@ public abstract class Card {
     private PlayerData playerData;
 
     @NotNull
-    private Boolean alreadyPlayed = Boolean.FALSE;
+    private boolean alreadyPlayed = Boolean.FALSE;
     @NotNull
     private Integer turnWhenPlayed;
 }

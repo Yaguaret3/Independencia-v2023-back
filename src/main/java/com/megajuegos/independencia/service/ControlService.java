@@ -22,7 +22,7 @@ public interface ControlService {
 
     String createAndGiveExtraCard(ExtraCardRequest request, Long playerDataId);
 
-    String editCity(Map<String, String> request, Long id);
+    String editCity(Map<String, Integer> request, Long id);
 
     String removeBuilding(Long cityId, Long buildingId);
 

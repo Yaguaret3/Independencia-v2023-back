@@ -111,27 +111,27 @@ public class PaymentServiceImpl implements PaymentService {
         for(Card card : playerData.getCards()){
             if(card instanceof ResourceCard
                     && ((ResourceCard) card).getResourceTypeEnum()==ResourceTypeEnum.TEXTIL
-                    && !card.getAlreadyPlayed()){
+                    && !card.isAlreadyPlayed()){
                 textilActual ++;
             }
             if(card instanceof ResourceCard
                     && ((ResourceCard) card).getResourceTypeEnum()==ResourceTypeEnum.AGROPECUARIA
-                    && !card.getAlreadyPlayed()){
+                    && !card.isAlreadyPlayed()){
                 agropecuariaActual ++;
             }
             if(card instanceof ResourceCard
                     && ((ResourceCard) card).getResourceTypeEnum()==ResourceTypeEnum.METALMECANICA
-                    && !card.getAlreadyPlayed()){
+                    && !card.isAlreadyPlayed()){
                 metalmecanicaActual ++;
             }
             if(card instanceof ResourceCard
                     && ((ResourceCard) card).getResourceTypeEnum()==ResourceTypeEnum.CONSTRUCCION
-                    && !card.getAlreadyPlayed()){
+                    && !card.isAlreadyPlayed()){
                 construccionActual ++;
             }
             if(card instanceof ResourceCard
                     && ((ResourceCard) card).getResourceTypeEnum()==ResourceTypeEnum.COMERCIAL
-                    && !card.getAlreadyPlayed()){
+                    && !card.isAlreadyPlayed()){
                 comercialActual ++;
             }
         }
