@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ public class GameDataFullResponse {
                 .playersData(entity.getPlayers()
                         .stream()
                         .map(PlayerDataFullResponse::toFullResponse)
+                        .sorted(Comparator.comparing(PlayerDataFullResponse::getId))
                         .collect(Collectors.toList()))
                 .gameRegions(entity.getGameRegions()
                         .stream()

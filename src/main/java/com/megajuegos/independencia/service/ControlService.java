@@ -44,15 +44,13 @@ public interface ControlService {
 
     String assignMilitia(Long armyId, Integer militia);
 
-    String assignReserve(Long capitanId, Integer militia);
+    String assignReserve(Long playerId, Integer militia);
 
     String deleteArmy(Long armyId);
 
     String createArmy(NewArmyRequest request);
 
     String moveCamp(MoveCampRequest request);
-
-    String assignMilitiaToGobernador(Long gobernadorId, Integer militia);
 
     String assignNewDiputadoToCity(Long cityId, Long diputadoId) throws InstanceNotFoundException;
 

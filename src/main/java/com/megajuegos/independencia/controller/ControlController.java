@@ -56,18 +56,13 @@ public class ControlController {
     public ResponseEntity<GameDataFullResponse> getFullData(){
         return ResponseEntity.ok(service.getFullData());
     }
-
-    @PostMapping("/{gobernadorId}/assign-reserve")
-    public ResponseEntity<String> assignMilitiaToGobernador(@PathVariable Long gobernadorId, @RequestBody SoleValueRequest militia){
-        return ResponseEntity.ok(service.assignMilitiaToGobernador(gobernadorId, militia.getNewValue()));
-    }
     @PostMapping("/{id}/edit-city")
     public ResponseEntity<String> editCity(@RequestBody Map<String, Integer> request, @PathVariable Long id){
         return ResponseEntity.ok(service.editCity(request, id));
     }
     @PostMapping("/{cityId}/assign-diputado")
-    public ResponseEntity<String> assignNewDiputadoToCity(@PathVariable Long cityId, @RequestParam Long diputadoId) throws InstanceNotFoundException {
-        return ResponseEntity.ok(service.assignNewDiputadoToCity(cityId, diputadoId));
+    public ResponseEntity<String> assignNewDiputadoToCity(@PathVariable Long cityId, @RequestBody AssignDiputadoRequest diputado) throws InstanceNotFoundException {
+        return ResponseEntity.ok(service.assignNewDiputadoToCity(cityId, diputado.getDiputadoId()));
     }
     @PostMapping("/{cityId}/remove-building")
     public ResponseEntity<String> removeBuilding(@PathVariable Long cityId, @RequestParam Long buildingId){
@@ -121,9 +116,9 @@ public class ControlController {
     public ResponseEntity<String> assignMilitia(@PathVariable Long armyId, @RequestBody SoleValueRequest militia){
         return ResponseEntity.ok(service.assignMilitia(armyId, militia.getNewValue()));
     }
-    @PostMapping("/{capitanId}/assign-reserve")
-    public ResponseEntity<String> assignReserve(@PathVariable Long capitanId, @RequestBody SoleValueRequest militia){
-        return ResponseEntity.ok(service.assignReserve(capitanId, militia.getNewValue()));
+    @PostMapping("/{playerId}/assign-reserve")
+    public ResponseEntity<String> assignReserve(@PathVariable Long playerId, @RequestBody SoleValueRequest militia){
+        return ResponseEntity.ok(service.assignReserve(playerId, militia.getNewValue()));
     }
     @DeleteMapping("/{armyId}")
     public ResponseEntity<String> deleteArmy(@PathVariable Long armyId){

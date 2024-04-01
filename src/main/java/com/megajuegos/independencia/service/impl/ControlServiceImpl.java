@@ -295,6 +295,7 @@ public class ControlServiceImpl implements ControlService {
             field.setAccessible(true);
             ReflectionUtils.setField(field, price, value);
         });
+        priceRepository.save(price);
         return PRICE_UPDATED;
     }
 
@@ -421,13 +422,22 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
-    public String assignReserve(Long capitanId, Integer militia) {
+    public String assignReserve(Long playerId, Integer militia) {
         ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
 
-        CapitanData capitanData = capitanRepository.findById(capitanId).orElseThrow(() -> new PlayerNotFoundException());
-        capitanData.setReserva(militia);
-        playerDataRepository.save(capitanData);
+        PlayerData playerData = playerDataRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException());
+        if(playerData instanceof CapitanData){
+            CapitanData capitanData = (CapitanData) playerData;
+            capitanData.setReserva(militia);
+            playerDataRepository.save(capitanData);
+        }
+        if(playerData instanceof GobernadorData){
+            GobernadorData gobernadorData = (GobernadorData) playerData;
+            gobernadorData.setMilicia(militia);
+            playerDataRepository.save(gobernadorData);
+        }
+
         return RESERVE_ASSIGNED;
     }
 
@@ -473,17 +483,6 @@ public class ControlServiceImpl implements ControlService {
 
         capitanRepository.save(capitanData);
         return CAMP_MOVED;
-    }
-
-    @Override
-    public String assignMilitiaToGobernador(Long gobernadorId, Integer militia) {
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
-                .orElseThrow(() -> new PlayerNotFoundException());
-
-        GobernadorData gobernadorData = gobernadorRepository.findById(gobernadorId).orElseThrow(() -> new PlayerNotFoundException());
-        gobernadorData.setMilicia(militia);
-        playerDataRepository.save(gobernadorData);
-        return MILITIA_ASSIGNED;
     }
 
     @Override
