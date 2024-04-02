@@ -107,6 +107,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
         Votation newVotation = Votation.builder()
                 .propuesta(proposal)
                 .active(true)
+                .congreso(congreso)
                 .build();
 
         votationRepository.save(newVotation);

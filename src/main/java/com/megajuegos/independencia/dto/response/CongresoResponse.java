@@ -16,6 +16,8 @@ public class CongresoResponse {
     private List<VotationResponse> votations;
     private Integer plata;
     private Integer militia;
+    private String presidente;
+    private Long presidenteId;
 
     public static CongresoResponse toDtoResponse(Congreso entity){
 
@@ -31,6 +33,8 @@ public class CongresoResponse {
                         .stream()
                         .map(VotationResponse::toDtoResponse)
                         .collect(Collectors.toList()))
+                .presidente(entity.getPresidente().getUsername())
+                .presidenteId(entity.getPresidente().getId())
                 .build();
     }
 }
