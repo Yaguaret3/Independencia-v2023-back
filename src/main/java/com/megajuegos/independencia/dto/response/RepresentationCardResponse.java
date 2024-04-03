@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,14 +18,16 @@ public class RepresentationCardResponse {
     private Long id;
     private String ciudad;
     private Integer poblacion;
-    private VoteResponse vote;
+    private List<VoteResponse> votes;
 
     public static RepresentationCardResponse toDtoResponse(RepresentationCard entity){
         return RepresentationCardResponse.builder()
                 .id(entity.getId())
                 .ciudad(entity.getRepresentacion().getNombre())
                 .poblacion(entity.getRepresentacion().getPoblacion())
-                .vote(entity.getVote() == null ? null : VoteResponse.toDtoResponse(entity.getVote()))
+                .votes(entity.getVotes().stream()
+                        .map(VoteResponse::toDtoResponse)
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

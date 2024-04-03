@@ -21,6 +21,6 @@ public class Vote {
     @ManyToOne
     private RevolucionarioData revolucionarioData;
     private VoteTypeEnum voteType;
-    @OneToMany
+    @ManyToMany
     private List<RepresentationCard> representacion;
 }
