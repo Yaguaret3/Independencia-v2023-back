@@ -9,5 +9,5 @@ public class NewArmyRequest {
 
     private Long capitanId;
     private Long gameSubRegionId;
-    private Integer milicia;
+    private Integer milicias;
 }

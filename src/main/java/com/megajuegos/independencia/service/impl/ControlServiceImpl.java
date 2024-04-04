@@ -446,7 +446,14 @@ public class ControlServiceImpl implements ControlService {
         ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
                 .orElseThrow(() -> new PlayerNotFoundException());
 
+        Army army = armyRepository.findById(armyId).orElseThrow(() -> new ArmyNotFoundException());
+
+        CapitanData capitanData = army.getCapitanData();
+        capitanData.getEjercito().remove(army);
+
+        capitanRepository.save(capitanData);
         armyRepository.deleteById(armyId);
+
         return ARMY_DELETED;
     }
 
@@ -462,10 +469,12 @@ public class ControlServiceImpl implements ControlService {
         Army army = Army.builder()
                 .gameSubRegion(gameSubRegion)
                 .capitanData(capitanData)
-                .milicias(request.getMilicia())
+                .milicias(request.getMilicias())
                 .build();
 
         armyRepository.save(army);
+        capitanData.getEjercito().add(army);
+        capitanRepository.save(capitanData);
         return ARMY_CREATED;
     }
 
