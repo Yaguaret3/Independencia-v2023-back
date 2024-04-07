@@ -136,6 +136,18 @@ public class ControlController {
     public ResponseEntity<String> assignCongressPresident(@RequestParam Long revolucionarioId){
         return ResponseEntity.ok(service.assignCongressPresident(revolucionarioId));
     }
+    @DeleteMapping("/{congresoId}/remove-congress")
+    public ResponseEntity<String> removeCongress(@PathVariable Long congresoId){
+        return ResponseEntity.ok(service.removeCongress(congresoId));
+    }
+    @PatchMapping("/{congresoId}/update-congress")
+    public ResponseEntity<String> updateCongress(@PathVariable Long congresoId, @RequestBody UpdateCongressRequest request){
+        return ResponseEntity.ok(service.updateCongress(congresoId, request));
+    }
+    @PostMapping("/create-new-congress")
+    public ResponseEntity<String> createNewCongress(@RequestBody CreateNewCongressRequest request){
+        return ResponseEntity.ok(service.createNewCongress(request));
+    }
 
     @PostMapping("/phase-concluded")
     public ResponseEntity<Void> concludePhase(){

@@ -1,5 +1,7 @@
 package com.megajuegos.independencia.dto.response;
 
+import com.megajuegos.independencia.dto.response.tiny.CityTinyResponse;
+import com.megajuegos.independencia.dto.response.tiny.PlayerDataTinyResponse;
 import com.megajuegos.independencia.entities.Congreso;
 import com.megajuegos.independencia.entities.data.RevolucionarioData;
 import lombok.Builder;
@@ -12,12 +14,13 @@ import java.util.stream.Collectors;
 public class CongresoResponse {
 
     private Long id;
-    private List<String> revolucionarios;
+    private List<PlayerDataTinyResponse> revolucionarios;
     private List<VotationResponse> votations;
     private Integer plata;
     private Integer militia;
     private String presidente;
     private Long presidenteId;
+    private CityTinyResponse sede;
 
     public static CongresoResponse toDtoResponse(Congreso entity){
 
@@ -25,9 +28,9 @@ public class CongresoResponse {
                 .id(entity.getId())
                 .plata(entity.getPlata())
                 .militia(entity.getMilicia())
-                .revolucionarios(entity.getRevolucionarioData()
+                .revolucionarios(entity.getRevolucionarios()
                         .stream()
-                        .map(RevolucionarioData::getUsername)
+                        .map(PlayerDataTinyResponse::toTinyResponse)
                         .collect(Collectors.toList()))
                 .votations(entity.getVotations()
                         .stream()
@@ -35,6 +38,7 @@ public class CongresoResponse {
                         .collect(Collectors.toList()))
                 .presidente(entity.getPresidente().getUsername())
                 .presidenteId(entity.getPresidente().getId())
+                .sede(CityTinyResponse.toTinyResponse(entity.getSede()))
                 .build();
     }
 }

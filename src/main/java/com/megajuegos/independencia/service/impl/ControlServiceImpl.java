@@ -10,10 +10,7 @@ import com.megajuegos.independencia.enums.RepresentationEnum;
 import com.megajuegos.independencia.enums.ResourceTypeEnum;
 import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.*;
-import com.megajuegos.independencia.repository.data.CapitanDataRepository;
-import com.megajuegos.independencia.repository.data.ControlDataRepository;
-import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
-import com.megajuegos.independencia.repository.data.PlayerDataRepository;
+import com.megajuegos.independencia.repository.data.*;
 import com.megajuegos.independencia.service.ControlService;
 import com.megajuegos.independencia.service.util.UserUtil;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +37,7 @@ public class ControlServiceImpl implements ControlService {
     private final BattleRepository battleRepository;
     private final GobernadorDataRepository gobernadorRepository;
     private final CapitanDataRepository capitanRepository;
+    private final RevolucionarioRepository revolucionarioRepository;
     private final UserUtil userUtil;
     private final PersonalPriceRepository priceRepository;
     private final CongresoRepository congresoRepository;
@@ -552,6 +550,67 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
+    public String removeCongress(Long congresoId) {
+        Congreso congreso = congresoRepository.findById(congresoId)
+                        .orElseThrow(() -> new CongresoNotFoundException());
+        List<RevolucionarioData> revolucionarios = congreso.getRevolucionarios();
+        City sede = congreso.getSede();
+
+        revolucionarios.forEach(r -> r.setCongreso(null));
+        sede.setSedeDelCongreso(null);
+
+        revolucionarioRepository.saveAll(revolucionarios);
+        cityRepository.save(sede);
+
+        congresoRepository.deleteById(congresoId);
+        return CONGRESS_REMOVED;
+    }
+
+    @Override
+    public String updateCongress(Long congresoId, UpdateCongressRequest request) {
+
+        Congreso congreso = congresoRepository.findById(congresoId)
+                .orElseThrow(() -> new CongresoNotFoundException());
+        if(request.getMilicia() != null){
+            congreso.setMilicia(request.getMilicia());
+        }
+        if(request.getPlata() != null){
+            congreso.setPlata(request.getPlata());
+        }
+        if(request.getPresidente() != null){
+            congreso.setPresidente(revolucionarioRepository.findById(request.getPresidente())
+                    .orElseThrow(() -> new PlayerNotFoundException()));
+        }
+        return CONGRESS_UPDATED;
+    }
+
+    @Override
+    public String createNewCongress(CreateNewCongressRequest request) {
+
+        City sede = cityRepository.findById(request.getSedeId())
+                .orElseThrow(() -> new CityNotFoundException());
+        RevolucionarioData presidente = revolucionarioRepository.findById(request.getPresidenteId())
+                .orElseThrow(() -> new PlayerNotFoundException());
+        List<RevolucionarioData> revolucionarios = revolucionarioRepository.findAllById(request.getDiputadosIds());
+
+        Congreso congreso = Congreso.builder()
+                                    .sede(sede)
+                                    .presidente(presidente)
+                                    .revolucionarios(revolucionarios)
+                                    .plata(request.getPlata())
+                                    .milicia(request.getMilicia())
+                            .build();
+
+        sede.setSedeDelCongreso(congreso);
+        revolucionarios.forEach(r -> r.setCongreso(congreso));
+
+        congresoRepository.save(congreso);
+        cityRepository.save(sede);
+        revolucionarioRepository.saveAll(revolucionarios);
+        return CONGRESS_CREATED;
+    }
+
+    @Override
     public String solveBattle(SolveBattleRequest request) {
 
         ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
@@ -625,7 +684,7 @@ public class ControlServiceImpl implements ControlService {
 
     private void collectTaxes(GameData gameData){
 
-        Set<PlayerData> players = gameData.getPlayers();
+        List<PlayerData> players = gameData.getPlayers();
         List<GobernadorData> gobernadores = players
                                             .stream()
                                             .filter(GobernadorData.class::isInstance)
@@ -636,19 +695,6 @@ public class ControlServiceImpl implements ControlService {
             gobernador.setPlata(gobernador.getPlata() + gobernador.getCity().getTaxesLevel());
         }
 
-    }
-    private void earnDiscipline(GameData gameData){
-
-        /*Set<PlayerData> players = gameData.getPlayers();
-        List<CapitanData> capitanes = players
-                                            .stream()
-                                            .filter(CapitanData.class::isInstance)
-                                            .map(CapitanData.class::cast)
-                                            .collect(Collectors.toList());
-
-        for(CapitanData capitan : capitanes){
-            capitan.setDisciplina(capitan.getDisciplina() + capitan.getCamp().getNivel());
-        }*/
     }
 
 

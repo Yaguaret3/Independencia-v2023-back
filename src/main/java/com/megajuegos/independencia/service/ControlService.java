@@ -55,5 +55,11 @@ public interface ControlService {
     String assignNewDiputadoToCity(Long cityId, Long diputadoId) throws InstanceNotFoundException;
 
     String addPlata(Long playerId, Integer plata);
+
+    String removeCongress(Long congresoId);
+
+    String updateCongress(Long congresoId, UpdateCongressRequest request);
+
+    String createNewCongress(CreateNewCongressRequest request);
 }
 

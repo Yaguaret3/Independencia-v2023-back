@@ -4,7 +4,7 @@ import com.megajuegos.independencia.entities.data.RevolucionarioData;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,12 +17,15 @@ public class Congreso{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToMany(mappedBy = "congreso")
-    private Set<RevolucionarioData> revolucionarioData;
+    private List<RevolucionarioData> revolucionarios;
     @OneToOne
     private RevolucionarioData presidente;
     @OneToMany
     @JoinColumn(name = "congreso")
-    private Set<Votation> votations;
+    private List<Votation> votations;
     private Integer plata;
     private Integer milicia;
+    @OneToOne
+    @JoinColumn
+    private City sede;
 }

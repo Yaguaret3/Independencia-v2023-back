@@ -29,4 +29,6 @@ public class City {
     private Set<Building> buildings;
     @OneToOne(mappedBy = "city")
     private GameSubRegion subRegion;
+    @OneToOne(mappedBy = "sede")
+    private Congreso sedeDelCongreso;
 }

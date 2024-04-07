@@ -1,11 +1,12 @@
 package com.megajuegos.independencia.entities.data;
 
+import com.megajuegos.independencia.entities.Congreso;
 import com.megajuegos.independencia.entities.GameRegion;
 import com.megajuegos.independencia.enums.PhaseEnum;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Builder
@@ -20,11 +21,15 @@ public class GameData {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gameData")
-    private Set<PlayerData> players;
+    private List<PlayerData> players;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gameData")
-    private Set<GameRegion> gameRegions;
+    private List<GameRegion> gameRegions;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn
+    private List<Congreso> congresos;
 
     private Integer turno;
 

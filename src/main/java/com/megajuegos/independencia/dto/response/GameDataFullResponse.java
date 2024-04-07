@@ -20,6 +20,7 @@ public class GameDataFullResponse {
     private Long nextEndOfTurn;
     private String fase;
     private List<BuildingResponse> edificios;
+    private List<CongresoResponse> congresos;
 
     public static GameDataFullResponse toFullResponse(GameData entity){
 
@@ -43,6 +44,9 @@ public class GameDataFullResponse {
                                 .buildingType(b.name())
                                 .bonification(b.getBonificacion())
                                 .build())
+                        .collect(Collectors.toList()))
+                .congresos(entity.getCongresos().stream()
+                        .map(CongresoResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .build();
     }
