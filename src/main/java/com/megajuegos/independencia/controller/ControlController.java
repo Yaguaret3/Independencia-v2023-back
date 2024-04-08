@@ -19,36 +19,35 @@ public class ControlController {
 
     // INIT AND TEST
 
-    @PostMapping("/create-give-resource-card")
-    public ResponseEntity<String> createAndGiveCard(@RequestParam Long playerDataId){
-        return ResponseEntity.ok(service.createAndGiveResourceCard(playerDataId));
+    @PostMapping("/{playerId}/create-give-resource-card")
+    public ResponseEntity<String> createAndGiveResourceCard(@PathVariable Long playerId, @RequestBody NewResourceCardRequest request){
+        return ResponseEntity.ok(service.createAndGiveResourceCard(playerId, request));
     }
-    @PostMapping("/create-give-representation-card")
-    public ResponseEntity<String> createAndGiveRepresentationCard(@RequestParam Long playerDataId) throws InstanceNotFoundException {
-        return ResponseEntity.ok(service.createAndGiveRepresentationCard(playerDataId));
+    @PostMapping("/{playerId}/create-give-representation-card")
+    public ResponseEntity<String> createAndGiveRepresentationCard(@PathVariable Long playerId, @RequestBody NewRepresentationCardRequest request) throws InstanceNotFoundException {
+        return ResponseEntity.ok(service.createAndGiveRepresentationCard(playerId, request));
     }
-    @PostMapping("/create-give-market-card")
-    public ResponseEntity<String> createAndGiveMarketCard(@RequestBody NewMarketCardRequest request){
-        return ResponseEntity.ok(service.createAndGiveMarketCard(request));
+    @PostMapping("/{playerId}/create-give-market-card")
+    public ResponseEntity<String> createAndGiveMarketCard(@PathVariable Long playerId, @RequestBody NewMarketCardRequest request){
+        return ResponseEntity.ok(service.createAndGiveMarketCard(playerId, request));
     }
-    @PostMapping("/create-give-extra-card")
-    public ResponseEntity<String> createAndGiveExtraCard(@RequestBody ExtraCardRequest request, @RequestParam Long playerDataId){
-       return ResponseEntity.ok(service.createAndGiveExtraCard(request, playerDataId));
+    @PostMapping("/{playerId}/create-give-extra-card")
+    public ResponseEntity<String> createAndGiveExtraCard(@PathVariable Long playerId, @RequestBody ExtraCardRequest request){
+       return ResponseEntity.ok(service.createAndGiveExtraCard(playerId, request));
     }
     @PostMapping("/create-assign-personal-prices")
     public ResponseEntity<String> createAndAssignPersonalPrice(@RequestParam Long playerDataId){
         return ResponseEntity.ok((service.createAndAssignPersonalPrice(playerDataId)));
     }
 
-    @PostMapping("/move-card")
-    public ResponseEntity<String> moveCard(@RequestParam(name = "from") Long from,
-                                           @RequestParam(name = "to") Long to,
-                                           @RequestParam(name = "carta") Long carta){
-        return ResponseEntity.ok(service.moveCard(from, to, carta));
+    @PostMapping("/{idCard}/move-card")
+    public ResponseEntity<String> moveCard(@RequestBody MoveCardRequest request,
+                                           @PathVariable Long idCard){
+        return ResponseEntity.ok(service.moveCard(request.getFromId(), request.getToId(), idCard));
     }
 
-    @PostMapping("/remove-card")
-    public ResponseEntity<String> removeCard(@RequestParam Long idCard){
+    @DeleteMapping("/{idCard}/remove-card")
+    public ResponseEntity<String> removeCard(@PathVariable Long idCard){
         return ResponseEntity.ok(service.removeCard(idCard));
     }
 

@@ -8,19 +8,19 @@ import java.util.Map;
 
 public interface ControlService {
 
-    String createAndGiveResourceCard(Long playerDataId);
+    String createAndGiveResourceCard(Long playerDataId, NewResourceCardRequest request);
     String moveCard(Long from, Long to, Long carta);
     String removeCard(Long idCard);
     GameDataFullResponse getFullData();
     String solveBattle(SolveBattleRequest request);
-    String createAndGiveRepresentationCard(Long playerDataId) throws InstanceNotFoundException;
-    String createAndGiveMarketCard(NewMarketCardRequest request);
+    String createAndGiveRepresentationCard(Long playerDataId, NewRepresentationCardRequest request) throws InstanceNotFoundException;
+    String createAndGiveMarketCard(Long playerId, NewMarketCardRequest request);
     String createAndAssignPersonalPrice(Long playerDataId);
     String assignCongressPresident(Long revolucionarioId);
 
     void concludePhase();
 
-    String createAndGiveExtraCard(ExtraCardRequest request, Long playerDataId);
+    String createAndGiveExtraCard(Long playerId, ExtraCardRequest request);
 
     String editCity(Map<String, Integer> request, Long id);
 

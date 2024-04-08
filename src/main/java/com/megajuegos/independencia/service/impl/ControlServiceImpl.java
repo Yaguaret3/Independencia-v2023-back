@@ -54,33 +54,33 @@ public class ControlServiceImpl implements ControlService {
     private static final int UN_SOLO_ATACANTE = 1;
 
     @Override
-    public String createAndGiveResourceCard(Long playerDataId) {
+    public String createAndGiveResourceCard(Long playerDataId, NewResourceCardRequest request) {
 
         PlayerData playerData = playerDataRepository.findById(playerDataId)
                 .orElseThrow(PlayerNotFoundException::new);
 
         playerData.getCards().add(ResourceCard.builder()
-                        .resourceTypeEnum(ResourceTypeEnum.METALMECANICA)
+                        .resourceTypeEnum(request.getResourceType())
                         .build());
         playerDataRepository.save(playerData);
         return CARD_CREATED_GIVEN;
     }
     @Override
-    public String createAndGiveRepresentationCard(Long playerDataId) throws InstanceNotFoundException {
-        GobernadorData gobernadorData = gobernadorRepository.findById(playerDataId)
+    public String createAndGiveRepresentationCard(Long playerId, NewRepresentationCardRequest request) throws InstanceNotFoundException {
+        PlayerData playerData = playerDataRepository.findById(playerId)
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
 
-        gobernadorData.getCards().add(RepresentationCard.builder()
-                        .representacion(RepresentationEnum.byNombre(gobernadorData.getCity().getName()))
+        playerData.getCards().add(RepresentationCard.builder()
+                        .representacion(RepresentationEnum.byNombre(request.getCityName()))
                         .build());
 
-        playerDataRepository.save(gobernadorData);
+        playerDataRepository.save(playerData);
         return CARD_CREATED_GIVEN;
     }
 
     @Override
-    public String createAndGiveMarketCard(NewMarketCardRequest request) {
-        PlayerData playerData = playerDataRepository.findById(request.getPlayerId())
+    public String createAndGiveMarketCard(Long playerId, NewMarketCardRequest request) {
+        PlayerData playerData = playerDataRepository.findById(playerId)
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
 
         playerData.getCards().add(MarketCard.builder()
@@ -94,9 +94,9 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
-    public String createAndGiveExtraCard(ExtraCardRequest request, Long playerDataId) {
+    public String createAndGiveExtraCard(Long playerId, ExtraCardRequest request) {
 
-        PlayerData playerData = playerDataRepository.findById(playerDataId)
+        PlayerData playerData = playerDataRepository.findById(playerId)
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
 
         playerData.getCards().add(ExtraCard.builder()
@@ -224,6 +224,7 @@ public class ControlServiceImpl implements ControlService {
         PlayerData playerData = card.getPlayerData();
         playerData.getCards().remove(card);
         playerDataRepository.save(playerData);
+        cardRepository.delete(card);
         return CARD_REMOVED;
     }
     @Override

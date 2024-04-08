@@ -141,8 +141,8 @@ public class SettingServiceImpl implements SettingService {
     ------------------------------ Métodos privados ---------------------------------
      */
 
-    private Set<GameRegion> createRegions(){
-        Set<GameRegion> gameRegions = new HashSet<>();
+    private List<GameRegion> createRegions(){
+        List<GameRegion> gameRegions = new ArrayList<>();
         Arrays.stream(RegionEnum.values()).forEach(r -> {
 
                     gameRegions.add(GameRegion.builder()
