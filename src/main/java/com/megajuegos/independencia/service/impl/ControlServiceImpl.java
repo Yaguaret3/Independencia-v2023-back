@@ -639,6 +639,7 @@ public class ControlServiceImpl implements ControlService {
             congreso.setPresidente(revolucionarioRepository.findById(request.getPresidente())
                     .orElseThrow(() -> new PlayerNotFoundException()));
         }
+        congresoRepository.save(congreso);
         return CONGRESS_UPDATED;
     }
 
