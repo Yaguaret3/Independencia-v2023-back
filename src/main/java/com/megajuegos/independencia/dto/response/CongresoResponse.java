@@ -36,8 +36,8 @@ public class CongresoResponse {
                         .stream()
                         .map(VotationResponse::toDtoResponse)
                         .collect(Collectors.toList()))
-                .presidente(entity.getPresidente().getUsername())
-                .presidenteId(entity.getPresidente().getId())
+                .presidente(entity.getPresidente() == null ? null : entity.getPresidente().getUsername())
+                .presidenteId(entity.getPresidente() == null ? null : entity.getPresidente().getId())
                 .sede(CityTinyResponse.toTinyResponse(entity.getSede()))
                 .build();
     }

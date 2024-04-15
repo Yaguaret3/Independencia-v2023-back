@@ -10,6 +10,7 @@ import com.megajuegos.independencia.entities.card.BattleCard;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.data.CapitanData;
 import com.megajuegos.independencia.entities.data.MercaderData;
+import com.megajuegos.independencia.entities.data.PlayerData;
 import com.megajuegos.independencia.enums.ActionTypeEnum;
 import com.megajuegos.independencia.enums.BattleTypeEnum;
 import com.megajuegos.independencia.enums.PersonalPricesEnum;
@@ -19,6 +20,7 @@ import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.CapitanDataRepository;
 import com.megajuegos.independencia.service.CapitanService;
 import com.megajuegos.independencia.service.PaymentService;
+import com.megajuegos.independencia.service.util.GameIdUtil;
 import com.megajuegos.independencia.service.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,17 +41,28 @@ public class CapitanServiceImpl implements CapitanService {
     private final CardRepository cardRepository;
     private final GameRegionRepository gameRegionRepository;
     private final ArmyRepository armyRepository;
+    private final GameIdUtil gameIdUtil;
 
     @Override
     public CapitanResponse getData() {
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
         return CapitanResponse.toDtoResponse(capitanData);
     }
 
     @Override
     public GameDataTinyCapitanResponse getGameData() {
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
         return GameDataTinyCapitanResponse.toDtoResponse(capitanData);
     }
@@ -57,7 +70,12 @@ public class CapitanServiceImpl implements CapitanService {
     @Override
     public void buyActionCards(BuyRequest request) throws InstanceNotFoundException {
 
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         if (!paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.fromId(request.getCardTypeId()))) throw new PaymentNotPossibleException();
@@ -72,7 +90,12 @@ public class CapitanServiceImpl implements CapitanService {
     @Override
     public void buyBattleCards(BuyRequest request) throws InstanceNotFoundException {
 
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         if (!paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.BATTLE_CARD)) throw new PaymentNotPossibleException();
@@ -87,7 +110,12 @@ public class CapitanServiceImpl implements CapitanService {
     @Override
     public void playActionRequest(ActionRequest request) {
 
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
         Integer turno = capitanData.getGameData().getTurno();
 
@@ -128,7 +156,12 @@ public class CapitanServiceImpl implements CapitanService {
     @Override
     public void rush(ActionRequest request) {
 
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
         Integer turno = capitanData.getGameData().getTurno();
 
@@ -145,7 +178,12 @@ public class CapitanServiceImpl implements CapitanService {
     @Override
     public void assignMilitiaToBattle(Long battleId, Integer milicia) {
 
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         Battle battle = battleRepository.findById(battleId).orElseThrow(() -> new BattleNotFoundException());
@@ -163,7 +201,12 @@ public class CapitanServiceImpl implements CapitanService {
     @Override
     public void playBattleCards(BattleRequest request) {
 
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
         Battle battle = battleRepository.findById(request.getBattleId())
                 .orElseThrow(BattleNotFoundException::new);
@@ -189,7 +232,12 @@ public class CapitanServiceImpl implements CapitanService {
     @Override
     public void move(MovementRequest request) {
 
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
         Integer turno = capitanData.getGameData().getTurno();
 
@@ -223,7 +271,12 @@ public class CapitanServiceImpl implements CapitanService {
 
     @Override
     public void makeCamp(CampRequest request) {
-        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        CapitanData capitanData = capitanDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
         Integer turno = capitanData.getGameData().getTurno();
 

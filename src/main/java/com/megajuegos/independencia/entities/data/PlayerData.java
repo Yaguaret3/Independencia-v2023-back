@@ -27,16 +27,13 @@ public abstract class PlayerData {
     private RoleEnum rol;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "gameData")
     private GameData gameData;
 
     private String username;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "playerData")
-    private Set<Card> cards;
+    private List<Card> cards;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "playerData")
     private List<PersonalPrice> prices;
 }

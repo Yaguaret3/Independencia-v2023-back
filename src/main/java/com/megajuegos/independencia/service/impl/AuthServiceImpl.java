@@ -65,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(request.getEmail())
                 .password(encodedPass)
                 .username(request.getUsername())
-                .roles(Stream.of(RoleEnum.USER).collect(Collectors.toSet()))
+                .roles(Stream.of(RoleEnum.USER).collect(Collectors.toList()))
                 .build();
 
         userRepository.save(user);

@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.entities;
 
+import com.megajuegos.independencia.entities.data.PlayerData;
 import com.megajuegos.independencia.enums.RoleEnum;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,9 +30,10 @@ public class UserIndependencia implements UserDetails {
     @Enumerated(EnumType.STRING)
     @JoinTable(name = "join_user_role")
     @ElementCollection(targetClass = RoleEnum.class, fetch = FetchType.EAGER)
-    private Set<RoleEnum> roles;
+    private List<RoleEnum> roles;
 
-    private Long playerDataId;
+    @OneToMany
+    private List<PlayerData> playerDataList;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

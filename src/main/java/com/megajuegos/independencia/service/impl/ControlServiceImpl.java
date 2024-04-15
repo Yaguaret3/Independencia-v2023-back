@@ -12,6 +12,7 @@ import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.*;
 import com.megajuegos.independencia.service.ControlService;
+import com.megajuegos.independencia.service.util.GameIdUtil;
 import com.megajuegos.independencia.service.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -47,6 +48,7 @@ public class ControlServiceImpl implements ControlService {
     private final VotationRepository votationRepository;
     private final ArmyRepository armyRepository;
     private final GameSubRegionRepository gameSubRegionRepository;
+    private final GameIdUtil gameIdUtil;
 
     private static final int DADO_CUATRO_MAX = 4;
     private static final int DADO_CUATRO_MIN = 1;
@@ -149,7 +151,12 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public void concludePhase() {
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
         GameData gameData = controlData.getGameData();
 
@@ -230,7 +237,12 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public GameDataFullResponse getFullData() {
 
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         return GameDataFullResponse.toFullResponse(controlData.getGameData());
@@ -340,7 +352,12 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String createBattle(CreateBattleRequest request) {
 
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
         GameData gameData = controlData.getGameData();
 
@@ -375,7 +392,12 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String asignRandomValuesBattle(Long battleId) {
 
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         //Busca batallas y toma ejércitos involucrados
@@ -411,7 +433,12 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String assignMilitia(Long armyId, Integer militia) {
 
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         Army army = armyRepository.findById(armyId).orElseThrow(() -> new ArmyNotFoundException());
@@ -422,7 +449,12 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String assignReserve(Long playerId, Integer militia) {
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         PlayerData playerData = playerDataRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException());
@@ -442,7 +474,12 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String deleteArmy(Long armyId) {
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         Army army = armyRepository.findById(armyId).orElseThrow(() -> new ArmyNotFoundException());
@@ -458,7 +495,12 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String createArmy(NewArmyRequest request) {
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         CapitanData capitanData = capitanRepository.findById(request.getCapitanId()).orElseThrow(() -> new PlayerNotFoundException());
@@ -480,7 +522,12 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String moveCamp(MoveCampRequest request) {
 
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         CapitanData capitanData = capitanRepository.findById(request.getCapitanId()).orElseThrow(() -> new PlayerNotFoundException());
@@ -495,7 +542,12 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String assignNewDiputadoToCity(Long cityId, Long diputadoId) throws InstanceNotFoundException {
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException());
@@ -531,7 +583,12 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String addPlata(Long playerId, Integer plata) {
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         PlayerData playerData = playerDataRepository.findById(playerId)
@@ -608,13 +665,23 @@ public class ControlServiceImpl implements ControlService {
         congresoRepository.save(congreso);
         cityRepository.save(sede);
         revolucionarioRepository.saveAll(revolucionarios);
+
+        GameData gameData = gameDataRepository.findFirstByOrderById()
+                .orElseThrow(() -> new GameDataNotFoundException());
+        gameData.getCongresos().add(congreso);
+        gameDataRepository.save(gameData);
         return CONGRESS_CREATED;
     }
 
     @Override
     public String solveBattle(SolveBattleRequest request) {
 
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataId())
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         Battle battle = battleRepository.findById(request.getBattleId()).orElseThrow(BattleNotFoundException::new);
