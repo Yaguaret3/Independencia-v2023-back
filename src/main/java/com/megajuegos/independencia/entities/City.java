@@ -4,7 +4,7 @@ import com.megajuegos.independencia.entities.data.GobernadorData;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder
 public class City {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
     private String name;
     private Integer marketLevel;
@@ -24,9 +24,8 @@ public class City {
     private String diputado;
     @OneToOne(mappedBy = "city")
     private GobernadorData gobernadorData;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "city")
-    private Set<Building> buildings;
+    @OneToMany(mappedBy = "city")
+    private List<Building> buildings;
     @OneToOne(mappedBy = "city")
     private GameSubRegion subRegion;
     @OneToOne(mappedBy = "sede")

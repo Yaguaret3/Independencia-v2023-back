@@ -14,9 +14,11 @@ import javax.persistence.*;
 @Builder
 public class PersonalPrice {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
     private PersonalPricesEnum name;
+    @ManyToOne
+    private PlayerData playerData; // owning side
     private Integer plata;
     private Integer textil;
     private Integer agropecuaria;

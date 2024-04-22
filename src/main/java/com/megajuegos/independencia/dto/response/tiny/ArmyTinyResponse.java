@@ -21,7 +21,7 @@ public class ArmyTinyResponse {
         return ArmyTinyResponse.builder()
                 .armyId(entity.getId())
                 .capitanId(entity.getCapitanData().getId())
-                .gameAreaId(entity.getGameSubRegion().getId())
+                .gameAreaId(entity.getSubregion().getId())
                 .build();
     }
 }

@@ -13,16 +13,13 @@ import javax.persistence.*;
 @Builder
 public class Camp {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
-    private Integer nivel=0;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gameRegion")
-    private GameRegion gameRegion;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gameSubRegion")
-    private GameSubRegion gameSubRegion;
-
+    private Integer nivel;
+    @ManyToOne
+    private GameRegion gameRegion; //owning side
+    @ManyToOne
+    private GameSubRegion subregion; //owning side
 
     @OneToOne(mappedBy = "camp")
     private CapitanData capitanData;

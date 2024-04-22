@@ -20,6 +20,7 @@ import com.megajuegos.independencia.service.util.GameIdUtil;
 import com.megajuegos.independencia.service.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +30,7 @@ import static com.megajuegos.independencia.util.Messages.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RevolucionarioServiceImpl implements RevolucionarioService {
 
     private final VoteRepository voteRepository;
@@ -125,7 +127,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
 
         Congreso congreso = revolucionarioData.getCongreso();
 
-        validatePresidente(congreso, revolucionarioData);
+        validatePresidente(revolucionarioData);
         validateNoActiveVotations(congreso);
 
         Votation newVotation = Votation.builder()
@@ -156,7 +158,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
 
         Congreso congreso = revolucionarioData.getCongreso();
 
-        validatePresidente(congreso, revolucionarioData);
+        validatePresidente(revolucionarioData);
         Votation votation = validateActiveVotation(congreso);
 
         votation.setActive(false);
@@ -169,8 +171,8 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
                     Métodos privados
      ---------------------------------------------------------------------------*/
 
-    private void validatePresidente(Congreso congreso, RevolucionarioData revolucionarioData){
-        if(congreso.getPresidente() != revolucionarioData){
+    private void validatePresidente(RevolucionarioData revolucionarioData){
+        if(!revolucionarioData.isPresidente()){
             throw new NotCongressPresidentException();
         }
     }

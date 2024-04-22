@@ -13,12 +13,14 @@ import com.megajuegos.independencia.service.PaymentService;
 import com.megajuegos.independencia.service.util.PaymentRequestUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PaymentServiceImpl implements PaymentService {
 
     private final CardRepository cardRepository;

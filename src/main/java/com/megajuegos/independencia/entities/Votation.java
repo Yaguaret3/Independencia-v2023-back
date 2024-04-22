@@ -13,15 +13,13 @@ import java.util.List;
 @AllArgsConstructor
 public class Votation {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
     private String propuesta;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
+    @OneToMany(mappedBy = "votation")
     private List<Vote> votes;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
-    private Congreso congreso;
+    @ManyToOne
+    private Congreso congreso; // owning side
     private Integer turnoDeJuego;
     private Boolean active;
 }

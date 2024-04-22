@@ -24,7 +24,7 @@ public class BattleTinyResponse {
                 .combatientes(entity.getCombatientes().stream()
                         .map(ArmyTinyResponse::toTinyResponse)
                         .collect(Collectors.toList()))
-                .gameAreaId(entity.getGameSubRegion().getId())
+                .gameAreaId(entity.getSubregion().getId())
                 .turn(entity.getTurnoDeJuego())
                 .active(entity.getActive())
                 .build();

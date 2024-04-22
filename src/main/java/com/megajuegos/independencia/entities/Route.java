@@ -15,10 +15,10 @@ import java.util.List;
 @NoArgsConstructor
 public class Route {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
     @ManyToMany
-    private List<GameSubRegion> subregions;
+    private List<GameSubRegion> subregions; // owning side
     private Long tradeScore;
     private Integer turn;
     private String comentario;

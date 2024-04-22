@@ -17,7 +17,7 @@ import java.util.List;
 public class RepresentationCard extends Card {
 
     private RepresentationEnum representacion;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable
-    private List<Vote> votes;
+
+    @ManyToMany
+    private List<Vote> votes; // owning side
 }

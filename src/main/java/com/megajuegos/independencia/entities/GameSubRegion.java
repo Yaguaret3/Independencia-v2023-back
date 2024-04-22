@@ -16,27 +16,26 @@ import java.util.Set;
 @AllArgsConstructor
 public class GameSubRegion {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
     @OneToOne
-    private City city;
+    private City city;                      // owning side
     private SubRegionEnum subRegionEnum;
-    @ManyToMany
-    @NotNull
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<GameSubRegion> adjacent;
+    @ManyToOne
+    private GameRegion gameRegion;          // owning side
     private String nombre;
-    @Column(columnDefinition = "TEXT")
     private String area;
     private String color;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gameSubRegion")
+    @OneToMany(mappedBy = "subregion")
     private List<Army> ejercitos;
-    @OneToMany(mappedBy = "gameSubRegion")
+    @OneToMany(mappedBy = "subregion")
     private List<Camp> campamentos;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gameSubRegion")
+    @OneToMany(mappedBy = "subregion")
     private List<Battle> batallas;
-    @OneToMany
-    @JoinColumn
+    @OneToMany(mappedBy = "subregion")
     private List<Action> attackActions;
+    @ManyToMany(mappedBy = "subregions")
+    private List<Route> rutas;
 }

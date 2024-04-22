@@ -19,7 +19,7 @@ public class VoteResponse {
     public static VoteResponse toDtoResponse(Vote entity){
         return VoteResponse.builder()
                 .id(entity.getId())
-                .revolucionarioName(entity.getRevolucionarioData().getUsername())
+                .revolucionarioName(entity.getRevolucionarioData().getUser().getUsername())
                 .voteType(entity.getVoteType().getLabel())
                 .representacionResponse(entity.getRepresentacion()
                                 .stream()

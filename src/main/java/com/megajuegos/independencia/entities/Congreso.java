@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.entities;
 
+import com.megajuegos.independencia.entities.data.GameData;
 import com.megajuegos.independencia.entities.data.RevolucionarioData;
 import lombok.*;
 
@@ -14,18 +15,16 @@ import java.util.List;
 @Builder
 public class Congreso{
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
+    @ManyToOne
+    private GameData gameData;      // owning side
     @OneToMany(mappedBy = "congreso")
     private List<RevolucionarioData> revolucionarios;
-    @OneToOne
-    private RevolucionarioData presidente;
-    @OneToMany
-    @JoinColumn(name = "congreso")
+    @OneToMany(mappedBy = "congreso")
     private List<Votation> votations;
     private Integer plata;
     private Integer milicia;
     @OneToOne
-    @JoinColumn
-    private City sede;
+    private City sede; // owning side
 }

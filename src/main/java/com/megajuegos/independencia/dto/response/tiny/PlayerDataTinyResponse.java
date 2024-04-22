@@ -22,7 +22,7 @@ public class PlayerDataTinyResponse {
 
         return PlayerDataTinyResponse.builder()
                 .playerId(entity.getId())
-                .playerName(entity.getUsername())
+                .playerName(entity.getUser().getUsername())
                 .gameId(entity.getGameData().getId())
                 .cards(entity.getCards().size())
                 .rol(entity.getRol().name())

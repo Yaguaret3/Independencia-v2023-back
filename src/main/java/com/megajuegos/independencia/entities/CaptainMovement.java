@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Entity @Getter @Setter
 public class CaptainMovement {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
 
     private Long captainId;

@@ -13,10 +13,9 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Building {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
     private BuildingTypeEnum buildingType;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "city")
-    private City city;
+    @ManyToOne
+    private City city; //owning side
 }

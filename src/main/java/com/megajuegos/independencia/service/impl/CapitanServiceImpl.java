@@ -24,6 +24,7 @@ import com.megajuegos.independencia.service.util.GameIdUtil;
 import com.megajuegos.independencia.service.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.InstanceNotFoundException;
 import java.util.Arrays;
@@ -31,6 +32,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CapitanServiceImpl implements CapitanService {
 
     private final GameSubRegionRepository gameSubRegionRepository;
@@ -301,7 +303,7 @@ public class CapitanServiceImpl implements CapitanService {
         GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getNewAreaId())
                 .orElseThrow(() -> new GameAreaNotFoundException());
 
-        capitanData.getCamp().setGameSubRegion(gameSubRegion);
+        capitanData.getCamp().setSubregion(gameSubRegion);
 
         actionCard.setTurnWhenPlayed(turno);
         actionCard.setAlreadyPlayed(true);
@@ -314,7 +316,7 @@ public class CapitanServiceImpl implements CapitanService {
                 .orElseThrow(() -> new SubRegionNotFoundException());
         gameSubRegionDeploy.getEjercitos().add(Army.builder()
                 .capitanData(capitanData)
-                .gameSubRegion(gameSubRegionDeploy)
+                .subregion(gameSubRegionDeploy)
                 .build());
         gameSubRegionRepository.save(gameSubRegionDeploy);
     }

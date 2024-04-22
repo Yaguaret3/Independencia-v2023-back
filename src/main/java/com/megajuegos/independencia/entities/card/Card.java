@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.entities.card;
 
+import com.megajuegos.independencia.entities.data.GameData;
 import com.megajuegos.independencia.entities.data.PlayerData;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -15,14 +16,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public abstract class Card {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "playerData")
-    private PlayerData playerData;
-
-    @NotNull
+    @ManyToOne
+    private PlayerData playerData; // owning side
     private boolean alreadyPlayed = Boolean.FALSE;
-    @NotNull
     private Integer turnWhenPlayed;
 }

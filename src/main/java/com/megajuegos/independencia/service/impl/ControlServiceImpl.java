@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
 import javax.management.InstanceNotFoundException;
@@ -29,6 +30,7 @@ import static com.megajuegos.independencia.util.Messages.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ControlServiceImpl implements ControlService {
 
     private final GameDataRepository gameDataRepository;
@@ -142,9 +144,16 @@ public class ControlServiceImpl implements ControlService {
         revolucionario = (RevolucionarioData) optional.get();
 
         Congreso congreso = revolucionario.getCongreso();
-        congreso.setPresidente(revolucionario);
 
-        congresoRepository.save(congreso);
+        congreso.getRevolucionarios().forEach(r -> {
+            if(r.equals(revolucionario)){
+                r.setPresidente(true);
+            } else {
+                r.setPresidente(false);
+            }
+        });
+
+        revolucionarioRepository.saveAll(congreso.getRevolucionarios());
 
         return CONGRESS_PRESIDENT_ASSIGNED;
     }
@@ -383,7 +392,7 @@ public class ControlServiceImpl implements ControlService {
         battleRepository.save(Battle.builder()
                         .active(true)
                         .turnoDeJuego(gameData.getTurno())
-                        .gameSubRegion(gameSubRegionInvolucrada)
+                        .subregion(gameSubRegionInvolucrada)
                         .combatientes(ejercitosInvolucrados)
                 .build());
         return BATTLE_CREATED;
@@ -508,7 +517,7 @@ public class ControlServiceImpl implements ControlService {
         GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getGameSubRegionId()).orElseThrow(() -> new GameAreaNotFoundException());
 
         Army army = Army.builder()
-                .gameSubRegion(gameSubRegion)
+                .subregion(gameSubRegion)
                 .capitanData(capitanData)
                 .milicias(request.getMilicias())
                 .build();
@@ -533,8 +542,14 @@ public class ControlServiceImpl implements ControlService {
         CapitanData capitanData = capitanRepository.findById(request.getCapitanId()).orElseThrow(() -> new PlayerNotFoundException());
         GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getGameSubregionId()).orElseThrow(() -> new GameAreaNotFoundException());
 
-        Camp camp = capitanData.getCamp();
-        camp.setGameSubRegion(gameSubRegion);
+        Camp camp = capitanData.getCamp() == null ? Camp.builder()
+                                                    .nivel(1)
+                                                    .capitanData(capitanData)
+                                                    .build()
+                : capitanData.getCamp();
+
+        camp.setSubregion(gameSubRegion);
+        camp.setGameRegion(gameSubRegion.getGameRegion());
 
         capitanRepository.save(capitanData);
         return CAMP_MOVED;
@@ -572,7 +587,7 @@ public class ControlServiceImpl implements ControlService {
         actualPlayer.getCards().remove(representationCard);
         revolucionarioData.getCards().add(representationCard);
 
-        city.setDiputado(revolucionarioData.getUsername());
+        city.setDiputado(revolucionarioData.getUser().getUsername());
 
         cityRepository.save(city);
         playerDataRepository.save(actualPlayer);
@@ -635,11 +650,16 @@ public class ControlServiceImpl implements ControlService {
         if(request.getPlata() != null){
             congreso.setPlata(request.getPlata());
         }
-        if(request.getPresidente() != null){
-            congreso.setPresidente(revolucionarioRepository.findById(request.getPresidente())
-                    .orElseThrow(() -> new PlayerNotFoundException()));
-        }
         congresoRepository.save(congreso);
+        congreso.getRevolucionarios().forEach(r -> {
+            if(r.getId().equals(request.getPresidente())){
+                r.setPresidente(true);
+            } else {
+                r.setPresidente(false);
+            }
+        });
+        revolucionarioRepository.saveAll(congreso.getRevolucionarios());
+
         return CONGRESS_UPDATED;
     }
 
@@ -648,13 +668,10 @@ public class ControlServiceImpl implements ControlService {
 
         City sede = cityRepository.findById(request.getSedeId())
                 .orElseThrow(() -> new CityNotFoundException());
-        RevolucionarioData presidente = revolucionarioRepository.findById(request.getPresidenteId())
-                .orElseThrow(() -> new PlayerNotFoundException());
         List<RevolucionarioData> revolucionarios = revolucionarioRepository.findAllById(request.getDiputadosIds());
 
         Congreso congreso = Congreso.builder()
                                     .sede(sede)
-                                    .presidente(presidente)
                                     .revolucionarios(revolucionarios)
                                     .plata(request.getPlata())
                                     .milicia(request.getMilicia())
@@ -665,6 +682,15 @@ public class ControlServiceImpl implements ControlService {
 
         congresoRepository.save(congreso);
         cityRepository.save(sede);
+
+        congresoRepository.save(congreso);
+        congreso.getRevolucionarios().forEach(r -> {
+            if(r.getId().equals(request.getPresidenteId())){
+                r.setPresidente(true);
+            } else {
+                r.setPresidente(false);
+            }
+        });
         revolucionarioRepository.saveAll(revolucionarios);
 
         GameData gameData = gameDataRepository.findFirstByOrderById()
@@ -686,7 +712,7 @@ public class ControlServiceImpl implements ControlService {
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         Battle battle = battleRepository.findById(request.getBattleId()).orElseThrow(BattleNotFoundException::new);
-        GameSubRegion gameSubRegion = battle.getGameSubRegion();
+        GameSubRegion gameSubRegion = battle.getSubregion();
 
         List<Army> ejercitos = battle.getCombatientes();
         ejercitos.forEach(army -> {

@@ -4,9 +4,7 @@ import com.megajuegos.independencia.entities.data.CapitanData;
 import com.megajuegos.independencia.enums.ActionTypeEnum;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -16,10 +14,15 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 public class Action {
 
-    @Id
+    @Id @GeneratedValue
     private Long id;
     @ManyToOne
-    private CapitanData capitanId;
+    private CapitanData capitanId; //owning side
     private ActionTypeEnum actionType;
     private boolean solved;
+
+    @ManyToOne
+    private GameRegion gameRegion; //owning side
+    @ManyToOne
+    private GameSubRegion subregion; //owning side
 }

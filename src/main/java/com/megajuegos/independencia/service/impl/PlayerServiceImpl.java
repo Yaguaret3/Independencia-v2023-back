@@ -17,13 +17,14 @@ import static com.megajuegos.independencia.util.Messages.CARD_GIVEN;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PlayerServiceImpl implements PlayerService {
 
     private final PlayerDataRepository repository;
     private final UserUtil userUtil;
     private final GameIdUtil gameIdUtil;
 
-    @Override @Transactional
+    @Override
     public String giveCard(Long jugador, Long cardId) {
         PlayerData myPlayerData = repository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
                         .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))

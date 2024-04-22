@@ -16,19 +16,16 @@ import java.util.List;
 @AllArgsConstructor
 public class GameData {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gameData")
+    @OneToMany(mappedBy = "gameData")
     private List<PlayerData> players;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gameData")
+    @OneToMany(mappedBy = "gameData")
     private List<GameRegion> gameRegions;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
+    @OneToMany(mappedBy = "gameData")
     private List<Congreso> congresos;
 
     private Integer turno;

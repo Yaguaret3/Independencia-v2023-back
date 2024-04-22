@@ -15,8 +15,7 @@ import javax.persistence.*;
 public class GobernadorData extends PlayerData {
 
     @OneToOne
-    @JoinColumn
-    private City city;
+    private City city; // owning side
     private Integer plata;
     private Integer milicia;
 }

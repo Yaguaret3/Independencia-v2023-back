@@ -3,6 +3,7 @@ package com.megajuegos.independencia.dto.response;
 import com.megajuegos.independencia.dto.response.tiny.CityTinyResponse;
 import com.megajuegos.independencia.dto.response.tiny.PlayerDataTinyResponse;
 import com.megajuegos.independencia.entities.Congreso;
+import com.megajuegos.independencia.entities.UserIndependencia;
 import com.megajuegos.independencia.entities.data.RevolucionarioData;
 import lombok.Builder;
 import lombok.Data;
@@ -36,8 +37,17 @@ public class CongresoResponse {
                         .stream()
                         .map(VotationResponse::toDtoResponse)
                         .collect(Collectors.toList()))
-                .presidente(entity.getPresidente() == null ? null : entity.getPresidente().getUsername())
-                .presidenteId(entity.getPresidente() == null ? null : entity.getPresidente().getId())
+                .presidente(entity.getRevolucionarios().stream()
+                        .filter(RevolucionarioData::isPresidente)
+                        .findFirst()
+                        .map(RevolucionarioData::getUser)
+                        .map(UserIndependencia::getUsername)
+                        .orElse(null))
+                .presidenteId(entity.getRevolucionarios().stream()
+                        .filter(RevolucionarioData::isPresidente)
+                        .findFirst()
+                        .map(RevolucionarioData::getId)
+                        .orElse(null))
                 .sede(CityTinyResponse.toTinyResponse(entity.getSede()))
                 .build();
     }

@@ -16,11 +16,13 @@ import java.util.List;
 @Builder
 public class Vote {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
     @ManyToOne
-    private RevolucionarioData revolucionarioData;
+    private RevolucionarioData revolucionarioData; // owning side
     private VoteTypeEnum voteType;
-    @ManyToMany
+    @ManyToMany(mappedBy = "votes")
     private List<RepresentationCard> representacion;
+    @ManyToOne
+    private Votation votation; // owning side
 }

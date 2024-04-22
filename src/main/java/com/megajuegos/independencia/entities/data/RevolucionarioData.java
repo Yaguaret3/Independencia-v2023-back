@@ -16,11 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 public class RevolucionarioData extends PlayerData {
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "revolucionarioData")
+    @OneToMany(mappedBy = "revolucionarioData")
     private List<Vote> votos;
     private Integer plata;
     @ManyToOne
-    @JoinColumn(name = "congreso")
-    private Congreso congreso;
+    private Congreso congreso; // owning side
+
+    private boolean presidente;
 }

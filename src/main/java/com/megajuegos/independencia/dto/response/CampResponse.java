@@ -17,7 +17,7 @@ public class CampResponse {
                 .id(entity.getId())
                 .capitanId(entity.getCapitanData().getId())
                 .nivel(entity.getNivel())
-                .areaDeJuegoId(entity.getGameSubRegion().getId())
+                .areaDeJuegoId(entity.getSubregion().getId())
                 .build();
     }
 }

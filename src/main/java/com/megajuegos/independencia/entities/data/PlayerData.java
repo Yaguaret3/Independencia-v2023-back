@@ -1,6 +1,7 @@
 package com.megajuegos.independencia.entities.data;
 
 import com.megajuegos.independencia.entities.PersonalPrice;
+import com.megajuegos.independencia.entities.UserIndependencia;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.enums.RoleEnum;
 import lombok.AllArgsConstructor;
@@ -21,19 +22,20 @@ import java.util.Set;
 @SuperBuilder
 public abstract class PlayerData {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
 
     private RoleEnum rol;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private GameData gameData;
+    @ManyToOne
+    private GameData gameData; // owning side
 
-    private String username;
+    @ManyToOne
+    private UserIndependencia user; // owning side
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "playerData")
     private List<Card> cards;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "playerData")
     private List<PersonalPrice> prices;
 }

@@ -21,18 +21,17 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class UserIndependencia implements UserDetails {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
-    private String username="";
-    private String password="";
-    private String email="";
+    private String username;
+    private String password;
+    private String email;
 
     @Enumerated(EnumType.STRING)
     @JoinTable(name = "join_user_role")
     @ElementCollection(targetClass = RoleEnum.class, fetch = FetchType.EAGER)
     private List<RoleEnum> roles;
-
-    @OneToMany
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<PlayerData> playerDataList;
 
     @Override

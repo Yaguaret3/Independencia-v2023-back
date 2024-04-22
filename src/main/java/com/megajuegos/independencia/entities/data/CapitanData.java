@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.entities.data;
 
+import com.megajuegos.independencia.entities.Action;
 import com.megajuegos.independencia.entities.Army;
 import com.megajuegos.independencia.entities.Camp;
 import lombok.AllArgsConstructor;
@@ -20,8 +21,12 @@ import java.util.List;
 public class CapitanData extends PlayerData {
 
     private Integer reserva;
-    @OneToMany
+
+    @OneToMany(mappedBy = "capitanData")
     private List<Army> ejercito;
+    @OneToMany(mappedBy = "capitanId")
+    private List<Action> acciones;
+
     @OneToOne
-    private Camp camp;
+    private Camp camp; //owning side
 }

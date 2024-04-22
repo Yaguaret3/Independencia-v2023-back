@@ -5,7 +5,10 @@ import com.megajuegos.independencia.entities.*;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.card.MarketCard;
 import com.megajuegos.independencia.entities.card.RepresentationCard;
-import com.megajuegos.independencia.entities.data.*;
+import com.megajuegos.independencia.entities.data.GameData;
+import com.megajuegos.independencia.entities.data.GobernadorData;
+import com.megajuegos.independencia.entities.data.PlayerData;
+import com.megajuegos.independencia.entities.data.RevolucionarioData;
 import com.megajuegos.independencia.enums.*;
 import com.megajuegos.independencia.exceptions.CityNotFoundException;
 import com.megajuegos.independencia.exceptions.GameDataNotFoundException;
@@ -15,7 +18,6 @@ import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
 import com.megajuegos.independencia.service.SettingService;
-import com.megajuegos.independencia.service.util.GameIdUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import static com.megajuegos.independencia.util.Messages.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SettingServiceImpl implements SettingService {
 
     private final UserIndependenciaRepository userRepository;
@@ -40,7 +43,6 @@ public class SettingServiceImpl implements SettingService {
     private final GameSubRegionRepository gameSubregionRepository;
 
     @Override
-    @Transactional
     public String createGame() {
 
         List<GameRegion> regions = createRegions();
@@ -93,7 +95,7 @@ public class SettingServiceImpl implements SettingService {
 
         user.getRoles().add(request.getRole());
         PlayerData playerData = request.getRole().createPlayerData();
-        playerData.setUsername(user.getUsername());
+        playerData.setUser(user);
         playerData.setRol(request.getRole());
 
         setRevolucionarioData(playerData);
@@ -203,7 +205,7 @@ public class SettingServiceImpl implements SettingService {
     private City createCityFromCityEnum(CiudadInitEnum cityEnum) {
         return City.builder()
                 .name(cityEnum.getNombre())
-                .buildings(new HashSet<>(cityEnum.getEdificios()))
+                .buildings(cityEnum.getEdificios())
                 .diputado("")
                 .taxesLevel(cityEnum.getNivelImpositivo())
                 .marketLevel(cityEnum.getNivelMercado())

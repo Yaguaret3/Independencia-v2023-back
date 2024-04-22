@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.entities.card;
 
+import com.megajuegos.independencia.entities.Army;
 import com.megajuegos.independencia.entities.Battle;
 import com.megajuegos.independencia.enums.BattleTypeEnum;
 import lombok.*;
@@ -16,4 +17,6 @@ import javax.persistence.*;
 public class BattleCard extends Card {
 
     private BattleTypeEnum tipoOrdenDeBatalla;
+    @ManyToOne
+    private Army army; // owning side
 }

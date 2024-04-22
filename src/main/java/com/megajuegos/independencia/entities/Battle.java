@@ -13,15 +13,12 @@ import java.util.List;
 @Builder
 public class Battle {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
-
-    @ManyToMany
+    @OneToMany(mappedBy = "battle")
     private List<Army> combatientes;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
-    private GameSubRegion gameSubRegion;
+    @ManyToOne
+    private GameSubRegion subregion; //owning side
     private Integer turnoDeJuego;
     private Boolean active;
 }

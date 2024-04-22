@@ -15,19 +15,22 @@ import java.util.List;
 @Builder
 public class Army {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
     @ManyToOne
-    private CapitanData capitanData;
+    private CapitanData capitanData; // owning side
     @ManyToOne
-    private GameSubRegion gameSubRegion;
+    private GameSubRegion subregion; // owning side
+    @ManyToOne
+    private Battle battle;          // owning side
 
-    @OneToMany
+    @OneToMany(mappedBy = "army")
     private List<BattleCard> cartasJugadas;
     private Integer milicias;
     private boolean ataque;
     private Integer valorAzar;
     private Integer valorProvisorio;
+
     @Transient
     private int iniciativa;
 }

@@ -8,7 +8,6 @@ import com.megajuegos.independencia.entities.City;
 import com.megajuegos.independencia.entities.GameRegion;
 import com.megajuegos.independencia.entities.PersonalPrice;
 import com.megajuegos.independencia.entities.card.Card;
-import com.megajuegos.independencia.entities.card.MarketCard;
 import com.megajuegos.independencia.entities.data.CapitanData;
 import com.megajuegos.independencia.entities.data.GobernadorData;
 import com.megajuegos.independencia.entities.data.PlayerData;
@@ -18,7 +17,6 @@ import com.megajuegos.independencia.enums.RegionEnum;
 import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.CityRepository;
 import com.megajuegos.independencia.repository.GameRegionRepository;
-import com.megajuegos.independencia.repository.UserIndependenciaRepository;
 import com.megajuegos.independencia.repository.data.CapitanDataRepository;
 import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
@@ -34,12 +32,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.InstanceNotFoundException;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.megajuegos.independencia.util.Messages.USER_NOT_FOUND_BY_ID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GobernadorServiceImpl implements GobernadorService {
 
     private final GameRegionRepository gameRegionRepository;
@@ -82,7 +80,6 @@ public class GobernadorServiceImpl implements GobernadorService {
     }
 
     @Override
-    @Transactional
     public void sellMarketPlace(MarketPlaceSellRequest request) {
 
         GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
@@ -207,10 +204,9 @@ public class GobernadorServiceImpl implements GobernadorService {
 
         they.getCards().add(card);
         gobernadorData.getCards().remove(card);
-        gobernadorData.getCity().setDiputado(they.getUsername());
 
         City city = gobernadorData.getCity();
-        city.setDiputado(they.getUsername());
+        city.setDiputado(they.getUser().getUsername());
 
         cityRepository.save(city);
         gobernadorRepository.save(gobernadorData);
