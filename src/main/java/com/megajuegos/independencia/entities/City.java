@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 public class City {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private Integer marketLevel;

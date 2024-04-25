@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 public class Army {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     private CapitanData capitanData; // owning side

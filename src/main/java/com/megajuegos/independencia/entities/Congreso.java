@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 public class Congreso{
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     private GameData gameData;      // owning side

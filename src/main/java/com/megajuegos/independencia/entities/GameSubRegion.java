@@ -16,7 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class GameSubRegion {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne
     private City city;                      // owning side

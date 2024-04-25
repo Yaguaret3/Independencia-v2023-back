@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Building {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private BuildingTypeEnum buildingType;
     @ManyToOne

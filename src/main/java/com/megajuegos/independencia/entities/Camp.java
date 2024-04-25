@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Builder
 public class Camp {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer nivel;
     @ManyToOne

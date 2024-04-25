@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Builder
 public class PersonalPrice {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private PersonalPricesEnum name;
     @ManyToOne

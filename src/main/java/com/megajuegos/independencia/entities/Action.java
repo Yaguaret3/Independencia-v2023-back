@@ -14,10 +14,11 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Action {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     private CapitanData capitanId; //owning side
+    @Enumerated(EnumType.STRING)
     private ActionTypeEnum actionType;
     private boolean solved;
 

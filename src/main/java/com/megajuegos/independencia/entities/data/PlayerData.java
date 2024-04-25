@@ -22,9 +22,10 @@ import java.util.Set;
 @SuperBuilder
 public abstract class PlayerData {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private RoleEnum rol;
 
     @ManyToOne

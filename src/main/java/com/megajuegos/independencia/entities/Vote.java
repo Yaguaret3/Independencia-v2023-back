@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 public class Vote {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     private RevolucionarioData revolucionarioData; // owning side

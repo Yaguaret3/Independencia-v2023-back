@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Votation {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String propuesta;
     @OneToMany(mappedBy = "votation")

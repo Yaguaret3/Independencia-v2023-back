@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GameData {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(mappedBy = "gameData")

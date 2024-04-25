@@ -399,7 +399,7 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
-    public String asignRandomValuesBattle(Long battleId) {
+    public String assignRandomValuesBattle(Long battleId) {
 
         ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
                         .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))

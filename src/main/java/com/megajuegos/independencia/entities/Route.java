@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Route {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToMany
     private List<GameSubRegion> subregions; // owning side

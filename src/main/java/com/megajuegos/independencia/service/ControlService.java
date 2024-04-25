@@ -40,7 +40,7 @@ public interface ControlService {
 
     String createBattle(CreateBattleRequest request);
 
-    String asignRandomValuesBattle(Long battleId);
+    String assignRandomValuesBattle(Long battleId);
 
     String assignMilitia(Long armyId, Integer militia);
 

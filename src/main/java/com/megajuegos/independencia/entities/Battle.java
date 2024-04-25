@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class Battle {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToMany(mappedBy = "battle")
     private List<Army> combatientes;

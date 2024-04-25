@@ -72,7 +72,7 @@ public class ControlController {
         return ResponseEntity.ok(service.addBuilding(cityId, request));
     }
     @PostMapping("/{playerId}/update-plata")
-    public ResponseEntity<String> addBuilding(@PathVariable Long playerId, @RequestBody SoleValueRequest plata){
+    public ResponseEntity<String> addPlata(@PathVariable Long playerId, @RequestBody SoleValueRequest plata){
         return ResponseEntity.ok(service.addPlata(playerId, plata.getNewValue()));
     }
     @PostMapping("/{routeId}/assignFinalValue")
@@ -102,9 +102,9 @@ public class ControlController {
     public ResponseEntity<String> createBattle(@RequestBody CreateBattleRequest request){
         return ResponseEntity.ok(service.createBattle(request));
     }
-    @PostMapping("/{battleId}/asign-random-values-battle")
-    public ResponseEntity<String> asignRandomValuesBattle(@PathVariable Long battleId){
-        return ResponseEntity.ok(service.asignRandomValuesBattle(battleId));
+    @PostMapping("/{battleId}/assign-random-values-battle")
+    public ResponseEntity<String> assignRandomValuesBattle(@PathVariable Long battleId){
+        return ResponseEntity.ok(service.assignRandomValuesBattle(battleId));
     }
 
     @PostMapping("/solve-battle")

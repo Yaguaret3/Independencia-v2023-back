@@ -16,7 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class GameRegion {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
