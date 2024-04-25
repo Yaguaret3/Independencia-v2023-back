@@ -26,6 +26,7 @@ public class GameSubRegion {
     @ManyToOne
     private GameRegion gameRegion;          // owning side
     private String nombre;
+    @Column(columnDefinition = "TEXT")
     private String area;
     private String color;
     @OneToMany(mappedBy = "subregion")

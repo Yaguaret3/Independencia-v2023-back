@@ -10,10 +10,7 @@ import com.megajuegos.independencia.entities.data.GobernadorData;
 import com.megajuegos.independencia.entities.data.PlayerData;
 import com.megajuegos.independencia.entities.data.RevolucionarioData;
 import com.megajuegos.independencia.enums.*;
-import com.megajuegos.independencia.exceptions.CityNotFoundException;
-import com.megajuegos.independencia.exceptions.GameDataNotFoundException;
-import com.megajuegos.independencia.exceptions.PlayerNotFoundException;
-import com.megajuegos.independencia.exceptions.WrongRoleException;
+import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
@@ -41,41 +38,61 @@ public class SettingServiceImpl implements SettingService {
     private final PlayerDataRepository playerDataRepository;
     private final CongresoRepository congresoRepository;
     private final GameSubRegionRepository gameSubregionRepository;
+    private final GameRegionRepository gameRegionRepository;
 
     @Override
+    @Transactional
     public String createGame() {
 
-        List<GameRegion> regions = createRegions();
-        gameDataRepository.save(
+        //Juego vacío
+        GameData game = gameDataRepository.save(
                 GameData.builder()
                         .turno(0)
                         .fase(PhaseEnum.MOVING)
-                        .gameRegions(regions)
                         .congresos(new ArrayList<>())
                         .build()
         );
 
-        addAdjacentSubregions();
+        //Regiones (owning side) - GameData
+        List<GameRegion> regions = createRegions(game);
+        gameRegionRepository.saveAll(regions);
+        game.setGameRegions(regions);
 
-        City sede = regions.stream()
-                .map(GameRegion::getSubRegions)
-                .flatMap(Collection::stream)
-                .map(GameSubRegion::getCity)
-                .filter(Objects::nonNull)
-                .filter(c -> "Buenos Aires".equalsIgnoreCase(c.getName()))
+        //Subregiones (owning side) - Regiones
+        List<GameSubRegion> subRegions = createSubregions(regions);
+        gameSubregionRepository.saveAll(subRegions);
+        // TODO ¿Es necesario guardarlo en GameRegion que es dependiente?
+
+        //Ciudades - Subregiones (owning side)
+        List<City> ciudades = cityRepository.saveAll(createCities(subRegions));
+        ciudades.forEach(c -> {
+            GameSubRegion gameSubRegion = c.getSubRegion();
+            gameSubRegion.setCity(c);
+            gameSubregionRepository.save(gameSubRegion);
+        });
+
+        //Subregions adyacentes
+        subRegions.forEach(r -> r.getAdjacent().addAll(subregionsAdyacents(subRegions, r)));
+        gameSubregionRepository.saveAll(subRegions);
+
+        //Congreso (owning side) - Ciudad
+        City sede = ciudades.stream().filter(c -> c.getSubRegion().getSubRegionEnum().equals(SubRegionEnum.BUENOS_AIRES))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Juego mal creado"));
+                .orElseThrow(() -> new PoorlyCreatedGame());
 
         Congreso congreso = congresoRepository.save(Congreso.builder()
                                                             .plata(0)
                                                             .milicia(0)
                                                             .sede(sede)
+                                                            .gameData(game)
                                                             .build());
+
         sede.setSedeDelCongreso(congreso);
         cityRepository.save(sede);
 
-        GameData game = gameDataRepository.findFirstByOrderById()
-                .orElseThrow(() -> new RuntimeException("Juego mal creado"));
+        congresoRepository.save(congreso);
+
+        // Congreso (owning side)- GameData
         game.getCongresos().add(congreso);
         gameDataRepository.save(game);
 
@@ -167,50 +184,59 @@ public class SettingServiceImpl implements SettingService {
     }
 
     /*
-    ------------------------------ Métodos privados ---------------------------------
+    --------------------------------------------------------------------------------------------
+    --------------------------------------------------------------------------------------------
+    ------------------------------ Métodos privados --------------------------------------------
+    --------------------------------------------------------------------------------------------
+    --------------------------------------------------------------------------------------------
      */
 
-    private List<GameRegion> createRegions(){
+    private List<GameRegion> createRegions(GameData game){
         List<GameRegion> gameRegions = new ArrayList<>();
-        Arrays.stream(RegionEnum.values()).forEach(r -> {
-
-                    gameRegions.add(GameRegion.builder()
-                            .regionEnum(r)
-                            .subRegions(
-                                    r.getSubRegions().stream()
-                                            .map(s -> {
-                                                City city = null;
-                                                if (s.getCity() != null) {
-                                                    city = createCityFromCityEnum(s.getCity());
-                                                    cityRepository.save(city);
-                                                }
-
-                                                return GameSubRegion.builder()
-                                                        .subRegionEnum(s)
-                                                        .nombre(s.getNombre())
-                                                        .area(s.getArea())
-                                                        .color(s.getColor())
-                                                        .city(city)
-                                                        .adjacent(new ArrayList<>())
-                                                        .build();
-                                            })
-                                            .collect(Collectors.toList())
-                            )
-                            .build());
-                }
+        Arrays.stream(RegionEnum.values()).forEach(r ->
+                gameRegions.add(GameRegion.builder()
+                                    .regionEnum(r)
+                                    .gameData(game)
+                                    .build())
         );
         return gameRegions;
     }
+    private List<GameSubRegion> createSubregions(List<GameRegion> regions){
 
-    private City createCityFromCityEnum(CiudadInitEnum cityEnum) {
+        List<GameSubRegion> gameSubregions = new ArrayList<>();
+
+        regions.forEach(r -> gameSubregions.addAll(
+                r.getRegionEnum().getSubRegions().stream()
+                    .map(s -> GameSubRegion.builder()
+                            .subRegionEnum(s)
+                            .nombre(s.getNombre())
+                            .area(s.getArea())
+                            .color(s.getColor())
+                            .adjacent(new ArrayList<>())
+                            .gameRegion(r)
+                            .build())
+                    .collect(Collectors.toList())));
+        return gameSubregions;
+
+    }
+    private List<City> createCities(List<GameSubRegion> subregions){
+
+        return subregions.stream()
+                .filter(sr -> sr.getSubRegionEnum().getCity() != null)
+                .map(this::createCityFromGameSubRegion)
+                .collect(Collectors.toList());
+    }
+
+    private City createCityFromGameSubRegion(GameSubRegion gameSubRegion) {
         return City.builder()
-                .name(cityEnum.getNombre())
-                .buildings(cityEnum.getEdificios())
+                .name(gameSubRegion.getSubRegionEnum().getCity().getNombre())
+                .buildings(gameSubRegion.getSubRegionEnum().getCity().getEdificios())
                 .diputado("")
-                .taxesLevel(cityEnum.getNivelImpositivo())
-                .marketLevel(cityEnum.getNivelMercado())
-                .publicOpinion(cityEnum.getOpinionPublica())
-                .prestige(cityEnum.getPrestigio())
+                .taxesLevel(gameSubRegion.getSubRegionEnum().getCity().getNivelImpositivo())
+                .marketLevel(gameSubRegion.getSubRegionEnum().getCity().getNivelMercado())
+                .publicOpinion(gameSubRegion.getSubRegionEnum().getCity().getOpinionPublica())
+                .prestige(gameSubRegion.getSubRegionEnum().getCity().getPrestigio())
+                .subRegion(gameSubRegion)
                 .build();
     }
 
@@ -226,12 +252,10 @@ public class SettingServiceImpl implements SettingService {
         }
     }
 
+    private List<GameSubRegion> subregionsAdyacents(List<GameSubRegion> totalList, GameSubRegion subRegion){
 
-
-    private void addAdjacentSubregions() {
-
-        List<GameSubRegion> subregions = gameSubregionRepository.findAll();
-        subregions.forEach(r -> r.getAdjacent().addAll(gameSubregionRepository.findAllBySubRegionEnumIn(r.getSubRegionEnum().getAdyacentes())));
-        gameSubregionRepository.saveAll(subregions);
+        return totalList.stream()
+                .filter(sr -> sr.getSubRegionEnum().getAdyacentes().contains(subRegion.getSubRegionEnum()))
+                .collect(Collectors.toList());
     }
 }

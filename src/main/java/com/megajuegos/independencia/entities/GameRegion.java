@@ -21,7 +21,7 @@ public class GameRegion {
 
     @ManyToOne
     private GameData gameData; // owning side
-
+    @Enumerated(EnumType.STRING)
     private RegionEnum regionEnum;
     @OneToMany(mappedBy = "gameRegion")
     private List<GameSubRegion> subRegions;
