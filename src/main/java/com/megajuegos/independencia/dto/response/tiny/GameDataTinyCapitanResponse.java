@@ -47,6 +47,9 @@ public class GameDataTinyCapitanResponse {
                 .turno(gameData.getTurno())
                 .nextEndOfTurn(gameData.getNextEndOfTurn())
                 .fase(gameData.getFase())
+                .gameRegionsTiny(gameData.getGameRegions().stream()
+                        .map(GameRegionVeryTinyResponse::toVeryTinyDto)
+                        .collect(Collectors.toList()))
                 .build();
     }
 
