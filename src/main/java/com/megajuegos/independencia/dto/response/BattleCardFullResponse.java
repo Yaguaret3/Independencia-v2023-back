@@ -8,6 +8,7 @@ import lombok.Data;
 public class BattleCardFullResponse {
 
     private Long id;
+    private String nombre;
     private Boolean alreadyPlayed;
     private Integer turnWhenPlayed;
     private Long playerId;
@@ -17,11 +18,11 @@ public class BattleCardFullResponse {
 
         return BattleCardFullResponse.builder()
                 .id(entity.getId())
+                .nombre(entity.getTipoOrdenDeBatalla().getNombre())
                 .playerId(entity.getPlayerData().getId())
                 .alreadyPlayed(entity.isAlreadyPlayed())
                 .turnWhenPlayed(entity.getTurnWhenPlayed())
                 .battleOrderType(entity.getTipoOrdenDeBatalla().name())
                 .build();
     }
-
 }

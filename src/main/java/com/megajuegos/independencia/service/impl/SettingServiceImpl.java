@@ -37,6 +37,7 @@ public class SettingServiceImpl implements SettingService {
     private final GameSubRegionRepository gameSubregionRepository;
     private final GameRegionRepository gameRegionRepository;
     private final CampRepository campRepository;
+    private final PersonalPriceRepository personalPriceRepository;
 
     @Override
     @Transactional
@@ -122,6 +123,8 @@ public class SettingServiceImpl implements SettingService {
 
         playerData.setGameData(gameData);
         gameData.getPlayers().add(playerData);
+
+        setPrecios(playerData);
 
         PlayerData playerSaved = playerDataRepository.save(playerData);
         user.getPlayerDataList().add(playerSaved);
@@ -272,6 +275,43 @@ public class SettingServiceImpl implements SettingService {
                     .build());
 
             ((CapitanData) playerData).setCamp(camp);
+        }
+    }
+
+    // TODO: Ver cómo asignar precios iniciales
+    private void setPrecios(PlayerData playerData) {
+
+        if(playerData instanceof GobernadorData){
+            personalPriceRepository.saveAll(Arrays.stream(PersonalPricesEnum.values()).filter(pp -> pp.getRol().equals(RoleEnum.GOBERNADOR))
+                    .map(pp -> PersonalPrice.builder()
+                            .name(pp)
+                            .playerData(playerData)
+                            .build())
+                    .collect(Collectors.toList()));
+        }
+        if(playerData instanceof CapitanData){
+            personalPriceRepository.saveAll(Arrays.stream(PersonalPricesEnum.values()).filter(pp -> pp.getRol().equals(RoleEnum.CAPITAN))
+                    .map(pp -> PersonalPrice.builder()
+                            .name(pp)
+                            .playerData(playerData)
+                            .build())
+                    .collect(Collectors.toList()));
+        }
+        if(playerData instanceof RevolucionarioData){
+            personalPriceRepository.saveAll(Arrays.stream(PersonalPricesEnum.values()).filter(pp -> pp.getRol().equals(RoleEnum.REVOLUCIONARIO))
+                    .map(pp -> PersonalPrice.builder()
+                            .name(pp)
+                            .playerData(playerData)
+                            .build())
+                    .collect(Collectors.toList()));
+        }
+        if(playerData instanceof MercaderData){
+            personalPriceRepository.saveAll(Arrays.stream(PersonalPricesEnum.values()).filter(pp -> pp.getRol().equals(RoleEnum.MERCADER))
+                    .map(pp -> PersonalPrice.builder()
+                            .name(pp)
+                            .playerData(playerData)
+                            .build())
+                    .collect(Collectors.toList()));
         }
     }
 }

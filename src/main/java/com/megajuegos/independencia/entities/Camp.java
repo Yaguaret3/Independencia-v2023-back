@@ -21,6 +21,6 @@ public class Camp {
     @ManyToOne
     private GameSubRegion subregion; //owning side
 
-    @OneToOne(mappedBy = "camp")
+    @OneToOne(mappedBy = "camp", orphanRemoval = true)
     private CapitanData capitanData;
 }
