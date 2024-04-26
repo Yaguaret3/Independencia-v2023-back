@@ -5,10 +5,7 @@ import com.megajuegos.independencia.entities.*;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.card.MarketCard;
 import com.megajuegos.independencia.entities.card.RepresentationCard;
-import com.megajuegos.independencia.entities.data.GameData;
-import com.megajuegos.independencia.entities.data.GobernadorData;
-import com.megajuegos.independencia.entities.data.PlayerData;
-import com.megajuegos.independencia.entities.data.RevolucionarioData;
+import com.megajuegos.independencia.entities.data.*;
 import com.megajuegos.independencia.enums.*;
 import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.*;
@@ -39,6 +36,7 @@ public class SettingServiceImpl implements SettingService {
     private final CongresoRepository congresoRepository;
     private final GameSubRegionRepository gameSubregionRepository;
     private final GameRegionRepository gameRegionRepository;
+    private final CampRepository campRepository;
 
     @Override
     @Transactional
@@ -61,7 +59,6 @@ public class SettingServiceImpl implements SettingService {
         //Subregiones (owning side) - Regiones
         List<GameSubRegion> subRegions = createSubregions(regions);
         gameSubregionRepository.saveAll(subRegions);
-        // TODO ¿Es necesario guardarlo en GameRegion que es dependiente?
 
         //Ciudades - Subregiones (owning side)
         List<City> ciudades = cityRepository.saveAll(createCities(subRegions));
@@ -105,6 +102,7 @@ public class SettingServiceImpl implements SettingService {
         UserIndependencia user = userRepository.findById(request.getId())
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_EMAIL));
 
+        // TODO Decidir qué hacer con rol ADMIN
         if((RoleEnum.ADMIN.equals(request.getRole()) || RoleEnum.USER.equals(request.getRole()))
                 && user.getRoles().contains(request.getRole())){
             throw new WrongRoleException();
@@ -115,7 +113,9 @@ public class SettingServiceImpl implements SettingService {
         playerData.setUser(user);
         playerData.setRol(request.getRole());
 
+        //setByRole
         setRevolucionarioData(playerData);
+        setCapitanData(playerData);
 
         GameData gameData = gameDataRepository.findFirstByOrderById()
                 .orElseThrow(() -> new GameDataNotFoundException());
@@ -240,6 +240,13 @@ public class SettingServiceImpl implements SettingService {
                 .build();
     }
 
+    private List<GameSubRegion> subregionsAdyacents(List<GameSubRegion> totalList, GameSubRegion subRegion){
+
+        return totalList.stream()
+                .filter(sr -> sr.getSubRegionEnum().getAdyacentes().contains(subRegion.getSubRegionEnum()))
+                .collect(Collectors.toList());
+    }
+
     private void setRevolucionarioData(PlayerData playerData){
 
         if(playerData instanceof RevolucionarioData){
@@ -252,10 +259,19 @@ public class SettingServiceImpl implements SettingService {
         }
     }
 
-    private List<GameSubRegion> subregionsAdyacents(List<GameSubRegion> totalList, GameSubRegion subRegion){
+    private void setCapitanData(PlayerData playerData) {
 
-        return totalList.stream()
-                .filter(sr -> sr.getSubRegionEnum().getAdyacentes().contains(subRegion.getSubRegionEnum()))
-                .collect(Collectors.toList());
+        if(playerData instanceof CapitanData){
+
+            List<GameSubRegion> subregionList = gameSubregionRepository.findAllBySubRegionEnumIn(Collections.singletonList(SubRegionEnum.BUENOS_AIRES));
+
+            Camp camp = campRepository.save(Camp.builder()
+                    .nivel(1)
+                    .subregion(subregionList.get(0))
+                    .gameRegion(subregionList.get(0).getGameRegion())
+                    .build());
+
+            ((CapitanData) playerData).setCamp(camp);
+        }
     }
 }
