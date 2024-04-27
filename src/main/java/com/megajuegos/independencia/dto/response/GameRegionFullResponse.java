@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 public class GameRegionFullResponse {
 
     private Long id;
-    private List<GameSubRegionFullResponse> subRegions;
+    private List<GameSubRegionFullResponse> subregions;
 
     public static GameRegionFullResponse toFullResponse(GameRegion entity){
         return GameRegionFullResponse.builder()
                 .id(entity.getId())
-                .subRegions(entity.getSubRegions()
+                .subregions(entity.getSubRegions()
                         .stream()
                         .map(GameSubRegionFullResponse::toFullResponse)
                         .collect(Collectors.toList()))
