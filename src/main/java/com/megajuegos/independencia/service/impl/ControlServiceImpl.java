@@ -1,6 +1,7 @@
 package com.megajuegos.independencia.service.impl;
 
 import com.megajuegos.independencia.dto.request.control.*;
+import com.megajuegos.independencia.dto.response.ControlResponse;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 import com.megajuegos.independencia.entities.*;
 import com.megajuegos.independencia.entities.card.*;
@@ -177,7 +178,7 @@ public class ControlServiceImpl implements ControlService {
 
         controlData.setSiguienteFaseSolicitada(true);
 
-        //Chequear si al actualizar controlData cambia también su referencia desde la lista de Controles.
+        //TODO Chequear si al actualizar controlData cambia también su referencia desde la lista de Controles.
         List<ControlData> controles = gameData.getPlayers().stream()
                 .filter(ControlData.class::isInstance)
                 .map(p -> (ControlData) p)
@@ -193,7 +194,7 @@ public class ControlServiceImpl implements ControlService {
                     gameData.setFase(PhaseEnum.PLANNING);
                     break;
                 case PLANNING:
-                    gameData.setFase(PhaseEnum.PLANNING);
+                    gameData.setFase(PhaseEnum.REVEALING);
                     break;
                 case REVEALING:
                     advanceTurn(gameData);
@@ -255,6 +256,19 @@ public class ControlServiceImpl implements ControlService {
                 .orElseThrow(() -> new PlayerNotFoundException());
 
         return GameDataFullResponse.toFullResponse(controlData.getGameData());
+    }
+
+    @Override
+    public ControlResponse getControlData() {
+        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
+                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                        .findFirst()
+                        .map(PlayerData::getId)
+                        .orElseThrow(() -> new PlayerNotFoundException())
+                )
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        return ControlResponse.toDto(controlData);
     }
 
     @Override
@@ -771,6 +785,7 @@ public class ControlServiceImpl implements ControlService {
         gameData.setTurno(gameData.getTurno()+1);
         gameData.setNextEndOfTurn(newTurnInMillis);
 
+        // TODO sumar ganancias de turno
         //collectTaxes(gameData);
         //earnDiscipline(gameData);
 
@@ -789,8 +804,5 @@ public class ControlServiceImpl implements ControlService {
         for(GobernadorData gobernador : gobernadores){
             gobernador.setPlata(gobernador.getPlata() + gobernador.getCity().getTaxesLevel());
         }
-
     }
-
-
 }

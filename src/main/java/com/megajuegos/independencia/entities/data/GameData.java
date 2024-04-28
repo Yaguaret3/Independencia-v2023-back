@@ -32,5 +32,6 @@ public class GameData {
 
     private Long nextEndOfTurn;
 
+    @Enumerated(EnumType.STRING)
     private PhaseEnum fase;
 }

@@ -40,14 +40,13 @@ public class SettingServiceImpl implements SettingService {
     private final PersonalPriceRepository personalPriceRepository;
 
     @Override
-    @Transactional
     public String createGame() {
 
         //Juego vacío
         GameData game = gameDataRepository.save(
                 GameData.builder()
                         .turno(0)
-                        .fase(PhaseEnum.MOVING)
+                        .fase(PhaseEnum.REVEALING)
                         .congresos(new ArrayList<>())
                         .build()
         );

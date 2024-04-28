@@ -1,6 +1,7 @@
 package com.megajuegos.independencia.controller;
 
 import com.megajuegos.independencia.dto.request.control.*;
+import com.megajuegos.independencia.dto.response.ControlResponse;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 import com.megajuegos.independencia.service.ControlService;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,10 @@ public class ControlController {
     @GetMapping ("/game")
     public ResponseEntity<GameDataFullResponse> getFullData(){
         return ResponseEntity.ok(service.getFullData());
+    }
+    @GetMapping ("/control-data")
+    public ResponseEntity<ControlResponse> getControlData(){
+        return ResponseEntity.ok(service.getControlData());
     }
     @PostMapping("/{id}/edit-city")
     public ResponseEntity<String> editCity(@RequestBody Map<String, Integer> request, @PathVariable Long id){
@@ -148,7 +153,7 @@ public class ControlController {
         return ResponseEntity.ok(service.createNewCongress(request));
     }
 
-    @PostMapping("/phase-concluded")
+    @PostMapping("/conclude-phase")
     public ResponseEntity<Void> concludePhase(){
         service.concludePhase();
         return ResponseEntity.ok().build();

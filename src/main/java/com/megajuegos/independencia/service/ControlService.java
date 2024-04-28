@@ -1,6 +1,7 @@
 package com.megajuegos.independencia.service;
 
 import com.megajuegos.independencia.dto.request.control.*;
+import com.megajuegos.independencia.dto.response.ControlResponse;
 import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 
 import javax.management.InstanceNotFoundException;
@@ -61,5 +62,7 @@ public interface ControlService {
     String updateCongress(Long congresoId, UpdateCongressRequest request);
 
     String createNewCongress(CreateNewCongressRequest request);
+
+    ControlResponse getControlData();
 }
 
