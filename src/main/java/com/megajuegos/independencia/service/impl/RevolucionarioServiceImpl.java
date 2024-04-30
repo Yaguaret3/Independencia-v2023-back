@@ -105,6 +105,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
                         .filter(RepresentationCard.class::isInstance)
                         .map(RepresentationCard.class::cast)
                         .collect(Collectors.toList()))
+                .votation(votation)
                 .build();
         voteRepository.save(vote);
 
