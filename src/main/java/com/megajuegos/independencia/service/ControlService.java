@@ -64,5 +64,7 @@ public interface ControlService {
     String createNewCongress(CreateNewCongressRequest request);
 
     ControlResponse getControlData();
+
+    String moveToCongress(MoveToCongressRequest request);
 }
 

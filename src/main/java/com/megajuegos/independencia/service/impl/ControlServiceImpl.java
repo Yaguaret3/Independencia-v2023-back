@@ -52,6 +52,7 @@ public class ControlServiceImpl implements ControlService {
     private final ArmyRepository armyRepository;
     private final GameSubRegionRepository gameSubRegionRepository;
     private final GameIdUtil gameIdUtil;
+    private final BuildingRepository buildingRepository;
 
     private static final int DADO_CUATRO_MAX = 4;
     private static final int DADO_CUATRO_MIN = 1;
@@ -64,9 +65,14 @@ public class ControlServiceImpl implements ControlService {
         PlayerData playerData = playerDataRepository.findById(playerDataId)
                 .orElseThrow(PlayerNotFoundException::new);
 
-        playerData.getCards().add(ResourceCard.builder()
-                        .resourceTypeEnum(request.getResourceType())
-                        .build());
+        Card card = ResourceCard.builder()
+                .resourceTypeEnum(request.getResourceType())
+                .playerData(playerData)
+                .build();
+
+        cardRepository.save(card);
+
+        playerData.getCards().add(card);
         playerDataRepository.save(playerData);
         return CARD_CREATED_GIVEN;
     }
@@ -75,9 +81,14 @@ public class ControlServiceImpl implements ControlService {
         PlayerData playerData = playerDataRepository.findById(playerId)
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
 
-        playerData.getCards().add(RepresentationCard.builder()
-                        .representacion(RepresentationEnum.byNombre(request.getCityName()))
-                        .build());
+        Card card = RepresentationCard.builder()
+                .representacion(RepresentationEnum.byNombre(request.getCityName()))
+                .playerData(playerData)
+                .build();
+
+        cardRepository.save(card);
+
+        playerData.getCards().add(card);
 
         playerDataRepository.save(playerData);
         return CARD_CREATED_GIVEN;
@@ -88,13 +99,17 @@ public class ControlServiceImpl implements ControlService {
         PlayerData playerData = playerDataRepository.findById(playerId)
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
 
-        playerData.getCards().add(MarketCard.builder()
-                        .nombreCiudad(cityRepository.findByName(request.getCityName()).orElseThrow(() -> new CityNotFoundException()).getName())
-                        .level(request.getLevel())
-                .build());
+        Card card = MarketCard.builder()
+                .nombreCiudad(cityRepository.findByName(request.getCityName()).orElseThrow(() -> new CityNotFoundException()).getName())
+                .level(request.getLevel())
+                .playerData(playerData)
+                .build();
+
+        cardRepository.save(card);
+
+        playerData.getCards().add(card);
 
         playerDataRepository.save(playerData);
-
         return CARD_CREATED_GIVEN;
     }
 
@@ -104,11 +119,16 @@ public class ControlServiceImpl implements ControlService {
         PlayerData playerData = playerDataRepository.findById(playerId)
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
 
-        playerData.getCards().add(ExtraCard.builder()
-                    .bonificacion(request.getBonificacion())
-                    .nombre(request.getNombre())
-                    .descripcion(request.getDescripcion())
-                .build());
+        Card card = ExtraCard.builder()
+                .bonificacion(request.getBonificacion())
+                .nombre(request.getNombre())
+                .descripcion(request.getDescripcion())
+                .playerData(playerData)
+                .build();
+
+        cardRepository.save(card);
+
+        playerData.getCards().add(card);
 
         playerDataRepository.save(playerData);
         return CARD_CREATED_GIVEN;
@@ -293,6 +313,7 @@ public class ControlServiceImpl implements ControlService {
 
         city.getBuildings().remove(building);
         cityRepository.save(city);
+        buildingRepository.delete(building);
 
         return BUILDING_REMOVED;
     }
@@ -301,11 +322,16 @@ public class ControlServiceImpl implements ControlService {
     public String addBuilding(Long cityId, NewBuildingRequest request) {
         City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException());
 
-        city.getBuildings().add(Building.builder()
-                        .buildingType(request.getBuildingType())
-                        .city(city)
-                .build());
+        Building building = Building.builder()
+                .buildingType(request.getBuildingType())
+                .city(city)
+                .build();
+
+        buildingRepository.save(building);
+
+        city.getBuildings().add(building);
         cityRepository.save(city);
+
 
         return BUILDING_CREATED;
     }
@@ -712,6 +738,25 @@ public class ControlServiceImpl implements ControlService {
         gameData.getCongresos().add(congreso);
         gameDataRepository.save(gameData);
         return CONGRESS_CREATED;
+    }
+
+    @Override
+    public String moveToCongress(MoveToCongressRequest request) {
+
+        Congreso congreso = congresoRepository.findById(request.getCongresoId())
+                .orElseThrow(() -> new CongresoNotFoundException());
+        RevolucionarioData revolucionarioData = revolucionarioRepository.findById(request.getRevolucionarioId()).orElseThrow(() -> new PlayerNotFoundException());
+
+        Congreso congresoOld = revolucionarioData.getCongreso();
+        congresoOld.getRevolucionarios().remove(revolucionarioData);
+        congreso.getRevolucionarios().add(revolucionarioData);
+
+        revolucionarioData.setCongreso(congreso);
+
+        congresoRepository.saveAll(Arrays.asList(congreso, congresoOld));
+        revolucionarioRepository.save(revolucionarioData);
+
+        return MOVED_TO_CONGRESS;
     }
 
     @Override

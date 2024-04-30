@@ -17,15 +17,22 @@ public class PlayerDataTinyResponse {
     private Long gameId;
     private Integer cards;
     private String rol;
+    private boolean presidente;
 
     public static PlayerDataTinyResponse toTinyResponse(PlayerData entity){
 
-        return PlayerDataTinyResponse.builder()
+        PlayerDataTinyResponse response = PlayerDataTinyResponse.builder()
                 .playerId(entity.getId())
                 .playerName(entity.getUser().getUsername())
                 .gameId(entity.getGameData().getId())
                 .cards(entity.getCards().size())
                 .rol(entity.getRol().name())
                 .build();
+
+        if(entity instanceof RevolucionarioData){
+            RevolucionarioData revData = (RevolucionarioData) entity;
+            response.setPresidente(revData.isPresidente());
+        }
+        return response;
     }
 }

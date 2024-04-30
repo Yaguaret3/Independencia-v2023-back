@@ -47,4 +47,5 @@ public class Messages {
     public static final String CONGRESS_REMOVED = "Congreso borrado";
     public static final String CONGRESS_CREATED = "Congreso creado";
     public static final String CONGRESS_UPDATED = "Congreso actualizado";
+    public static final String MOVED_TO_CONGRESS = "Movimiento a congreso exitoso";
 }

@@ -152,6 +152,10 @@ public class ControlController {
     public ResponseEntity<String> createNewCongress(@RequestBody CreateNewCongressRequest request){
         return ResponseEntity.ok(service.createNewCongress(request));
     }
+    @PostMapping("/move-to-congress")
+    public ResponseEntity<String> moveToCongress(@RequestBody MoveToCongressRequest request){
+        return ResponseEntity.ok(service.moveToCongress(request));
+    }
 
     @PostMapping("/conclude-phase")
     public ResponseEntity<Void> concludePhase(){

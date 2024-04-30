@@ -41,6 +41,7 @@ public class PlayerDataFullResponse {
     //Revolucionario
     private CongresoResponse congreso;
     private List<VoteResponse> votes;
+    private boolean presidente;
 
     public static PlayerDataFullResponse toFullResponse(PlayerData entity){
 
@@ -108,6 +109,7 @@ public class PlayerDataFullResponse {
                         .map(VoteResponse::toDtoResponse)
                         .collect(Collectors.toList()));
                 response.setCongreso(CongresoResponse.toDtoResponse(revolucionarioData.getCongreso()));
+                response.setPresidente(revolucionarioData.isPresidente());
                 break;
             default:
         }
