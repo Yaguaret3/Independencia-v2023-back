@@ -15,6 +15,7 @@ import com.megajuegos.independencia.enums.BuildingTypeEnum;
 import com.megajuegos.independencia.enums.PersonalPricesEnum;
 import com.megajuegos.independencia.enums.RegionEnum;
 import com.megajuegos.independencia.exceptions.*;
+import com.megajuegos.independencia.repository.CardRepository;
 import com.megajuegos.independencia.repository.CityRepository;
 import com.megajuegos.independencia.repository.GameRegionRepository;
 import com.megajuegos.independencia.repository.data.CapitanDataRepository;
@@ -48,6 +49,7 @@ public class GobernadorServiceImpl implements GobernadorService {
     private final CapitanDataRepository capitanDataRepository;
     private final CityRepository cityRepository;
     private final GameIdUtil gameIdUtil;
+    private final CardRepository cardRepository;
 
     @Override
     public GobernadorResponse getData() {
@@ -102,10 +104,13 @@ public class GobernadorServiceImpl implements GobernadorService {
         PlayerData they = playerDataRepository.findById(request.getIdJugadorDestino())
                 .orElseThrow(() -> new PlayerNotFoundException());
 
+        card.setPlayerData(they);
         they.getCards().add(card);
         gobernadorData.getCards().remove(card);
+
         gobernadorRepository.save(gobernadorData);
         playerDataRepository.save(they);
+        cardRepository.save(card);
     }
 
     @Override
@@ -204,6 +209,7 @@ public class GobernadorServiceImpl implements GobernadorService {
 
         they.getCards().add(card);
         gobernadorData.getCards().remove(card);
+        card.setPlayerData(they);
 
         City city = gobernadorData.getCity();
         city.setDiputado(they.getUser().getUsername());
@@ -211,6 +217,7 @@ public class GobernadorServiceImpl implements GobernadorService {
         cityRepository.save(city);
         gobernadorRepository.save(gobernadorData);
         playerDataRepository.save(they);
+        cardRepository.save(card);
     }
 
     @Override
