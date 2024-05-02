@@ -14,6 +14,7 @@ public class ArmyTinyResponse {
 
     private Long armyId;
     private Long capitanId;
+    private String capitanName;
     private Long gameAreaId;
 
     public static ArmyTinyResponse toTinyResponse(Army entity){
@@ -21,6 +22,7 @@ public class ArmyTinyResponse {
         return ArmyTinyResponse.builder()
                 .armyId(entity.getId())
                 .capitanId(entity.getCapitanData().getId())
+                .capitanName(entity.getCapitanData().getUser().getUsername())
                 .gameAreaId(entity.getSubregion().getId())
                 .build();
     }

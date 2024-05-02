@@ -13,13 +13,6 @@ public enum RegionEnum {
     RIO_DE_LA_PLATA(1,
             "Río de la Plata",
             "red",
-            "-908px",
-            "-552px",
-            "1.3",
-            "10px",
-            "10px",
-            "470",
-            "470",
             "-926px",
             "-549px",
             "1.61",
@@ -75,13 +68,6 @@ public enum RegionEnum {
     LITORAL(2,
             "Litoral",
             "lime",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "-306px",
             "-347px",
             "1.19",
@@ -141,13 +127,6 @@ public enum RegionEnum {
     CORDOBA_DEL_TUCUMAN(3,
             "Córdoba del Tucumán",
             "orange",
-            "-972px",
-            "85px",
-            "",
-            "2",
-            "",
-            "",
-            "",
             "-903px",
             "100px",
             "1.8",
@@ -202,13 +181,6 @@ public enum RegionEnum {
     SALTA_DEL_TUCUMAN(4,
             "Salta del Tucumán",
             "aqua",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "-352px",
             "28px",
             "1.2",
@@ -269,13 +241,6 @@ public enum RegionEnum {
     ALTO_PERU(5,
             "Alto Perú",
             "yellow",
-            "-52px",
-            "-55px",
-            "",
-            "1",
-            "",
-            "",
-            "",
             "-66px",
             "-66px",
             "0.98",
@@ -357,13 +322,6 @@ public enum RegionEnum {
     CHILE(6,
             "Chile",
             "purple",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "-589px",
             "-113px",
             "0.88",
@@ -415,48 +373,31 @@ public enum RegionEnum {
     private final Integer id;
     private final String nombre;
     private final String color;
-    private final String bgTopGobernador;
-    private final String bgLeftGobernador;
-    private final String bgScaleGobernador;
-    private final String fgTopGobernador;
-    private final String fgLeftGobernador;
-    private final String fgHeightGobernador;
-    private final String fgWidthGobernador;
-    private final String bgTopMercader;
-    private final String bgLeftMercader;
-    private final String bgScaleMercader;
-    private final String fgTopMercader;
-    private final String fgLeftMercader;
-    private final String fgHeightMercader;
-    private final String fgWidthMercader;
+    private final String bgTop;
+    private final String bgLeft;
+    private final String bgScale;
+    private final String fgTop;
+    private final String fgLeft;
+    private final String fgHeight;
+    private final String fgWidth;
     private final String fgViewBox;
     private final String fgArea;
 
     RegionEnum(Integer id, String nombre, String color,
-               String bgTopGobernador, String bgLeftGobernador, String bgScaleGobernador,
-               String fgTopGobernador, String fgLeftGobernador, String fgHeightGobernador,
-               String fgWidthGobernador,
-               String bgTopMercader, String bgLeftMercader, String bgScaleMercader,
-               String fgTopMercader, String fgLeftMercader, String fgHeightMercader,
-               String fgWidthMercader,
+               String bgTop, String bgLeft, String bgScale,
+               String fgTop, String fgLeft, String fgHeight,
+               String fgWidth,
                String fgViewBox, String fgArea){
         this.id = id;
         this.nombre = nombre;
         this.color = color;
-        this.bgTopGobernador = bgTopGobernador;
-        this.bgLeftGobernador = bgLeftGobernador;
-        this.bgScaleGobernador = bgScaleGobernador;
-        this.fgTopGobernador = fgTopGobernador;
-        this.fgLeftGobernador = fgLeftGobernador;
-        this.fgHeightGobernador = fgHeightGobernador;
-        this.fgWidthGobernador = fgWidthGobernador;
-        this.bgTopMercader = bgTopMercader;
-        this.bgLeftMercader = bgLeftMercader;
-        this.bgScaleMercader = bgScaleMercader;
-        this.fgTopMercader = fgTopMercader;
-        this.fgLeftMercader = fgLeftMercader;
-        this.fgHeightMercader = fgHeightMercader;
-        this.fgWidthMercader = fgWidthMercader;
+        this.bgTop = bgTop;
+        this.bgLeft = bgLeft;
+        this.bgScale = bgScale;
+        this.fgTop = fgTop;
+        this.fgLeft = fgLeft;
+        this.fgHeight = fgHeight;
+        this.fgWidth = fgWidth;
         this.fgViewBox = fgViewBox;
         this.fgArea = fgArea;
     }

@@ -1,6 +1,5 @@
 package com.megajuegos.independencia.dto.response;
 
-import com.megajuegos.independencia.dto.response.tiny.GameRegionTinyGobernadorResponse;
 import com.megajuegos.independencia.dto.response.tiny.GameRegionTinyResponse;
 import com.megajuegos.independencia.dto.response.util.PlayerDataCardsUtil;
 import com.megajuegos.independencia.entities.GameRegion;
@@ -23,7 +22,7 @@ public class GobernadorResponse {
 
     private Long id;
     private CityFullResponse city;
-    private GameRegionTinyGobernadorResponse gameRegion;
+    private GameRegionTinyResponse gameRegion;
     private Integer plata;
     private Integer milicia;
     private RepresentationCardResponse representacion;
@@ -42,7 +41,7 @@ public class GobernadorResponse {
         return GobernadorResponse.builder()
                 .id(entity.getId())
                 .city(CityFullResponse.toDtoResponse(entity.getCity()))
-                .gameRegion(GameRegionTinyGobernadorResponse.toTinyResponse(gameRegion))
+                .gameRegion(GameRegionTinyResponse.toTinyResponse(gameRegion))
                 .plata(entity.getPlata())
                 .milicia(entity.getMilicia())
                 .representacion(representationUtil)
