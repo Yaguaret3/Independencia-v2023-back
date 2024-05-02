@@ -17,6 +17,6 @@ public class MercaderData extends PlayerData {
 
     private Integer puntajeComercial;
     private Integer puntajeComercialAcumulado;
-    @OneToMany
+    @OneToMany(mappedBy = "mercader")
     private List<Route> routes;
 }

@@ -1,6 +1,7 @@
 package com.megajuegos.independencia.dto.response;
 
 import com.megajuegos.independencia.entities.data.GameData;
+import com.megajuegos.independencia.entities.data.MercaderData;
 import com.megajuegos.independencia.enums.BuildingTypeEnum;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class GameDataFullResponse {
     private String fase;
     private List<BuildingResponse> edificios;
     private List<CongresoResponse> congresos;
+    private List<RouteResponse> rutas;
 
     public static GameDataFullResponse toFullResponse(GameData entity){
 
@@ -48,6 +50,14 @@ public class GameDataFullResponse {
                 .congresos(entity.getCongresos().stream()
                         .map(CongresoResponse::toDtoResponse)
                         .collect(Collectors.toList()))
+                .rutas(entity.getPlayers().stream()
+                        .filter(MercaderData.class::isInstance)
+                        .map(p -> (MercaderData) p)
+                        .flatMap(m -> m.getRoutes().stream())
+                        .filter(r-> r.getTurn().equals(entity.getTurno()))
+                        .map(RouteResponse::toDto)
+                        .collect(Collectors.toList()))
+
                 .build();
     }
 }

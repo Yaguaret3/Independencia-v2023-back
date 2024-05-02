@@ -10,12 +10,12 @@ import java.util.Objects;
 @AllArgsConstructor
 public enum ActionTypeEnum {
 
-    MOVIMIENTO(1, "Movimiento", "", 0, ""),
-    ATAQUE(2, "Ataque", "", 0, ""),
-    DEFENSA(3, "Defensa", "", 0, ""),
-    REACCION(4, "Reaccion", "", 0, ""),
-    DESPLIEGUE(5, "Despliegue", "", 0, ""),
-    ACAMPE(6, "Acampar", "", 0, ""),
+    MOVIMIENTO(1, "Movimiento", "Movés tu campamento a otra región", 0, ""),
+    ATAQUE(2, "Ataque", "Atacás a un ejército enemigo en una subregión que compartan", 0, ""),
+    DEFENSA(3, "Defensa", "Defendés un ataque en una región", 0, ""),
+    REACCION(4, "Reaccion", "Interceptás a un ejército enemigo que mueve su campamento a otra región", 0, ""),
+    DESPLIEGUE(5, "Despliegue", "Desplegás un ejército en una subregión", 0, ""),
+    ACAMPE(6, "Acampar", "Movés tu campamento a otra subregión de esta región", 0, ""),
     NADA(7, "Nada", "0", 0, "");
 
     private Integer id;

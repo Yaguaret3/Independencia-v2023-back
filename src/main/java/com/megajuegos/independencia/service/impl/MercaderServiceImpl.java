@@ -30,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.management.InstanceNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -141,12 +140,14 @@ public class MercaderServiceImpl implements MercaderService {
                 )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
-        List<MarketCitySubregionRequest> route = request.getSubregions();
-        route.sort(Comparator.comparing(MarketCitySubregionRequest::getPosition));
-        validateRoute(route, route.get(0), 0, mercaderData);
+        List<MarketCitySubregionRequest> roads = request.getSubregions();
+        roads.sort(Comparator.comparing(MarketCitySubregionRequest::getPosition));
+        validateRoute(roads, roads.get(0), 0, mercaderData);
 
-        mercaderData.getRoutes().add(savedRoutes(request, mercaderData));
-        routeRepository.saveAll(mercaderData.getRoutes());
+        Route route = savedRoute(request, mercaderData);
+        routeRepository.save(route);
+
+        mercaderData.getRoutes().add(route);
         playerDataRepository.save(mercaderData);
     }
 
@@ -252,7 +253,7 @@ public class MercaderServiceImpl implements MercaderService {
         }
     }
 
-    private Route savedRoutes(SingleTradeRouteRequest request, MercaderData mercaderData) {
+    private Route savedRoute(SingleTradeRouteRequest request, MercaderData mercaderData) {
 
         List<GameSubRegion> subregions = subregionRepository.findAllById(request.getSubregions().stream().map(MarketCitySubregionRequest::getId).collect(Collectors.toList()));
         Long provisionTradeScore = request.getSubregions().stream()
@@ -267,6 +268,7 @@ public class MercaderServiceImpl implements MercaderService {
                 .subregions(subregions)
                 .tradeScore(provisionTradeScore)
                 .turn(mercaderData.getGameData().getTurno())
+                .mercader(mercaderData)
                 .build();
     }
 
@@ -278,6 +280,6 @@ public class MercaderServiceImpl implements MercaderService {
                 .collect(Collectors.toList()));
 
         cards.forEach(mercaderData.getCards()::remove);
+        cardRepository.deleteAll(cards);
     }
-
 }

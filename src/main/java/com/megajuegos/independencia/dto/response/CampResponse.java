@@ -10,14 +10,20 @@ public class CampResponse {
     private Long id;
     private Long capitanId;
     private Integer nivel;
-    private Long areaDeJuegoId;
+    private Long gameSubregionId;
+    private String gameSubregionName;
+    private Long gameRegionId;
+    private String gameRegionName;
 
     public static CampResponse toDtoResponse(Camp entity){
         return CampResponse.builder()
                 .id(entity.getId())
                 .capitanId(entity.getCapitanData().getId())
                 .nivel(entity.getNivel())
-                .areaDeJuegoId(entity.getSubregion().getId())
+                .gameSubregionId(entity.getSubregion().getId())
+                .gameSubregionName(entity.getSubregion().getNombre())
+                .gameRegionId(entity.getGameRegion().getId())
+                .gameRegionName(entity.getGameRegion().getRegionEnum().getNombre())
                 .build();
     }
 }

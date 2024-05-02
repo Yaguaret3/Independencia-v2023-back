@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.entities;
 
+import com.megajuegos.independencia.entities.data.MercaderData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,5 +23,7 @@ public class Route {
     private Long tradeScore;
     private Integer turn;
     private String comentario;
+    @ManyToOne // owning side
+    private MercaderData mercader;
 
 }

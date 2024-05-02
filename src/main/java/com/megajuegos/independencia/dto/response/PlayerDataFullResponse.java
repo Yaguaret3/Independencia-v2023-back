@@ -34,6 +34,7 @@ public class PlayerDataFullResponse {
     //Capitan
     private Integer reserva;
     private List<ArmyFullResponse> armies;
+    private CampResponse campamento;
     //Mercader
     private Integer puntajeComercial;
     private Integer puntajeComercialAcumulado;
@@ -93,6 +94,7 @@ public class PlayerDataFullResponse {
                 response.setArmies(capitanData.getEjercito().stream()
                         .map(ArmyFullResponse::toDtoResponse)
                         .collect(Collectors.toList()));
+                response.setCampamento(CampResponse.toDtoResponse(capitanData.getCamp()));
                 break;
             case MERCADER:
                 MercaderData mercaderData = (MercaderData) entity;
