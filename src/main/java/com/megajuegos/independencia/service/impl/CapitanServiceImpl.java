@@ -80,12 +80,16 @@ public class CapitanServiceImpl implements CapitanService {
                 )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
-        if (!paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.fromId(request.getCardTypeId()))) throw new PaymentNotPossibleException();
+        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.fromId(request.getCardTypeId())))) throw new PaymentNotPossibleException();
 
         ActionTypeEnum actionType = ActionTypeEnum.fromId(request.getCardTypeId());
-        capitanData.getCards().add(ActionCard.builder()
-                        .tipoAccion(actionType)
-                        .build());
+        Card card = ActionCard.builder()
+                .tipoAccion(actionType)
+                .playerData(capitanData)
+                .build();
+        capitanData.getCards().add(card);
+
+        cardRepository.save(card);
         capitanDataRepository.save(capitanData);
     }
 
@@ -100,12 +104,17 @@ public class CapitanServiceImpl implements CapitanService {
                 )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
-        if (!paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.BATTLE_CARD)) throw new PaymentNotPossibleException();
+        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.BATTLE_CARD))) throw new PaymentNotPossibleException();
 
         BattleTypeEnum battleType = BattleTypeEnum.fromId(request.getCardTypeId());
-        capitanData.getCards().add(BattleCard.builder()
-                        .tipoOrdenDeBatalla(battleType)
-                        .build());
+
+        Card card = BattleCard.builder()
+                .tipoOrdenDeBatalla(battleType)
+                .playerData(capitanData)
+                .build();
+        capitanData.getCards().add(card);
+
+        cardRepository.save(card);
         capitanDataRepository.save(capitanData);
     }
 
