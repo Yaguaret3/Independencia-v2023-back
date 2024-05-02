@@ -11,6 +11,7 @@ public class CityTinyResponse {
     private Long id;
     private String name;
     private Long gobernadorId;
+    private String gobernadorName;
     private String subRegion;
 
     public static CityTinyResponse toTinyResponse(City entity){
@@ -18,6 +19,9 @@ public class CityTinyResponse {
                 .id(entity.getId())
                 .name(entity.getName())
                 .gobernadorId(entity.getGobernadorData()==null?null:entity.getGobernadorData().getId())
+                .gobernadorName(entity.getGobernadorData() != null ?
+                        entity.getGobernadorData().getUser().getUsername() :
+                        "")
                 .subRegion(entity.getSubRegion().getSubRegionEnum().name())
                 .build();
     }

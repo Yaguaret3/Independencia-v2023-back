@@ -12,6 +12,7 @@ public class CampTinyResponse {
     private Integer nivel;
     private Long gameAreaId;
     private Long capitanId;
+    private String capitanName;
 
     public static CampTinyResponse toTinyResponse(Camp entity){
 
@@ -20,6 +21,7 @@ public class CampTinyResponse {
                 .nivel(entity.getNivel())
                 .gameAreaId(entity.getId())
                 .capitanId(entity.getCapitanData().getId())
+                .capitanName(entity.getCapitanData().getUser().getUsername())
                 .build();
     }
 }
