@@ -25,7 +25,7 @@ public class GameRegionTinyResponse {
     private String fgHeight;
     private String fgWidth;
     private String color;
-    private List<GameSubRegionTinyResponse> subRegions;
+    private List<GameSubRegionTinyResponse> subregions;
 
     public static GameRegionTinyResponse toTinyResponse(GameRegion entity){
         return GameRegionTinyResponse.builder()
@@ -41,7 +41,7 @@ public class GameRegionTinyResponse {
                 .fgHeight(entity.getRegionEnum().getFgHeight())
                 .fgWidth(entity.getRegionEnum().getFgWidth())
                 .color(entity.getRegionEnum().getColor())
-                .subRegions(entity.getSubRegions()
+                .subregions(entity.getSubRegions()
                         .stream()
                         .map(GameSubRegionTinyResponse::toTinyResponse)
                         .collect(Collectors.toList()))

@@ -369,7 +369,7 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
-    public String assignFinalRouteValue(Long routeId, AssignRouteValueRequest request) {
+    public String updateRoute(Long routeId, AssignRouteValueRequest request) {
         Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException());
         route.setTradeScore(request.getFinalValue());
         route.setComentario(request.getComentario());

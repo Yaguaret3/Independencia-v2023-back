@@ -88,9 +88,9 @@ public class ControlController {
     public ResponseEntity<String> addPlata(@PathVariable Long playerId, @RequestBody SoleValueRequest plata){
         return ResponseEntity.ok(service.addPlata(playerId, plata.getNewValue()));
     }
-    @PostMapping("/{routeId}/assignFinalValue")
-    public ResponseEntity<String> assignFinalRouteValue(@PathVariable Long routeId, @RequestBody AssignRouteValueRequest request){
-        return ResponseEntity.ok(service.assignFinalRouteValue(routeId, request));
+    @PostMapping("/{routeId}/update-route")
+    public ResponseEntity<String> updateRoute(@PathVariable Long routeId, @RequestBody AssignRouteValueRequest request){
+        return ResponseEntity.ok(service.updateRoute(routeId, request));
     }
 
     @PostMapping("/{priceId}/update-price")

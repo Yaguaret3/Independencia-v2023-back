@@ -72,7 +72,7 @@ public class MercaderServiceImpl implements MercaderService {
         GameDataTinyResponse response = GameDataTinyResponse.toTinyResponse(data.getGameData());
         if(response.getFase() == PhaseEnum.REVEALING){
             response.getGameRegions()
-                    .forEach(r -> r.getSubRegions()
+                    .forEach(r -> r.getSubregions()
                         .forEach(s -> s.reveal(         // AQUÍ ESTÁ EL REVEAL
                                 data.getGameData().getPlayers().stream()
                                         .filter(MercaderData.class::isInstance)

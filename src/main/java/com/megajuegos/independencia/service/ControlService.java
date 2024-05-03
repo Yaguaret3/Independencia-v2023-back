@@ -29,7 +29,7 @@ public interface ControlService {
 
     String addBuilding(Long cityId, NewBuildingRequest request);
 
-    String assignFinalRouteValue(Long routeId, AssignRouteValueRequest request);
+    String updateRoute(Long routeId, AssignRouteValueRequest request);
 
     String updatePrices(Long priceId, Map<String, Integer> request);
 

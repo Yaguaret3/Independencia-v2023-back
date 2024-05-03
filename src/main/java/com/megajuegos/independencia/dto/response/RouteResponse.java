@@ -15,6 +15,7 @@ public class RouteResponse {
     private Long tradeScore;
     private Integer turn;
     private String comentario;
+    private String mercaderName;
 
     public static RouteResponse toDto(Route entity){
 
@@ -24,6 +25,7 @@ public class RouteResponse {
                 .turn(entity.getTurn())
                 .comentario(entity.getComentario())
                 .subregions(entity.getSubregions().stream().map(GameSubRegionTinyResponse::toTinyResponse).collect(Collectors.toList()))
+                .mercaderName(entity.getMercader().getUser().getUsername())
                 .build();
     }
 }
