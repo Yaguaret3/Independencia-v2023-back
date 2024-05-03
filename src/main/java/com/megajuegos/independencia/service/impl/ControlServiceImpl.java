@@ -135,6 +135,38 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
+    public String createAndGiveActionCard(Long playerId, NewActionCardRequest request) {
+        PlayerData playerData = playerDataRepository.findById(playerId)
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
+
+        Card card = ActionCard.builder()
+                .tipoAccion(request.getActionType())
+                .playerData(playerData)
+                .build();
+
+        cardRepository.save(card);
+        playerData.getCards().add(card);
+        playerDataRepository.save(playerData);
+        return CARD_CREATED_GIVEN;
+    }
+
+    @Override
+    public String createAndGiveBattleCard(Long playerId, NewBattleCardRequest request) {
+        PlayerData playerData = playerDataRepository.findById(playerId)
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
+
+        Card card = BattleCard.builder()
+                .tipoOrdenDeBatalla(request.getBattleType())
+                .playerData(playerData)
+                .build();
+
+        cardRepository.save(card);
+        playerData.getCards().add(card);
+        playerDataRepository.save(playerData);
+        return CARD_CREATED_GIVEN;
+    }
+
+    @Override
     public String createAndAssignPersonalPrice(Long playerDataId) {
         PlayerData playerData = playerDataRepository.findById(playerDataId)
                 .orElseThrow(PlayerNotFoundException::new);

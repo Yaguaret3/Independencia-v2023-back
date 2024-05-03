@@ -36,6 +36,14 @@ public class ControlController {
     public ResponseEntity<String> createAndGiveExtraCard(@PathVariable Long playerId, @RequestBody ExtraCardRequest request){
        return ResponseEntity.ok(service.createAndGiveExtraCard(playerId, request));
     }
+    @PostMapping("/{playerId}/create-give-action-card")
+    public ResponseEntity<String> createAndGiveActionCard(@PathVariable Long playerId, @RequestBody NewActionCardRequest request){
+        return ResponseEntity.ok(service.createAndGiveActionCard(playerId, request));
+    }
+    @PostMapping("/{playerId}/create-give-battle-card")
+    public ResponseEntity<String> createAndGiveBattleCard(@PathVariable Long playerId, @RequestBody NewBattleCardRequest request){
+        return ResponseEntity.ok(service.createAndGiveBattleCard(playerId, request));
+    }
     @PostMapping("/create-assign-personal-prices")
     public ResponseEntity<String> createAndAssignPersonalPrice(@RequestParam Long playerDataId){
         return ResponseEntity.ok((service.createAndAssignPersonalPrice(playerDataId)));

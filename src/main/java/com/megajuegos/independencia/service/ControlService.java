@@ -66,5 +66,9 @@ public interface ControlService {
     ControlResponse getControlData();
 
     String moveToCongress(MoveToCongressRequest request);
+
+    String createAndGiveActionCard(Long playerId, NewActionCardRequest request);
+
+    String createAndGiveBattleCard(Long playerId, NewBattleCardRequest request);
 }
 
