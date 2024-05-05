@@ -1,5 +1,9 @@
 package com.megajuegos.independencia.dto.response;
 
+import com.megajuegos.independencia.entities.Army;
+import com.megajuegos.independencia.entities.Battle;
+import com.megajuegos.independencia.entities.Route;
+import com.megajuegos.independencia.entities.data.CapitanData;
 import com.megajuegos.independencia.entities.data.GameData;
 import com.megajuegos.independencia.entities.data.MercaderData;
 import com.megajuegos.independencia.enums.BuildingTypeEnum;
@@ -9,6 +13,7 @@ import lombok.Data;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data @Builder
@@ -23,8 +28,9 @@ public class GameDataFullResponse {
     private List<BuildingResponse> edificios;
     private List<CongresoResponse> congresos;
     private List<RouteResponse> rutas;
+    private List<BattleFullResponse> batallas;
 
-    public static GameDataFullResponse toFullResponse(GameData entity){
+    public static GameDataFullResponse toFullResponse(GameData entity, List<Route> rutas, List<Battle> batallas){
 
         return GameDataFullResponse.builder()
                 .id(entity.getId())
@@ -50,14 +56,12 @@ public class GameDataFullResponse {
                 .congresos(entity.getCongresos().stream()
                         .map(CongresoResponse::toDtoResponse)
                         .collect(Collectors.toList()))
-                .rutas(entity.getPlayers().stream()
-                        .filter(MercaderData.class::isInstance)
-                        .map(p -> (MercaderData) p)
-                        .flatMap(m -> m.getRoutes().stream())
-                        .filter(r-> r.getTurn().equals(entity.getTurno()))
+                .rutas(rutas.stream()
                         .map(RouteResponse::toDto)
                         .collect(Collectors.toList()))
-
+                .batallas(batallas.stream()
+                        .map(BattleFullResponse::toFullResponse)
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

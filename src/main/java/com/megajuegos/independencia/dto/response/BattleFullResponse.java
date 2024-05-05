@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 public class BattleFullResponse {
 
     private Long id;
+    private Long subregionId;
+    private String subregionName;
+    private Long regionId;
+    private String regionName;
     private List<BattleCardFullResponse> cartasDeCombate;
     private List<ArmyFullResponse> combatientes;
     private Integer turnoDeJuego;
@@ -20,6 +24,10 @@ public class BattleFullResponse {
 
         return BattleFullResponse.builder()
                 .id(entity.getId())
+                .subregionId(entity.getSubregion().getId())
+                .subregionName(entity.getSubregion().getNombre())
+                .regionId(entity.getSubregion().getGameRegion().getId())
+                .regionName(entity.getSubregion().getGameRegion().getRegionEnum().getNombre())
                 .combatientes(entity.getCombatientes().stream()
                         .map(ArmyFullResponse::toDtoResponse)
                         .collect(Collectors.toList()))

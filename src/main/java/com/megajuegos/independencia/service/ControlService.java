@@ -43,8 +43,6 @@ public interface ControlService {
 
     String assignRandomValuesBattle(Long battleId);
 
-    String assignMilitia(Long armyId, Integer militia);
-
     String assignReserve(Long playerId, Integer militia);
 
     String deleteArmy(Long armyId);

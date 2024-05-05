@@ -124,10 +124,6 @@ public class ControlController {
     public ResponseEntity<String> solveBattle(@RequestBody SolveBattleRequest request){
         return ResponseEntity.ok(service.solveBattle(request));
     }
-    @PostMapping("/{armyId}/assign-militia")
-    public ResponseEntity<String> assignMilitia(@PathVariable Long armyId, @RequestBody SoleValueRequest militia){
-        return ResponseEntity.ok(service.assignMilitia(armyId, militia.getNewValue()));
-    }
     @PostMapping("/{playerId}/assign-reserve")
     public ResponseEntity<String> assignReserve(@PathVariable Long playerId, @RequestBody SoleValueRequest militia){
         return ResponseEntity.ok(service.assignReserve(playerId, militia.getNewValue()));

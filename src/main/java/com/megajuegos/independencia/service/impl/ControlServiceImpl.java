@@ -54,7 +54,7 @@ public class ControlServiceImpl implements ControlService {
     private final GameIdUtil gameIdUtil;
     private final BuildingRepository buildingRepository;
 
-    private static final int DADO_CUATRO_MAX = 4;
+    private static final int DADO_CUATRO_MAX = 5;
     private static final int DADO_CUATRO_MIN = 1;
     private static final int CERO_DEFAULT = 0;
     private static final int UN_SOLO_ATACANTE = 1;
@@ -307,7 +307,13 @@ public class ControlServiceImpl implements ControlService {
                 )
                 .orElseThrow(() -> new PlayerNotFoundException());
 
-        return GameDataFullResponse.toFullResponse(controlData.getGameData());
+        GameData gameData = controlData.getGameData();
+
+        List<Route> rutas = routeRepository.findByTurn(gameData.getTurno());
+
+        List<Battle> batallas = battleRepository.findByActive(true);
+
+        return GameDataFullResponse.toFullResponse(gameData, rutas, batallas);
     }
 
     @Override
@@ -449,28 +455,43 @@ public class ControlServiceImpl implements ControlService {
         GameSubRegion gameSubRegionInvolucrada = gameSubRegionRepository.findById(request.getGameSubRegionId())
                 .orElseThrow(() -> new GameAreaNotFoundException());
 
-        List<Army> ejercitosInvolucrados = armyRepository.findAllById(request.getCombatientes().stream()
+        List<CapitanData> capitanesInvolucrados = capitanRepository.findAllById(request.getCombatientes().stream()
                 .map(ArmyForBattleRequest::getId)
                 .collect(Collectors.toList()));
 
-        if(!gameSubRegionInvolucrada.getEjercitos().containsAll(ejercitosInvolucrados)){
+        List<CapitanData> capitanesEnSubregion = gameSubRegionInvolucrada.getEjercitos().stream()
+                .map(Army::getCapitanData)
+                .collect(Collectors.toList());
+
+        if(!new HashSet<>(capitanesEnSubregion).containsAll(capitanesInvolucrados)){
             throw new IncorrectBattleException();
         }
 
+        List<Army> ejercitosInvolucrados = capitanesInvolucrados.stream()
+                .flatMap(c -> c.getEjercito().stream())
+                .filter(a -> request.getGameSubRegionId().equals(a.getSubregion().getId()))
+                .collect(Collectors.toList());
+
         ejercitosInvolucrados.forEach(e -> {
             Optional<ArmyForBattleRequest> requestedArmyId = request.getCombatientes().stream()
-                    .filter(a -> a.getId().equals(e.getId()))
+                    .filter(a -> a.getId().equals(e.getCapitanData().getId()))
                     .findFirst();
             e.setAtaque(requestedArmyId.get().isAtaque());
             e.setMilicias(CERO_DEFAULT);
         });
 
-        battleRepository.save(Battle.builder()
-                        .active(true)
-                        .turnoDeJuego(gameData.getTurno())
-                        .subregion(gameSubRegionInvolucrada)
-                        .combatientes(ejercitosInvolucrados)
-                .build());
+        Battle battle = Battle.builder()
+                .active(true)
+                .turnoDeJuego(gameData.getTurno())
+                .subregion(gameSubRegionInvolucrada)
+                .combatientes(ejercitosInvolucrados)
+                .build();
+        battleRepository.save(battle);
+
+        ejercitosInvolucrados.forEach(e -> e.setBattle(battle));
+
+        armyRepository.saveAll(ejercitosInvolucrados);
+
         return BATTLE_CREATED;
     }
 
@@ -488,6 +509,7 @@ public class ControlServiceImpl implements ControlService {
         ejercitosInvolucrados.forEach(e -> {
             e.setIniciativa(random.nextInt());
             valoresAzar.add(random.nextInt(DADO_CUATRO_MAX - DADO_CUATRO_MIN) + DADO_CUATRO_MIN);
+            System.out.println();
         });
 
         //Ordena para hacer coincidir los ejércitos que atacan con los dados mayores
@@ -505,15 +527,6 @@ public class ControlServiceImpl implements ControlService {
 
         battleRepository.save(battle);
         return BATTLE_CREATED;
-    }
-
-    @Override
-    public String assignMilitia(Long armyId, Integer militia) {
-
-        Army army = armyRepository.findById(armyId).orElseThrow(() -> new ArmyNotFoundException());
-        army.setMilicias(militia);
-        armyRepository.save(army);
-        return MILITIA_ASSIGNED;
     }
 
     @Override
@@ -555,7 +568,6 @@ public class ControlServiceImpl implements ControlService {
         Army army = Army.builder()
                 .subregion(gameSubRegion)
                 .capitanData(capitanData)
-                .milicias(request.getMilicias())
                 .build();
 
         armyRepository.save(army);
@@ -746,6 +758,7 @@ public class ControlServiceImpl implements ControlService {
         GameSubRegion gameSubRegion = battle.getSubregion();
 
         List<Army> ejercitos = battle.getCombatientes();
+
         ejercitos.forEach(army -> {
 
             request.getResultados().forEach(r -> {
@@ -759,6 +772,7 @@ public class ControlServiceImpl implements ControlService {
                     //Quita el ejército de la subregión (y del capitán)
                     capitanData.getEjercito().remove(army);
                     gameSubRegion.getEjercitos().remove(army);
+                    armyRepository.delete(army);
 
                 }
                 if(Objects.equals(army.getId(), r.getArmyId()) && !r.isDestruido()){
