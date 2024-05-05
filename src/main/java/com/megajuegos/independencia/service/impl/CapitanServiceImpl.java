@@ -232,9 +232,15 @@ public class CapitanServiceImpl implements CapitanService {
             throw new IncorrectCardTypeException();
         }
 
-        army.getCartasJugadas().add((BattleCard) card);
+        BattleCard battleCard = (BattleCard) card;
 
+        army.getCartasJugadas().add(battleCard);
+
+        battleCard.setArmy(army);
+
+        armyRepository.save(army);
         battleRepository.save(battle);
+
         card.setTurnWhenPlayed(turno);
         card.setAlreadyPlayed(true);
         cardRepository.save(card);
