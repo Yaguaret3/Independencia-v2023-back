@@ -48,8 +48,8 @@ public class CapitanController {
         service.playActionRequest(request);
     }
     @PostMapping("/assign-militia-battle")
-    public void assignMilitiaToBattle(@RequestParam Long battleId, @RequestParam Integer milicia){
-        service.assignMilitiaToBattle(battleId, milicia);
+    public void assignMilitiaToBattle(@RequestBody AssignMilitiaToArmyRequest request){
+        service.assignMilitiaToBattle(request.getBattleId(), request.getMilicia());
     }
 
     @PostMapping("/play-battle-cards")
