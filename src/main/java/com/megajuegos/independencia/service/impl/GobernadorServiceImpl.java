@@ -129,6 +129,10 @@ public class GobernadorServiceImpl implements GobernadorService {
         if(request.isAumentar()){
             gobernadorData.getCity().setTaxesLevel(nivelImpositivo+1);
             gobernadorData.getCity().setPublicOpinion(opinionPublica-1);
+            if(opinionPublica<=0){
+                gobernadorData.getCity().setPublicOpinion(0);
+                gobernadorData.getCity().setPrestige(gobernadorData.getCity().getPrestige() - 1);
+            }
         }
         if(request.isDisminuir()){
             gobernadorData.getCity().setTaxesLevel(nivelImpositivo-1);

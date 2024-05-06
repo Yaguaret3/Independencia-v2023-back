@@ -76,6 +76,7 @@ public class ControlServiceImpl implements ControlService {
         playerDataRepository.save(playerData);
         return CARD_CREATED_GIVEN;
     }
+
     @Override
     public String createAndGiveRepresentationCard(Long playerId, NewRepresentationCardRequest request) throws InstanceNotFoundException {
         PlayerData playerData = playerDataRepository.findById(playerId)
@@ -172,16 +173,16 @@ public class ControlServiceImpl implements ControlService {
                 .orElseThrow(PlayerNotFoundException::new);
 
         PersonalPrice price = priceRepository.save(
-                                        PersonalPrice.builder()
-                                                .agropecuaria(0)
-                                                .comercial(0)
-                                                .construccion(0)
-                                                .metalmecanica(0)
-                                                .plata(0)
-                                                .puntajeComercial(0)
-                                                .textil(0)
-                                                .build()
-                                );
+                PersonalPrice.builder()
+                        .agropecuaria(0)
+                        .comercial(0)
+                        .construccion(0)
+                        .metalmecanica(0)
+                        .plata(0)
+                        .puntajeComercial(0)
+                        .textil(0)
+                        .build()
+        );
         playerData.getPrices().add(price);
         playerDataRepository.save(playerData);
         return PERSONAL_PRICE_ASSIGNED;
@@ -191,7 +192,7 @@ public class ControlServiceImpl implements ControlService {
     public String assignCongressPresident(Long revolucionarioId) {
         RevolucionarioData revolucionario;
         Optional<PlayerData> optional = playerDataRepository.findById(revolucionarioId);
-        if(!optional.isPresent() || !(optional.get() instanceof RevolucionarioData)){
+        if (!optional.isPresent() || !(optional.get() instanceof RevolucionarioData)) {
             throw new PlayerNotFoundException();
         }
         revolucionario = (RevolucionarioData) optional.get();
@@ -199,7 +200,7 @@ public class ControlServiceImpl implements ControlService {
         Congreso congreso = revolucionario.getCongreso();
 
         congreso.getRevolucionarios().forEach(r -> {
-            if(r.equals(revolucionario)){
+            if (r.equals(revolucionario)) {
                 r.setPresidente(true);
             } else {
                 r.setPresidente(false);
@@ -222,10 +223,10 @@ public class ControlServiceImpl implements ControlService {
                 .orElseThrow(() -> new PlayerNotFoundException());
         GameData gameData = controlData.getGameData();
 
-        if(controlData.getSiguienteFaseSolicitada()){
-           controlData.setSiguienteFaseSolicitada(false);
-           controlDataRepository.save(controlData);
-           return;
+        if (controlData.getSiguienteFaseSolicitada()) {
+            controlData.setSiguienteFaseSolicitada(false);
+            controlDataRepository.save(controlData);
+            return;
         }
 
         controlData.setSiguienteFaseSolicitada(true);
@@ -240,8 +241,8 @@ public class ControlServiceImpl implements ControlService {
                 .filter(c -> !c.getSiguienteFaseSolicitada())
                 .collect(Collectors.toList());
 
-        if(controlesQueFaltanTerminar.isEmpty()){
-            switch (gameData.getFase()){
+        if (controlesQueFaltanTerminar.isEmpty()) {
+            switch (gameData.getFase()) {
                 case MOVING:
                     gameData.setFase(PhaseEnum.PLANNING);
                     break;
@@ -271,13 +272,13 @@ public class ControlServiceImpl implements ControlService {
                 .orElseThrow(PlayerNotFoundException::new);
 
         Card card = null;
-        for(Card c : from.getCards()){
-            if(Objects.equals(c.getId(), cartaId)){
+        for (Card c : from.getCards()) {
+            if (Objects.equals(c.getId(), cartaId)) {
                 card = c;
                 break;
             }
         }
-        if(card!=null){
+        if (card != null) {
             to.getCards().add(card);
             from.getCards().remove(card);
         }
@@ -296,6 +297,7 @@ public class ControlServiceImpl implements ControlService {
         cardRepository.delete(card);
         return CARD_REMOVED;
     }
+
     @Override
     public GameDataFullResponse getFullData() {
 
@@ -400,10 +402,10 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String updateVotation(Long votationId, UpdateVotationRequest request) {
         Votation votation = votationRepository.findById(votationId).orElseThrow(() -> new VotationNotFoundException());
-        if(request.getPropuesta() != null){
+        if (request.getPropuesta() != null) {
             votation.setPropuesta(request.getPropuesta());
         }
-        if(request.getActive() != null){
+        if (request.getActive() != null) {
             votation.setActive(request.getActive());
         }
         return VOTATION_UPDATED;
@@ -439,7 +441,7 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String createBattle(CreateBattleRequest request) {
 
-        if(request.getCombatientes().size() <= 1){
+        if (request.getCombatientes().size() <= 1) {
             throw new IncorrectBattleException();
         }
 
@@ -463,7 +465,7 @@ public class ControlServiceImpl implements ControlService {
                 .map(Army::getCapitanData)
                 .collect(Collectors.toList());
 
-        if(!new HashSet<>(capitanesEnSubregion).containsAll(capitanesInvolucrados)){
+        if (!new HashSet<>(capitanesEnSubregion).containsAll(capitanesInvolucrados)) {
             throw new IncorrectBattleException();
         }
 
@@ -518,7 +520,7 @@ public class ControlServiceImpl implements ControlService {
 
         //Asigna valores
         int index = 0;
-        while(index<ejercitosInvolucrados.size()){
+        while (index < ejercitosInvolucrados.size()) {
             Army ejercito = ejercitosInvolucrados.get(index);
             ejercito.setValorAzar(valoresAzar.get(index));
             ejercito.setValorProvisorio(ejercito.getValorAzar() + ejercito.getMilicias());
@@ -532,12 +534,12 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String assignReserve(Long playerId, Integer militia) {
         PlayerData playerData = playerDataRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException());
-        if(playerData instanceof CapitanData){
+        if (playerData instanceof CapitanData) {
             CapitanData capitanData = (CapitanData) playerData;
             capitanData.setReserva(militia);
             playerDataRepository.save(capitanData);
         }
-        if(playerData instanceof GobernadorData){
+        if (playerData instanceof GobernadorData) {
             GobernadorData gobernadorData = (GobernadorData) playerData;
             gobernadorData.setMilicia(militia);
             playerDataRepository.save(gobernadorData);
@@ -583,9 +585,9 @@ public class ControlServiceImpl implements ControlService {
         GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getGameSubregionId()).orElseThrow(() -> new GameAreaNotFoundException());
 
         Camp camp = capitanData.getCamp() == null ? Camp.builder()
-                                                    .nivel(1)
-                                                    .capitanData(capitanData)
-                                                    .build()
+                .nivel(1)
+                .capitanData(capitanData)
+                .build()
                 : capitanData.getCamp();
 
         camp.setSubregion(gameSubRegion);
@@ -599,7 +601,7 @@ public class ControlServiceImpl implements ControlService {
     public String assignNewDiputadoToCity(Long cityId, Long diputadoId) throws InstanceNotFoundException {
         City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException());
         RevolucionarioData revolucionarioData = (RevolucionarioData) playerDataRepository.findById(diputadoId)
-                                    .orElseThrow(PlayerNotFoundException::new);
+                .orElseThrow(PlayerNotFoundException::new);
 
         List<RepresentationCard> cards = cardRepository
                 .findRepresentationCardByCity(RepresentationEnum.byNombre(city.getName()))
@@ -607,10 +609,10 @@ public class ControlServiceImpl implements ControlService {
                 .filter(r -> !r.isAlreadyPlayed())
                 .collect(Collectors.toList());
 
-        if(cards.isEmpty()){
+        if (cards.isEmpty()) {
             throw new CardNotFoundException();
         }
-        if(cards.size()>1){
+        if (cards.size() > 1) {
             throw new MoreThanOneRepresentationCardPerCity();
         }
 
@@ -633,12 +635,12 @@ public class ControlServiceImpl implements ControlService {
         PlayerData playerData = playerDataRepository.findById(playerId)
                 .orElseThrow(PlayerNotFoundException::new);
 
-        if(playerData instanceof GobernadorData){
+        if (playerData instanceof GobernadorData) {
             GobernadorData gobernadorData = (GobernadorData) playerData;
             gobernadorData.setPlata(plata);
             playerDataRepository.save(gobernadorData);
         }
-        if(playerData instanceof RevolucionarioData){
+        if (playerData instanceof RevolucionarioData) {
             RevolucionarioData revolucionarioData = (RevolucionarioData) playerData;
             revolucionarioData.setPlata(plata);
             playerDataRepository.save(revolucionarioData);
@@ -649,7 +651,7 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String removeCongress(Long congresoId) {
         Congreso congreso = congresoRepository.findById(congresoId)
-                        .orElseThrow(() -> new CongresoNotFoundException());
+                .orElseThrow(() -> new CongresoNotFoundException());
         List<RevolucionarioData> revolucionarios = congreso.getRevolucionarios();
         City sede = congreso.getSede();
 
@@ -668,15 +670,15 @@ public class ControlServiceImpl implements ControlService {
 
         Congreso congreso = congresoRepository.findById(congresoId)
                 .orElseThrow(() -> new CongresoNotFoundException());
-        if(request.getMilicia() != null){
+        if (request.getMilicia() != null) {
             congreso.setMilicia(request.getMilicia());
         }
-        if(request.getPlata() != null){
+        if (request.getPlata() != null) {
             congreso.setPlata(request.getPlata());
         }
         congresoRepository.save(congreso);
         congreso.getRevolucionarios().forEach(r -> {
-            if(r.getId().equals(request.getPresidente())){
+            if (r.getId().equals(request.getPresidente())) {
                 r.setPresidente(true);
             } else {
                 r.setPresidente(false);
@@ -695,11 +697,11 @@ public class ControlServiceImpl implements ControlService {
         List<RevolucionarioData> revolucionarios = revolucionarioRepository.findAllById(request.getDiputadosIds());
 
         Congreso congreso = Congreso.builder()
-                                    .sede(sede)
-                                    .revolucionarios(revolucionarios)
-                                    .plata(request.getPlata())
-                                    .milicia(request.getMilicia())
-                            .build();
+                .sede(sede)
+                .revolucionarios(revolucionarios)
+                .plata(request.getPlata())
+                .milicia(request.getMilicia())
+                .build();
 
         sede.setSedeDelCongreso(congreso);
         revolucionarios.forEach(r -> r.setCongreso(congreso));
@@ -709,7 +711,7 @@ public class ControlServiceImpl implements ControlService {
 
         congresoRepository.save(congreso);
         congreso.getRevolucionarios().forEach(r -> {
-            if(r.getId().equals(request.getPresidenteId())){
+            if (r.getId().equals(request.getPresidenteId())) {
                 r.setPresidente(true);
             } else {
                 r.setPresidente(false);
@@ -763,7 +765,7 @@ public class ControlServiceImpl implements ControlService {
 
             request.getResultados().forEach(r -> {
 
-                if(Objects.equals(army.getId(), r.getArmyId()) && r.isDestruido()){
+                if (Objects.equals(army.getId(), r.getArmyId()) && r.isDestruido()) {
 
                     //Si el ejército fue derrotado...
                     CapitanData capitanData = army.getCapitanData();
@@ -775,7 +777,7 @@ public class ControlServiceImpl implements ControlService {
                     armyRepository.delete(army);
 
                 }
-                if(Objects.equals(army.getId(), r.getArmyId()) && !r.isDestruido()){
+                if (Objects.equals(army.getId(), r.getArmyId()) && !r.isDestruido()) {
                     //Si el ejército no fue derrotado, se limpia para otra batalla.
                     army.setAtaque(false);
                     army.setIniciativa(0);
@@ -813,25 +815,67 @@ public class ControlServiceImpl implements ControlService {
         cal.add(Calendar.MINUTE, 15);
         Long newTurnInMillis = cal.getTimeInMillis();
 
-        gameData.setTurno(gameData.getTurno()+1);
+        gameData.setTurno(gameData.getTurno() + 1);
         gameData.setNextEndOfTurn(newTurnInMillis);
 
-        //collectTaxes(gameData);
+        //Gobernadores TODO Leyes políticas impositivas
+        collectTaxes(gameData);
+        //Mercaderes TODO Leyes comerciales
+        sumarPuntajeComercialAcumulado(gameData);
+        //Revolucionarios
+        limpiarRepresentacion(gameData);
+        //Capitanes
+        // ???
 
         gameDataRepository.save(gameData);
     }
 
-    private void collectTaxes(GameData gameData){
+    private void collectTaxes(GameData gameData) {
 
         List<PlayerData> players = gameData.getPlayers();
         List<GobernadorData> gobernadores = players
-                                            .stream()
-                                            .filter(GobernadorData.class::isInstance)
-                                            .map(GobernadorData.class::cast)
-                                            .collect(Collectors.toList());
+                .stream()
+                .filter(GobernadorData.class::isInstance)
+                .map(GobernadorData.class::cast)
+                .collect(Collectors.toList());
 
-        for(GobernadorData gobernador : gobernadores){
-            gobernador.setPlata(gobernador.getPlata() + gobernador.getCity().getTaxesLevel());
-        }
+        gobernadores.forEach(g -> g.setPlata(g.getPlata() + g.getCity().getTaxesLevel()));
+        playerDataRepository.saveAll(gobernadores);
+    }
+
+    private void sumarPuntajeComercialAcumulado(GameData gameData) {
+        List<MercaderData> mercaderes = gameData.getPlayers().stream()
+                .filter(MercaderData.class::isInstance)
+                .map(MercaderData.class::cast)
+                .collect(Collectors.toList());
+
+        mercaderes.forEach(m -> {
+            m.setPuntajeComercialAcumulado(m.getPuntajeComercialAcumulado() + m.getPuntajeComercial());
+            m.setPuntajeComercial(0);
+        });
+        playerDataRepository.saveAll(mercaderes);
+    }
+
+    private void limpiarRepresentacion(GameData gameData) {
+        List<RevolucionarioData> revolucionarios = gameData.getPlayers().stream()
+                .filter(RevolucionarioData.class::isInstance)
+                .map(RevolucionarioData.class::cast)
+                .collect(Collectors.toList());
+
+        List<RepresentationCard> representationCard = revolucionarios.stream()
+                .map(PlayerData::getCards)
+                .filter(RepresentationCard.class::isInstance)
+                .map(RepresentationCard.class::cast)
+                .collect(Collectors.toList());
+
+        representationCard.forEach(c -> c.setPlayerData(null));
+
+        revolucionarios.forEach(r -> r.setCards(r.getCards().stream()
+                .filter(c -> !(c instanceof RepresentationCard))
+                .collect(Collectors.toList())
+        ));
+
+        cardRepository.saveAll(representationCard);
+        playerDataRepository.saveAll(revolucionarios);
     }
 }
