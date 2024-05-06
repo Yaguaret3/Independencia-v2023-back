@@ -850,8 +850,13 @@ public class ControlServiceImpl implements ControlService {
                 .collect(Collectors.toList());
 
         mercaderes.forEach(m -> {
+
+            m.setPuntajeComercial(m.getPuntajeComercial() + m.getRoutes().stream()
+                    .mapToLong(Route::getTradeScore)
+                    .mapToInt(Integer.class::cast)
+                    .sum()
+            );
             m.setPuntajeComercialAcumulado(m.getPuntajeComercialAcumulado() + m.getPuntajeComercial());
-            m.setPuntajeComercial(0);
         });
         playerDataRepository.saveAll(mercaderes);
     }
