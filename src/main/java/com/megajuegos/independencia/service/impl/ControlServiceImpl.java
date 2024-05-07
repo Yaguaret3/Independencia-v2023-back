@@ -26,6 +26,7 @@ import javax.management.InstanceNotFoundException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.megajuegos.independencia.util.Messages.*;
 
@@ -231,7 +232,6 @@ public class ControlServiceImpl implements ControlService {
 
         controlData.setSiguienteFaseSolicitada(true);
 
-        //TODO Chequear si al actualizar controlData cambia también su referencia desde la lista de Controles.
         List<ControlData> controles = gameData.getPlayers().stream()
                 .filter(ControlData.class::isInstance)
                 .map(p -> (ControlData) p)
@@ -819,7 +819,7 @@ public class ControlServiceImpl implements ControlService {
         gameData.setNextEndOfTurn(newTurnInMillis);
 
         //Gobernadores TODO Leyes políticas impositivas
-        collectTaxes(gameData);
+        recolectarImpuestosRecuperarRepresentacionYMercados(gameData);
         //Mercaderes TODO Leyes comerciales
         sumarPuntajeComercialAcumulado(gameData);
         //Revolucionarios
@@ -830,16 +830,43 @@ public class ControlServiceImpl implements ControlService {
         gameDataRepository.save(gameData);
     }
 
-    private void collectTaxes(GameData gameData) {
+    private void recolectarImpuestosRecuperarRepresentacionYMercados(GameData gameData) {
 
-        List<PlayerData> players = gameData.getPlayers();
-        List<GobernadorData> gobernadores = players
+        List<GobernadorData> gobernadores = gameData.getPlayers()
                 .stream()
                 .filter(GobernadorData.class::isInstance)
                 .map(GobernadorData.class::cast)
                 .collect(Collectors.toList());
 
-        gobernadores.forEach(g -> g.setPlata(g.getPlata() + g.getCity().getTaxesLevel()));
+        gobernadores.forEach(g -> {
+
+            //Impuestos
+            g.setPlata(g.getPlata() + g.getCity().getTaxesLevel());
+
+            //Representacion
+            try {
+                RepresentationCard representationCard = RepresentationCard.builder()
+                        .representacion(RepresentationEnum.byNombre(g.getCity().getName()))
+                        .playerData(g)
+                        .build();
+                cardRepository.save(representationCard);
+                g.getCards().add(representationCard);
+            } catch (InstanceNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+            //Mercados
+            IntStream.range(0, g.getCity().getMarketLevel()).forEach(i -> {
+                MarketCard marketCard = MarketCard.builder()
+                        .playerData(g)
+                        .level(i + 1)
+                        .nombreCiudad(g.getCity().getName())
+                        .build();
+                cardRepository.save(marketCard);
+                g.getCards().add(marketCard);
+            });
+        });
+
         playerDataRepository.saveAll(gobernadores);
     }
 
