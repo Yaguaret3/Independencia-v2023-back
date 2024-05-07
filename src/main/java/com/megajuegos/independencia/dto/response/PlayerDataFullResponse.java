@@ -74,6 +74,7 @@ public class PlayerDataFullResponse {
                         .collect(Collectors.toList()))
                 .battleCards(util.getBattleCardList()
                         .stream()
+                        .filter(c -> !c.isAlreadyPlayed())
                         .map(BattleCardFullResponse::toFullResponse)
                         .collect(Collectors.toList()))
                 .prices(entity.getPrices().stream()

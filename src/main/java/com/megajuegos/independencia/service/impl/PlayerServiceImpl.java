@@ -19,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static com.megajuegos.independencia.util.Messages.CARD_GIVEN;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -82,7 +80,7 @@ public class PlayerServiceImpl implements PlayerService {
             }
         }
         if(player instanceof CapitanData){
-            if(!(card instanceof BattleCard && (playerTo instanceof CapitanData || playerTo instanceof RevolucionarioData))){
+            if(!(card instanceof BattleCard && playerTo instanceof CapitanData)){
                 throw new CardCannotBeGivenException();
             }
         }
