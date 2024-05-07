@@ -87,43 +87,6 @@ public class MercaderServiceImpl implements MercaderService {
         return response;
     }
 
-    @Override
-    public void giveResources(GiveResourcesRequest request) {
-
-        MercaderData data = mercaderDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
-
-        List<Long> reqCardIds = request.getResourceIds();
-        List<Card> cardList = reqCardIds.stream()
-                .flatMap(reqCardId -> data.getCards().stream()
-                        .filter(mercaderCard -> Objects.equals(mercaderCard.getId(), reqCardId)))
-                .collect(Collectors.toList());
-
-
-        reqCardIds.removeAll(cardList.stream()
-                .map(Card::getId)
-                .collect(Collectors.toList()));
-
-        if(!reqCardIds.isEmpty()){
-            throw new CardNotFoundException();
-        }
-
-        PlayerData they = playerDataRepository.findById(request.getIdJugadorDestino())
-                .orElseThrow(() -> new PlayerNotFoundException());
-
-        cardList.forEach(c -> {
-            data.getCards().remove(c);
-            they.getCards().add(c);
-        });
-        playerDataRepository.save(data);
-        playerDataRepository.save(they);
-    }
-
     // Validamos que sean adyacentes
     // Validamos que las ciudades tengan carta de ciudad
     // Asignamos bien jugado

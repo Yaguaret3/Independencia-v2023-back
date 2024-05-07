@@ -15,7 +15,8 @@ public class PlayerController {
     private final PlayerService service;
 
     @PostMapping("/give-card")
-    public ResponseEntity<String> giveCard(@RequestBody GiveCardRequest request) {
-        return ResponseEntity.ok(service.giveCard(request.getPlayerToId(), request.getCardId()));
+    public ResponseEntity<Void> giveCard(@RequestBody GiveCardRequest request) {
+        service.giveCard(request.getPlayerToId(), request.getCardId());
+        return ResponseEntity.ok().build();
     }
 }

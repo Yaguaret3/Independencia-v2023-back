@@ -27,11 +27,6 @@ public class MercaderController {
         return service.getData();
     }
 
-    @PostMapping("/give-resources")
-    public void giveResources(@Valid @RequestBody GiveResourcesRequest request){
-        service.giveResources(request);
-    }
-
     @PostMapping("/play-trade-routes")
     public void playTradeRoutes(@Valid @RequestBody SingleTradeRouteRequest request) {
         service.playTradeRoutes(request);
