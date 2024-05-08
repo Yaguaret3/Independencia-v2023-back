@@ -1,4 +1,16 @@
 package com.megajuegos.independencia.exceptions;
 
-public class RegionNotFoundException extends RuntimeException{
+import com.megajuegos.independencia.enums.SubRegionEnum;
+
+
+public class RegionNotFoundException extends GenericNotFoundException{
+    public RegionNotFoundException(Long id) {
+        super(id, "una región");
+    }
+    public RegionNotFoundException(SubRegionEnum subRegionEnum) {
+        super(0L, String.format("la subregión %s", subRegionEnum.getNombre()));
+    }
+    public RegionNotFoundException() {
+        super(0L, "ninguna región");
+    }
 }

@@ -1,7 +1,7 @@
 package com.megajuegos.independencia.service.util;
 
 import com.megajuegos.independencia.entities.data.GameData;
-import com.megajuegos.independencia.exceptions.NoCurrentGameException;
+import com.megajuegos.independencia.exceptions.GameDataNotFoundException;
 import com.megajuegos.independencia.repository.GameDataRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,6 +15,6 @@ public class GameIdUtil {
     public Long currentGameId(){
         return gameDataRepository.findFirstByOrderById()
                 .map(GameData::getId)
-                .orElseThrow(() -> new NoCurrentGameException());
+                .orElseThrow(GameDataNotFoundException::new);
     }
 }

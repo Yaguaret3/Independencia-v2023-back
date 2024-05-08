@@ -75,7 +75,7 @@ public class SettingServiceImpl implements SettingService {
         //Congreso (owning side) - Ciudad
         City sede = ciudades.stream().filter(c -> c.getSubRegion().getSubRegionEnum().equals(SubRegionEnum.BUENOS_AIRES))
                 .findFirst()
-                .orElseThrow(() -> new PoorlyCreatedGame());
+                .orElseThrow(PoorlyCreatedGame::new);
 
         Congreso congreso = congresoRepository.save(Congreso.builder()
                                                             .plata(0)
@@ -118,7 +118,7 @@ public class SettingServiceImpl implements SettingService {
         setCapitanData(playerData);
 
         GameData gameData = gameDataRepository.findFirstByOrderById()
-                .orElseThrow(() -> new GameDataNotFoundException());
+                .orElseThrow(GameDataNotFoundException::new);
 
         playerData.setGameData(gameData);
         gameData.getPlayers().add(playerData);
@@ -161,10 +161,10 @@ public class SettingServiceImpl implements SettingService {
     public String assignCity(Long toId, String ciudadNombre) throws InstanceNotFoundException {
 
         GobernadorData to = gobernadorDataRepository.findById(toId)
-                .orElseThrow(() -> new PlayerNotFoundException());
+                .orElseThrow(() -> new PlayerNotFoundException(toId));
 
         City city = cityRepository.findByName(ciudadNombre)
-                .orElseThrow(() -> new CityNotFoundException());
+                .orElseThrow(() -> new CityNotFoundException(ciudadNombre));
 
         to.setCity(city);
 

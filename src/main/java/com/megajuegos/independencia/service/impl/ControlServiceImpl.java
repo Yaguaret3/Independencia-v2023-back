@@ -102,7 +102,7 @@ public class ControlServiceImpl implements ControlService {
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
 
         Card card = MarketCard.builder()
-                .nombreCiudad(cityRepository.findByName(request.getCityName()).orElseThrow(() -> new CityNotFoundException()).getName())
+                .nombreCiudad(cityRepository.findByName(request.getCityName()).orElseThrow(() -> new CityNotFoundException(request.getCityName())).getName())
                 .level(request.getLevel())
                 .playerData(playerData)
                 .build();
@@ -194,7 +194,7 @@ public class ControlServiceImpl implements ControlService {
         RevolucionarioData revolucionario;
         Optional<PlayerData> optional = playerDataRepository.findById(revolucionarioId);
         if (!optional.isPresent() || !(optional.get() instanceof RevolucionarioData)) {
-            throw new PlayerNotFoundException();
+            throw new PlayerNotFoundException(revolucionarioId);
         }
         revolucionario = (RevolucionarioData) optional.get();
 
@@ -215,13 +215,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public void concludePhase() {
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        ControlData controlData = getControlDataFromLoggedUser();
         GameData gameData = controlData.getGameData();
 
         if (controlData.getSiguienteFaseSolicitada()) {
@@ -290,7 +284,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String removeCard(Long idCard) {
-        Card card = cardRepository.findById(idCard).orElseThrow(CardNotFoundException::new);
+        Card card = cardRepository.findById(idCard).orElseThrow(() -> new CardNotFoundException(idCard));
         PlayerData playerData = card.getPlayerData();
         playerData.getCards().remove(card);
         playerDataRepository.save(playerData);
@@ -301,13 +295,7 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public GameDataFullResponse getFullData() {
 
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        ControlData controlData = getControlDataFromLoggedUser();
 
         GameData gameData = controlData.getGameData();
 
@@ -320,13 +308,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public ControlResponse getControlData() {
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        ControlData controlData = getControlDataFromLoggedUser();
 
         return ControlResponse.toDto(controlData);
     }
@@ -334,7 +316,7 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String editCity(Map<String, Integer> request, Long id) {
 
-        City city = cityRepository.findById(id).orElseThrow(() -> new CityNotFoundException());
+        City city = cityRepository.findById(id).orElseThrow(() -> new CityNotFoundException(id));
         request.forEach((key, value) -> {
 
             Field field = ReflectionUtils.findField(City.class, key);
@@ -347,9 +329,9 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String removeBuilding(Long cityId, Long buildingId) {
-        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException());
+        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException(cityId));
 
-        Building building = city.getBuildings().stream().filter(b -> b.getId().equals(buildingId)).findFirst().orElseThrow(() -> new BuildingNotFoundException());
+        Building building = city.getBuildings().stream().filter(b -> b.getId().equals(buildingId)).findFirst().orElseThrow(() -> new BuildingNotFoundException(buildingId));
 
         city.getBuildings().remove(building);
         cityRepository.save(city);
@@ -360,7 +342,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String addBuilding(Long cityId, NewBuildingRequest request) {
-        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException());
+        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException(cityId));
 
         Building building = Building.builder()
                 .buildingType(request.getBuildingType())
@@ -378,7 +360,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String updateRoute(Long routeId, AssignRouteValueRequest request) {
-        Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException());
+        Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
         route.setTradeScore(request.getFinalValue());
         route.setComentario(request.getComentario());
         routeRepository.save(route);
@@ -401,7 +383,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String updateVotation(Long votationId, UpdateVotationRequest request) {
-        Votation votation = votationRepository.findById(votationId).orElseThrow(() -> new VotationNotFoundException());
+        Votation votation = votationRepository.findById(votationId).orElseThrow(() -> new VotationNotFoundException(votationId));
         if (request.getPropuesta() != null) {
             votation.setPropuesta(request.getPropuesta());
         }
@@ -413,7 +395,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String addVote(Long votationId, NewVoteRequest request) {
-        Votation votation = votationRepository.findById(votationId).orElseThrow(() -> new VotationNotFoundException());
+        Votation votation = votationRepository.findById(votationId).orElseThrow(() -> new VotationNotFoundException(votationId));
         Vote vote = Vote.builder()
                 .voteType(request.getVoteTypeEnum())
                 .representacion(
@@ -432,7 +414,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String updateVote(Long voteId, UpdateVoteRequest request) {
-        Vote vote = voteRepository.findById(voteId).orElseThrow(() -> new VoteNotFoundException());
+        Vote vote = voteRepository.findById(voteId).orElseThrow(() -> new VoteNotFoundException(voteId));
         vote.setVoteType(request.getVoteType());
         voteRepository.save(vote);
         return VOTE_UPDATED;
@@ -445,17 +427,11 @@ public class ControlServiceImpl implements ControlService {
             throw new IncorrectBattleException();
         }
 
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        ControlData controlData = getControlDataFromLoggedUser();
         GameData gameData = controlData.getGameData();
 
         GameSubRegion gameSubRegionInvolucrada = gameSubRegionRepository.findById(request.getGameSubRegionId())
-                .orElseThrow(() -> new GameAreaNotFoundException());
+                .orElseThrow(() -> new SubRegionNotFoundException(request.getGameSubRegionId()));
 
         List<CapitanData> capitanesInvolucrados = capitanRepository.findAllById(request.getCombatientes().stream()
                 .map(ArmyForBattleRequest::getId)
@@ -501,7 +477,7 @@ public class ControlServiceImpl implements ControlService {
     public String assignRandomValuesBattle(Long battleId) {
 
         //Busca batallas y toma ejércitos involucrados
-        Battle battle = battleRepository.findById(battleId).orElseThrow(() -> new BattleNotFoundException());
+        Battle battle = battleRepository.findById(battleId).orElseThrow(() -> new BattleNotFoundException(battleId));
         List<Army> ejercitosInvolucrados = battle.getCombatientes();
 
         Random random = new Random();
@@ -533,7 +509,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String assignReserve(Long playerId, Integer militia) {
-        PlayerData playerData = playerDataRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException());
+        PlayerData playerData = playerDataRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
         if (playerData instanceof CapitanData) {
             CapitanData capitanData = (CapitanData) playerData;
             capitanData.setReserva(militia);
@@ -550,7 +526,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String deleteArmy(Long armyId) {
-        Army army = armyRepository.findById(armyId).orElseThrow(() -> new ArmyNotFoundException());
+        Army army = armyRepository.findById(armyId).orElseThrow(() -> new ArmyNotFoundException(armyId));
 
         CapitanData capitanData = army.getCapitanData();
         capitanData.getEjercito().remove(army);
@@ -563,9 +539,9 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String createArmy(NewArmyRequest request) {
-        CapitanData capitanData = capitanRepository.findById(request.getCapitanId()).orElseThrow(() -> new PlayerNotFoundException());
+        CapitanData capitanData = capitanRepository.findById(request.getCapitanId()).orElseThrow(() -> new PlayerNotFoundException(request.getCapitanId()));
 
-        GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getGameSubRegionId()).orElseThrow(() -> new GameAreaNotFoundException());
+        GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getGameSubRegionId()).orElseThrow(() -> new SubRegionNotFoundException(request.getGameSubRegionId()));
 
         Army army = Army.builder()
                 .subregion(gameSubRegion)
@@ -581,8 +557,8 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String moveCamp(MoveCampRequest request) {
 
-        CapitanData capitanData = capitanRepository.findById(request.getCapitanId()).orElseThrow(() -> new PlayerNotFoundException());
-        GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getGameSubregionId()).orElseThrow(() -> new GameAreaNotFoundException());
+        CapitanData capitanData = capitanRepository.findById(request.getCapitanId()).orElseThrow(() -> new PlayerNotFoundException(request.getCapitanId()));
+        GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getGameSubregionId()).orElseThrow(() -> new SubRegionNotFoundException(request.getGameSubregionId()));
 
         Camp camp = capitanData.getCamp() == null ? Camp.builder()
                 .nivel(1)
@@ -599,7 +575,7 @@ public class ControlServiceImpl implements ControlService {
 
     @Override
     public String assignNewDiputadoToCity(Long cityId, Long diputadoId) throws InstanceNotFoundException {
-        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException());
+        City city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException(cityId));
         RevolucionarioData revolucionarioData = (RevolucionarioData) playerDataRepository.findById(diputadoId)
                 .orElseThrow(PlayerNotFoundException::new);
 
@@ -610,10 +586,10 @@ public class ControlServiceImpl implements ControlService {
                 .collect(Collectors.toList());
 
         if (cards.isEmpty()) {
-            throw new CardNotFoundException();
+            throw new CardNotFoundException(0L);
         }
         if (cards.size() > 1) {
-            throw new MoreThanOneRepresentationCardPerCity();
+            throw new MoreThanOneRepresentationCardPerCity(city.getName());
         }
 
         RepresentationCard representationCard = cards.get(0);
@@ -651,7 +627,7 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String removeCongress(Long congresoId) {
         Congreso congreso = congresoRepository.findById(congresoId)
-                .orElseThrow(() -> new CongresoNotFoundException());
+                .orElseThrow(() -> new CongresoNotFoundException(congresoId));
         List<RevolucionarioData> revolucionarios = congreso.getRevolucionarios();
         City sede = congreso.getSede();
 
@@ -669,7 +645,7 @@ public class ControlServiceImpl implements ControlService {
     public String updateCongress(Long congresoId, UpdateCongressRequest request) {
 
         Congreso congreso = congresoRepository.findById(congresoId)
-                .orElseThrow(() -> new CongresoNotFoundException());
+                .orElseThrow(() -> new CongresoNotFoundException(congresoId));
         if (request.getMilicia() != null) {
             congreso.setMilicia(request.getMilicia());
         }
@@ -693,7 +669,7 @@ public class ControlServiceImpl implements ControlService {
     public String createNewCongress(CreateNewCongressRequest request) {
 
         City sede = cityRepository.findById(request.getSedeId())
-                .orElseThrow(() -> new CityNotFoundException());
+                .orElseThrow(() -> new CityNotFoundException(request.getSedeId()));
         List<RevolucionarioData> revolucionarios = revolucionarioRepository.findAllById(request.getDiputadosIds());
 
         Congreso congreso = Congreso.builder()
@@ -720,7 +696,7 @@ public class ControlServiceImpl implements ControlService {
         revolucionarioRepository.saveAll(revolucionarios);
 
         GameData gameData = gameDataRepository.findFirstByOrderById()
-                .orElseThrow(() -> new GameDataNotFoundException());
+                .orElseThrow(GameDataNotFoundException::new);
         gameData.getCongresos().add(congreso);
         gameDataRepository.save(gameData);
         return CONGRESS_CREATED;
@@ -730,8 +706,9 @@ public class ControlServiceImpl implements ControlService {
     public String moveToCongress(MoveToCongressRequest request) {
 
         Congreso congreso = congresoRepository.findById(request.getCongresoId())
-                .orElseThrow(() -> new CongresoNotFoundException());
-        RevolucionarioData revolucionarioData = revolucionarioRepository.findById(request.getRevolucionarioId()).orElseThrow(() -> new PlayerNotFoundException());
+                .orElseThrow(() -> new CongresoNotFoundException(request.getCongresoId()));
+        RevolucionarioData revolucionarioData = revolucionarioRepository.findById(request.getRevolucionarioId())
+                .orElseThrow(() -> new PlayerNotFoundException(request.getRevolucionarioId()));
 
         Congreso congresoOld = revolucionarioData.getCongreso();
         congresoOld.getRevolucionarios().remove(revolucionarioData);
@@ -748,15 +725,9 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String solveBattle(SolveBattleRequest request) {
 
-        ControlData controlData = controlDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        ControlData controlData = getControlDataFromLoggedUser();
 
-        Battle battle = battleRepository.findById(request.getBattleId()).orElseThrow(BattleNotFoundException::new);
+        Battle battle = battleRepository.findById(request.getBattleId()).orElseThrow(() -> new BattleNotFoundException(request.getBattleId()));
         GameSubRegion gameSubRegion = battle.getSubregion();
 
         List<Army> ejercitos = battle.getCombatientes();
@@ -909,5 +880,14 @@ public class ControlServiceImpl implements ControlService {
         ));
 
         cardRepository.saveAll(representationCard);
+    }
+    private ControlData getControlDataFromLoggedUser(){
+        Long playerId = userUtil.getCurrentUser().getPlayerDataList().stream()
+                .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                .findFirst()
+                .map(PlayerData::getId)
+                .orElseThrow(PlayerNotFoundException::new);
+        return controlDataRepository.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException(playerId));
     }
 }

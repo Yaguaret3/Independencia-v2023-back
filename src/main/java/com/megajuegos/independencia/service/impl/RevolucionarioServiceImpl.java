@@ -46,38 +46,18 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
 
     @Override
     public RevolucionarioResponse getData() {
-        RevolucionarioData revolucionarioData = revolucionarioRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        RevolucionarioData revolucionarioData = getPlayerData();
         return RevolucionarioResponse.toDtoResponse(revolucionarioData);
     }
 
     @Override
     public GameDataTinyResponse getGameData() {
-        RevolucionarioData data = revolucionarioRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
-        return GameDataTinyResponse.toTinyResponse(data.getGameData());
+        RevolucionarioData revolucionarioData = getPlayerData();
+        return GameDataTinyResponse.toTinyResponse(revolucionarioData.getGameData());
     }
 
     @Override
     public List<CongresoResponse> getCongresosData() {
-        RevolucionarioData revolucionarioData = revolucionarioRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
-
         // TODO Estps tienen que ser tiny congresos
 
         return congresoRepository.findAll().stream()
@@ -88,13 +68,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
     @Override
     public void vote(VoteRequest request) {
 
-        RevolucionarioData revolucionarioData = revolucionarioRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        RevolucionarioData revolucionarioData = getPlayerData();
 
         Votation votation = revolucionarioData.getCongreso().getVotations().stream()
                 .filter(Votation::getActive).findAny()
@@ -129,13 +103,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
     @Override
     public void propose(String proposal) {
 
-        RevolucionarioData revolucionarioData = revolucionarioRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        RevolucionarioData revolucionarioData = getPlayerData();
 
         Congreso congreso = revolucionarioData.getCongreso();
 
@@ -167,13 +135,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
 
     @Override
     public void closeVotation() {
-        RevolucionarioData revolucionarioData = revolucionarioRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        RevolucionarioData revolucionarioData = getPlayerData();
 
         Congreso congreso = revolucionarioData.getCongreso();
 
@@ -199,7 +161,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
 
     private void validatePresidente(RevolucionarioData revolucionarioData){
         if(!revolucionarioData.isPresidente()){
-            throw new NotCongressPresidentException();
+            throw new NotCongressPresidentException(revolucionarioData.getUser().getUsername());
         }
     }
     private void validateNoActiveVotations(Congreso congreso){
@@ -213,7 +175,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
         return congreso.getVotations().stream()
                 .filter(Votation::getActive)
                 .findAny()
-                .orElseThrow(() -> new NoActiveVotationException());
+                .orElseThrow(NoActiveVotationException::new);
     }
     private void validateVoteAlreadySent(Votation votation, RevolucionarioData revolucionarioData){
 
@@ -222,5 +184,14 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
                 throw new VoteAlreadySentException();
             }
         });
+    }
+    private RevolucionarioData getPlayerData(){
+        Long playerId = userUtil.getCurrentUser().getPlayerDataList().stream()
+                .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                .findFirst()
+                .map(PlayerData::getId)
+                .orElseThrow(PlayerNotFoundException::new);
+        return revolucionarioRepository.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException(playerId));
     }
 }

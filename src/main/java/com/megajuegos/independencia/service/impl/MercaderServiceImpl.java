@@ -46,31 +46,20 @@ public class MercaderServiceImpl implements MercaderService {
 
     @Override
     public MercaderResponse getData() {
-        MercaderData data = mercaderDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
-        return MercaderResponse.toDtoResponse(data);
+        MercaderData mercaderData = getPlayerData();
+        return MercaderResponse.toDtoResponse(mercaderData);
     }
 
     @Override
     public GameDataTinyResponse getGameData() {
-        MercaderData data = mercaderDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
-        GameDataTinyResponse response = GameDataTinyResponse.toTinyResponse(data.getGameData());
+        MercaderData mercaderData = getPlayerData();
+
+        GameDataTinyResponse response = GameDataTinyResponse.toTinyResponse(mercaderData.getGameData());
         if(response.getFase() == PhaseEnum.REVEALING){
             response.getGameRegions()
                     .forEach(r -> r.getSubregions()
                         .forEach(s -> s.reveal(         // AQUÍ ESTÁ EL REVEAL
-                                data.getGameData().getPlayers().stream()
+                                mercaderData.getGameData().getPlayers().stream()
                                         .filter(MercaderData.class::isInstance)
                                         .map(p -> (MercaderData) p)
                                         .filter(m -> m.getRoutes().stream()
@@ -91,13 +80,7 @@ public class MercaderServiceImpl implements MercaderService {
     @Override
     public void playTradeRoutes(SingleTradeRouteRequest request) {
 
-        MercaderData mercaderData = mercaderDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        MercaderData mercaderData = getPlayerData();
 
         List<MarketCitySubregionRequest> roads = request.getSubregions();
         roads.sort(Comparator.comparing(MarketCitySubregionRequest::getPosition));
@@ -124,13 +107,7 @@ public class MercaderServiceImpl implements MercaderService {
     @Override
     public void buyResources(ResourceRequest request) {
 
-        MercaderData mercaderData = mercaderDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        MercaderData mercaderData = getPlayerData();
 
         PersonalPricesEnum priceEnum = mercaderData.getPrices().stream()
                 .filter(p -> Objects.equals(p.getId(), request.getPriceId()))
@@ -161,13 +138,7 @@ public class MercaderServiceImpl implements MercaderService {
     public void upgradePrices(PricesRequest request) {
 
         Integer disminucionDePrecio = 0;
-        MercaderData mercaderData = mercaderDataRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        MercaderData mercaderData = getPlayerData();
 
         if (Boolean.FALSE.equals(paymentService.succesfulPay(mercaderData, request.getPayment(), PersonalPricesEnum.TRADER_PRICES))) throw new PaymentNotPossibleException();
 
@@ -209,8 +180,8 @@ public class MercaderServiceImpl implements MercaderService {
         //En el caso de que el item no sea el último
         if(index < route.size()-1){
 
-            SubRegionEnum currentSubregion = subregionRepository.findById(subregion.getId()).orElseThrow(() -> new SubRegionNotFoundException()).getSubRegionEnum();
-            SubRegionEnum nextSubregion = subregionRepository.findById(route.get(subregion.getPosition().intValue()).getId()).orElseThrow(() -> new SubRegionNotFoundException()).getSubRegionEnum();
+            SubRegionEnum currentSubregion = subregionRepository.findById(subregion.getId()).orElseThrow(() -> new SubRegionNotFoundException(subregion.getId())).getSubRegionEnum();
+            SubRegionEnum nextSubregion = subregionRepository.findById(route.get(subregion.getPosition().intValue()).getId()).orElseThrow(() -> new SubRegionNotFoundException(route.get(subregion.getPosition().intValue()).getId())).getSubRegionEnum();
 
             //Si el siguiente no es adyacente
             if(!currentSubregion.getAdyacentes().contains(nextSubregion)){
@@ -245,7 +216,7 @@ public class MercaderServiceImpl implements MercaderService {
         List<GameSubRegion> subregions = subregionRepository.findAllById(request.getSubregions().stream().map(MarketCitySubregionRequest::getId).collect(Collectors.toList()));
         Long provisionTradeScore = request.getSubregions().stream()
                 .filter(marketSubregion -> marketSubregion.getCityMarketCardId() != null)
-                .map(marketSubregion -> (MarketCard) cardRepository.findById(marketSubregion.getCityMarketCardId()).orElseThrow(() -> new CardNotFoundException()))
+                .map(marketSubregion -> (MarketCard) cardRepository.findById(marketSubregion.getCityMarketCardId()).orElseThrow(() -> new CardNotFoundException(marketSubregion.getCityMarketCardId())))
                 .mapToLong(MarketCard::getLevel)
                 .sum();
 
@@ -268,5 +239,14 @@ public class MercaderServiceImpl implements MercaderService {
 
         cards.forEach(mercaderData.getCards()::remove);
         cardRepository.deleteAll(cards);
+    }
+    private MercaderData getPlayerData(){
+        Long playerId = userUtil.getCurrentUser().getPlayerDataList().stream()
+                .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                .findFirst()
+                .map(PlayerData::getId)
+                .orElseThrow(PlayerNotFoundException::new);
+        return mercaderDataRepository.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException(playerId));
     }
 }

@@ -55,30 +55,18 @@ public class GobernadorServiceImpl implements GobernadorService {
 
     @Override
     public GobernadorResponse getData() {
-        GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        GobernadorData gobernadorData = getPlayerData();
 
         GameRegion gameRegion = gameRegionRepository
                 .findByRegionEnum(RegionEnum.containingSubRegion(gobernadorData.getCity().getSubRegion().getSubRegionEnum()))
-                .orElseThrow(() -> new RegionNotFoundException());
+                .orElseThrow(() -> new RegionNotFoundException(gobernadorData.getCity().getSubRegion().getSubRegionEnum()));
 
         return GobernadorResponse.toDtoResponse(gobernadorData, gameRegion);
     }
 
     @Override
     public GameDataTinyGobernadorResponse getGameData() {
-        GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        GobernadorData gobernadorData = getPlayerData();
 
         return GameDataTinyGobernadorResponse.toDtoResponse(gobernadorData.getGameData());
     }
@@ -86,13 +74,7 @@ public class GobernadorServiceImpl implements GobernadorService {
     @Override
     public void sellMarketPlace(MarketPlaceSellRequest request) {
 
-        GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        GobernadorData gobernadorData = getPlayerData();
 
         Card card = null;
         for(Card c : gobernadorData.getCards()){
@@ -101,10 +83,10 @@ public class GobernadorServiceImpl implements GobernadorService {
                 break;
             }
         }
-        if(card==null) throw new CardNotFoundException();
+        if(card==null) throw new CardNotFoundException(request.getIdMarketCard());
 
         PlayerData they = playerDataRepository.findById(request.getIdJugadorDestino())
-                .orElseThrow(() -> new PlayerNotFoundException());
+                .orElseThrow(() -> new PlayerNotFoundException(request.getIdJugadorDestino()));
 
         card.setPlayerData(they);
         they.getCards().add(card);
@@ -136,13 +118,8 @@ public class GobernadorServiceImpl implements GobernadorService {
     @Override
     public void changeTaxes(TaxesRequest request) {
 
-        GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        GobernadorData gobernadorData = getPlayerData();
+
         Integer nivelImpositivo = gobernadorData.getCity().getTaxesLevel();
         Integer opinionPublica = gobernadorData.getCity().getPublicOpinion();
 
@@ -182,13 +159,7 @@ public class GobernadorServiceImpl implements GobernadorService {
     @Override
     public void buildNewBuilding(UpgradeBuildingRequest request) throws InstanceNotFoundException {
 
-        GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        GobernadorData gobernadorData = getPlayerData();
 
         PersonalPricesEnum priceEnum = gobernadorData.getPrices().stream()
                 .filter(p -> Objects.equals(p.getId(), request.getPriceId()))
@@ -198,7 +169,7 @@ public class GobernadorServiceImpl implements GobernadorService {
 
         BuildingTypeEnum buildingType = BuildingTypeEnum.valueOf(priceEnum.name());
 
-        if (maxTypeOfBuildingReached(buildingType.getId(), gobernadorData)) throw new MaxNumberOfBuildingTypeReachedException();
+        if (maxTypeOfBuildingReached(buildingType.getId(), gobernadorData)) throw new MaxNumberOfBuildingTypeReachedException(buildingType.name());
         if (!paymentService.succesfulPay(gobernadorData, request.getPayment(), priceEnum)) throw new PaymentNotPossibleException();
 
         gobernadorData.getCity().getBuildings().add(
@@ -220,13 +191,7 @@ public class GobernadorServiceImpl implements GobernadorService {
     @Override
     public void upgradeMarketplace(PaymentRequestUtil request) {
 
-        GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        GobernadorData gobernadorData = getPlayerData();
 
         if (!paymentService.succesfulPay(gobernadorData, request, PersonalPricesEnum.MARKET)) throw new PaymentNotPossibleException();
 
@@ -247,13 +212,7 @@ public class GobernadorServiceImpl implements GobernadorService {
     @Override
     public void giveRepresentationRequest(RepresentationRequest request) {
 
-        GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        GobernadorData gobernadorData = getPlayerData();
 
         Card card = null;
         for(Card c : gobernadorData.getCards()){
@@ -262,10 +221,10 @@ public class GobernadorServiceImpl implements GobernadorService {
                 break;
             }
         }
-        if(card==null) throw new CardNotFoundException();
+        if(card==null) throw new CardNotFoundException(request.getIdRepresentationCard());
 
         PlayerData they = playerDataRepository.findById(request.getIdJugadorDestino())
-                .orElseThrow(() -> new PlayerNotFoundException());
+                .orElseThrow(() -> new PlayerNotFoundException(request.getIdJugadorDestino()));
 
         they.getCards().add(card);
         gobernadorData.getCards().remove(card);
@@ -309,13 +268,7 @@ public class GobernadorServiceImpl implements GobernadorService {
         /** CANTIDAD MILICIA = 3?*/
         int cantidadMilicias= 1;
 
-        GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        GobernadorData gobernadorData = getPlayerData();
 
         if (!paymentService.succesfulPay(gobernadorData, request, PersonalPricesEnum.MILICIA)) throw new PaymentNotPossibleException();
 
@@ -337,15 +290,9 @@ public class GobernadorServiceImpl implements GobernadorService {
     @Override
     public void assignMilitia(AssignMilitiaRequest request) {
 
-        GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        GobernadorData gobernadorData = getPlayerData();
 
-        if(gobernadorData.getMilicia() < request.getCantidadMilicias()) throw new InsufficientMilitiaException();
+        if(gobernadorData.getMilicia() < request.getCantidadMilicias()) throw new InsufficientMilitiaException(gobernadorData.getMilicia());
 
         CapitanData they = capitanDataRepository.findById(request.getIdJugadorDestino())
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
@@ -391,5 +338,15 @@ public class GobernadorServiceImpl implements GobernadorService {
                     }
                     return false;
                 }).count() > BuildingTypeEnum.fromId(buildingTypeId).getMax();
+    }
+
+    private GobernadorData getPlayerData(){
+        Long playerId = userUtil.getCurrentUser().getPlayerDataList().stream()
+                .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                .findFirst()
+                .map(PlayerData::getId)
+                .orElseThrow(PlayerNotFoundException::new);
+        return gobernadorRepository.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException(playerId));
     }
 }

@@ -35,21 +35,21 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public void giveCard(Long jugador, Long cardId) {
-        PlayerData myPlayerData = repository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
-                        .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
-                        .findFirst()
-                        .map(PlayerData::getId)
-                        .orElseThrow(() -> new PlayerNotFoundException())
-                )
-                .orElseThrow(() -> new PlayerNotFoundException());
+        Long playerId = userUtil.getCurrentUser().getPlayerDataList().stream()
+                .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
+                .findFirst()
+                .map(PlayerData::getId)
+                .orElseThrow(PlayerNotFoundException::new);
+        PlayerData myPlayerData = repository.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException(playerId));
 
         Card card = myPlayerData.getCards().stream()
                 .filter(c -> Objects.equals(c.getId(), cardId))
                 .findFirst()
-                .orElseThrow(() -> new CardNotFoundException());
+                .orElseThrow(() -> new CardNotFoundException(cardId));
 
         PlayerData they = repository.findById(jugador)
-                .orElseThrow(() -> new PlayerNotFoundException());
+                .orElseThrow(() -> new PlayerNotFoundException(jugador));
 
         validarDarCarta(myPlayerData, card, they);
 
@@ -94,22 +94,22 @@ public class PlayerServiceImpl implements PlayerService {
         if(player instanceof GobernadorData){
 
             if(!(card instanceof ResourceCard && (playerTo instanceof RevolucionarioData || playerTo instanceof CapitanData))){
-                throw new CardCannotBeGivenException();
+                throw new CardCannotBeGivenException(card.getId(), playerTo.getRol().name(), playerTo.getUser().getUsername());
             }
         }
         if(player instanceof MercaderData){
             if(!(card instanceof ResourceCard && playerTo instanceof GobernadorData)){
-                throw new CardCannotBeGivenException();
+                throw new CardCannotBeGivenException(card.getId(), playerTo.getRol().name(), playerTo.getUser().getUsername());
             }
         }
         if(player instanceof RevolucionarioData){
             if(!(card instanceof ResourceCard)){
-                throw new CardCannotBeGivenException();
+                throw new CardCannotBeGivenException(card.getId(), playerTo.getRol().name(), playerTo.getUser().getUsername());
             }
         }
         if(player instanceof CapitanData){
             if(!(card instanceof BattleCard && playerTo instanceof CapitanData)){
-                throw new CardCannotBeGivenException();
+                throw new CardCannotBeGivenException(card.getId(), playerTo.getRol().name(), playerTo.getUser().getUsername());
             }
         }
     }
