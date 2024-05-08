@@ -4,6 +4,7 @@ import com.megajuegos.independencia.dto.response.tiny.GameRegionTinyResponse;
 import com.megajuegos.independencia.dto.response.util.PlayerDataCardsUtil;
 import com.megajuegos.independencia.entities.GameRegion;
 import com.megajuegos.independencia.entities.data.GobernadorData;
+import com.megajuegos.independencia.enums.LogTypeEnum;
 import com.megajuegos.independencia.enums.ResourceTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,11 +32,12 @@ public class GobernadorResponse {
     private List<ExtraCardResponse> extras;
     private List<ResourceTypeEnum> tiposDeRecurso;
     private GobernadorPricesResponse precios;
+    private List<String> historial;
 
-    public static GobernadorResponse toDtoResponse(GobernadorData entity, GameRegion gameRegion){
+    public static GobernadorResponse toDtoResponse(GobernadorData entity, GameRegion gameRegion) {
 
         PlayerDataCardsUtil util = new PlayerDataCardsUtil(entity);
-        RepresentationCardResponse representationUtil = util.getRepresentationCardList().isEmpty()?null:
+        RepresentationCardResponse representationUtil = util.getRepresentationCardList().isEmpty() ? null :
                 RepresentationCardResponse.toDtoResponse(util.getRepresentationCardList().get(0));
 
         return GobernadorResponse.builder()
@@ -59,6 +61,13 @@ public class GobernadorResponse {
                         .collect(Collectors.toList()))
                 .tiposDeRecurso(Arrays.stream(ResourceTypeEnum.values()).collect(Collectors.toList()))
                 .precios(GobernadorPricesResponse.toDto(entity.getPrices()))
+                .historial(entity.getLogs().stream()
+                        .map(l -> String.format("Turno %s %s %s",
+                                l.getTurno(),
+                                l.getTipo().getSymbol(),
+                                l.getNota()
+                        ))
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

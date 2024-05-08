@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.entities.data;
 
+import com.megajuegos.independencia.entities.Log;
 import com.megajuegos.independencia.entities.PersonalPrice;
 import com.megajuegos.independencia.entities.UserIndependencia;
 import com.megajuegos.independencia.entities.card.Card;
@@ -12,7 +13,6 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -39,4 +39,7 @@ public abstract class PlayerData {
 
     @OneToMany(mappedBy = "playerData")
     private List<PersonalPrice> prices;
+
+    @OneToMany(mappedBy = "player")
+    private List<Log> logs;
 }

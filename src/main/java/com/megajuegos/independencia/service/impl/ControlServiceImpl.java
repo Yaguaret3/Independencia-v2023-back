@@ -827,6 +827,10 @@ public class ControlServiceImpl implements ControlService {
         //Capitanes
         // ???
 
+        //Verificar que se están grabando las cartas de los jugadores
+        playerDataRepository.saveAll(gameData.getPlayers());
+
+
         gameDataRepository.save(gameData);
     }
 
@@ -866,8 +870,6 @@ public class ControlServiceImpl implements ControlService {
                 g.getCards().add(marketCard);
             });
         });
-
-        playerDataRepository.saveAll(gobernadores);
     }
 
     private void sumarPuntajeComercialAcumulado(GameData gameData) {
@@ -885,7 +887,6 @@ public class ControlServiceImpl implements ControlService {
             );
             m.setPuntajeComercialAcumulado(m.getPuntajeComercialAcumulado() + m.getPuntajeComercial());
         });
-        playerDataRepository.saveAll(mercaderes);
     }
 
     private void limpiarRepresentacion(GameData gameData) {
@@ -908,6 +909,5 @@ public class ControlServiceImpl implements ControlService {
         ));
 
         cardRepository.saveAll(representationCard);
-        playerDataRepository.saveAll(revolucionarios);
     }
 }

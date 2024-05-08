@@ -3,21 +3,21 @@ package com.megajuegos.independencia.service.impl;
 import com.megajuegos.independencia.dto.request.gobernador.*;
 import com.megajuegos.independencia.dto.response.GobernadorResponse;
 import com.megajuegos.independencia.dto.response.tiny.GameDataTinyGobernadorResponse;
-import com.megajuegos.independencia.entities.Building;
-import com.megajuegos.independencia.entities.City;
-import com.megajuegos.independencia.entities.GameRegion;
-import com.megajuegos.independencia.entities.PersonalPrice;
+import com.megajuegos.independencia.entities.*;
 import com.megajuegos.independencia.entities.card.Card;
+import com.megajuegos.independencia.entities.card.MarketCard;
 import com.megajuegos.independencia.entities.data.CapitanData;
 import com.megajuegos.independencia.entities.data.GobernadorData;
 import com.megajuegos.independencia.entities.data.PlayerData;
 import com.megajuegos.independencia.enums.BuildingTypeEnum;
+import com.megajuegos.independencia.enums.LogTypeEnum;
 import com.megajuegos.independencia.enums.PersonalPricesEnum;
 import com.megajuegos.independencia.enums.RegionEnum;
 import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.CardRepository;
 import com.megajuegos.independencia.repository.CityRepository;
 import com.megajuegos.independencia.repository.GameRegionRepository;
+import com.megajuegos.independencia.repository.LogRepository;
 import com.megajuegos.independencia.repository.data.CapitanDataRepository;
 import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.InstanceNotFoundException;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.megajuegos.independencia.util.Messages.USER_NOT_FOUND_BY_ID;
@@ -50,6 +51,7 @@ public class GobernadorServiceImpl implements GobernadorService {
     private final CityRepository cityRepository;
     private final GameIdUtil gameIdUtil;
     private final CardRepository cardRepository;
+    private final LogRepository logRepository;
 
     @Override
     public GobernadorResponse getData() {
@@ -111,6 +113,24 @@ public class GobernadorServiceImpl implements GobernadorService {
         gobernadorRepository.save(gobernadorData);
         playerDataRepository.save(they);
         cardRepository.save(card);
+
+        MarketCard marketCard = (MarketCard) card;
+
+        Log log1 = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Entregaste tu mercado de nivel %s a %s", marketCard.getLevel(), they.getUser().getUsername()))
+                .player(gobernadorData)
+                .build();
+        Log log2 = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.RECIBIDO)
+                .nota(String.format("Recibiste el mercado de %s de nivel %s del Gobernador %s", gobernadorData.getCity().getName(),
+                        marketCard.getLevel(), gobernadorData.getUser().getUsername()))
+                .player(they)
+                .build();
+
+        logRepository.saveAll(Arrays.asList(log1, log2));
     }
 
     @Override
@@ -139,6 +159,24 @@ public class GobernadorServiceImpl implements GobernadorService {
             gobernadorData.getCity().setPublicOpinion(opinionPublica+1);
         }
         gobernadorRepository.save(gobernadorData);
+
+        Log log1 = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(request.isAumentar() ? String.format("Aumentaste los impuestos a un total de: %s", gobernadorData.getCity().getTaxesLevel())
+                        : String.format("Disminuiste los impuestos a un total de: %s", gobernadorData.getCity().getTaxesLevel()))
+                .player(gobernadorData)
+                .build();
+
+        Log log2 = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.RECIBIDO)
+                .nota(request.isAumentar() ? String.format("La opinión pública descendió a %s", gobernadorData.getCity().getPublicOpinion())
+                        : String.format("La opinión pública ascendió a %s", gobernadorData.getCity().getPublicOpinion()))
+                .player(gobernadorData)
+                .build();
+
+        logRepository.saveAll(Arrays.asList(log1, log2));
     }
 
     @Override
@@ -168,6 +206,15 @@ public class GobernadorServiceImpl implements GobernadorService {
                 .buildingType(buildingType)
                 .build());
         gobernadorRepository.save(gobernadorData);
+
+        Log log = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.RECIBIDO)
+                .nota(String.format("Construiste el edificio: %s", buildingType.name()))
+                .player(gobernadorData)
+                .build();
+
+        logRepository.save(log);
     }
 
     @Override
@@ -186,6 +233,15 @@ public class GobernadorServiceImpl implements GobernadorService {
         gobernadorData.getCity().setMarketLevel(gobernadorData.getCity().getMarketLevel()+1);
 
         gobernadorRepository.save(gobernadorData);
+
+        Log log = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Aumentaste el valor de tus mercados a %s", gobernadorData.getCity().getMarketLevel()))
+                .player(gobernadorData)
+                .build();
+
+        logRepository.save(log);
     }
 
     @Override
@@ -222,6 +278,22 @@ public class GobernadorServiceImpl implements GobernadorService {
         gobernadorRepository.save(gobernadorData);
         playerDataRepository.save(they);
         cardRepository.save(card);
+
+        Log log1 = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Elegiste como diputado para este turno a %s", they.getUser().getUsername()))
+                .player(gobernadorData)
+                .build();
+
+        Log log2 = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.RECIBIDO)
+                .nota(String.format("Has sido elegido como diputado de %s durante este turno", gobernadorData.getCity().getName()))
+                .player(they)
+                .build();
+
+        logRepository.saveAll(Arrays.asList(log1, log2));
     }
 
     @Override
@@ -234,7 +306,8 @@ public class GobernadorServiceImpl implements GobernadorService {
     @Override
     public void recruitMilitia(PaymentRequestUtil request) {
 
-        /** CANTIDAD MILICIA */
+        /** CANTIDAD MILICIA = 3?*/
+        int cantidadMilicias= 1;
 
         GobernadorData gobernadorData = gobernadorRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
                         .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
@@ -246,9 +319,18 @@ public class GobernadorServiceImpl implements GobernadorService {
 
         if (!paymentService.succesfulPay(gobernadorData, request, PersonalPricesEnum.MILICIA)) throw new PaymentNotPossibleException();
 
-        gobernadorData.setMilicia(gobernadorData.getMilicia()+1);
+        gobernadorData.setMilicia(gobernadorData.getMilicia()+cantidadMilicias);
 
         gobernadorRepository.save(gobernadorData);
+
+        Log log = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.RECIBIDO)
+                .nota(String.format("Reclutaste %s milicias", cantidadMilicias))
+                .player(gobernadorData)
+                .build();
+
+        logRepository.save(log);
 
     }
 
@@ -273,6 +355,25 @@ public class GobernadorServiceImpl implements GobernadorService {
 
         gobernadorRepository.save(gobernadorData);
         capitanDataRepository.save(they);
+
+        Log log1 = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Enviaste un total de %s milicias al Capitán: %s", request.getCantidadMilicias(), they.getUser().getUsername()))
+                .player(gobernadorData)
+                .build();
+
+        Log log2 = Log.builder()
+                .turno(gobernadorData.getGameData().getTurno())
+                .tipo(LogTypeEnum.RECIBIDO)
+                .nota(String.format("Has recibido %s milicias del Gobernador %s de la ciudad de %s",
+                        request.getCantidadMilicias(),
+                        gobernadorData.getUser().getUsername(),
+                        gobernadorData.getCity().getName()))
+                .player(they)
+                .build();
+
+        logRepository.saveAll(Arrays.asList(log1, log2));
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface RevolucionarioService {
     RevolucionarioResponse getData();
     GameDataTinyResponse getGameData();
     List<CongresoResponse> getCongresosData();
-    String vote(VoteRequest request);
-    String propose(String proposal);
-    String closeVotation();
+    void vote(VoteRequest request);
+    void propose(String proposal);
+    void closeVotation();
 }

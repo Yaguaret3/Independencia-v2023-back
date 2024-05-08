@@ -37,21 +37,24 @@ public class RevolucionarioController {
     }
 
     @GetMapping("/congresos/")
-    public List<CongresoResponse> getCongresosData(){
-        return service.getCongresosData();
+    public ResponseEntity<List<CongresoResponse>> getCongresosData(){
+        return ResponseEntity.ok(service.getCongresosData());
     }
 
     @PostMapping("/propose")
-    public String propose(@RequestBody @Valid VoteProposalRequest request) {
-        return service.propose(request.getProposal());
+    public ResponseEntity<Void> propose(@RequestBody @Valid VoteProposalRequest request) {
+        service.propose(request.getProposal());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/vote")
-    public String vote(@Valid @RequestBody VoteRequest request){
-        return service.vote(request);
+    public ResponseEntity<Void> vote(@Valid @RequestBody VoteRequest request){
+        service.vote(request);
+        return ResponseEntity.ok().build();
     }
     @PostMapping("/close-votation")
-    public String closeVotation(){
-        return service.closeVotation();
+    public ResponseEntity<Void> closeVotation(){
+        service.closeVotation();
+        return ResponseEntity.ok().build();
     }
 }

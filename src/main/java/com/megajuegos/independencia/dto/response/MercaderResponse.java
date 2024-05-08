@@ -18,6 +18,7 @@ public class MercaderResponse {
     private List<MarketCardResponse> mercados;
     private List<ResourceCardResponse> recursos;
     private List<ExtraCardResponse> extras;
+    private List<String> historial;
 
     public static MercaderResponse toDtoResponse(MercaderData entity){
 
@@ -42,6 +43,13 @@ public class MercaderResponse {
                 .extras(util.getExtraCardList()
                         .stream()
                         .map(ExtraCardResponse::toDtoResponse)
+                        .collect(Collectors.toList()))
+                .historial(entity.getLogs().stream()
+                        .map(l -> String.format("Turno %s %s %s",
+                                l.getTurno(),
+                                l.getTipo().getSymbol(),
+                                l.getNota()
+                        ))
                         .collect(Collectors.toList()))
                 .build();
     }

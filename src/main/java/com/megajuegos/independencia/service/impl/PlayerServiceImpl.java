@@ -1,13 +1,16 @@
 package com.megajuegos.independencia.service.impl;
 
+import com.megajuegos.independencia.entities.Log;
 import com.megajuegos.independencia.entities.card.BattleCard;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.card.ResourceCard;
 import com.megajuegos.independencia.entities.data.*;
+import com.megajuegos.independencia.enums.LogTypeEnum;
 import com.megajuegos.independencia.exceptions.CardCannotBeGivenException;
 import com.megajuegos.independencia.exceptions.CardNotFoundException;
 import com.megajuegos.independencia.exceptions.PlayerNotFoundException;
 import com.megajuegos.independencia.repository.CardRepository;
+import com.megajuegos.independencia.repository.LogRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
 import com.megajuegos.independencia.service.PlayerService;
 import com.megajuegos.independencia.service.util.GameIdUtil;
@@ -28,6 +31,7 @@ public class PlayerServiceImpl implements PlayerService {
     private final CardRepository cardRepository;
     private final UserUtil userUtil;
     private final GameIdUtil gameIdUtil;
+    private final LogRepository logRepository;
 
     @Override
     public void giveCard(Long jugador, Long cardId) {
@@ -55,6 +59,30 @@ public class PlayerServiceImpl implements PlayerService {
 
         repository.saveAll(Arrays.asList(myPlayerData, they));
         cardRepository.save(card);
+
+       String cardString = null;
+        if(card instanceof ResourceCard){
+            cardString = ((ResourceCard) card).getResourceTypeEnum().name();
+        }
+        if(card instanceof BattleCard){
+            cardString = ((BattleCard) card).getTipoOrdenDeBatalla().getNombre();
+        }
+
+        Log log1 = Log.builder()
+                .turno(myPlayerData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Enviaste una carta de %s a %s", cardString, they.getUser().getUsername()))
+                .player(myPlayerData)
+                .build();
+
+        Log log2 = Log.builder()
+                .turno(myPlayerData.getGameData().getTurno())
+                .tipo(LogTypeEnum.RECIBIDO)
+                .nota(String.format("Has recibido una carta de %s de %s", cardString, myPlayerData.getUser().getUsername()))
+                .player(they)
+                .build();
+
+        logRepository.saveAll(Arrays.asList(log1, log2));
     }
 
     ////////////////////////////////////////////////////////////////////

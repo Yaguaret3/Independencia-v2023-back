@@ -5,13 +5,16 @@ import com.megajuegos.independencia.dto.response.CongresoResponse;
 import com.megajuegos.independencia.dto.response.RevolucionarioResponse;
 import com.megajuegos.independencia.dto.response.tiny.GameDataTinyResponse;
 import com.megajuegos.independencia.entities.Congreso;
+import com.megajuegos.independencia.entities.Log;
 import com.megajuegos.independencia.entities.Votation;
 import com.megajuegos.independencia.entities.Vote;
 import com.megajuegos.independencia.entities.card.RepresentationCard;
 import com.megajuegos.independencia.entities.data.PlayerData;
 import com.megajuegos.independencia.entities.data.RevolucionarioData;
+import com.megajuegos.independencia.enums.LogTypeEnum;
 import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.CongresoRepository;
+import com.megajuegos.independencia.repository.LogRepository;
 import com.megajuegos.independencia.repository.VotationRepository;
 import com.megajuegos.independencia.repository.VoteRepository;
 import com.megajuegos.independencia.repository.data.RevolucionarioRepository;
@@ -39,6 +42,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
     private final RevolucionarioRepository revolucionarioRepository;
     private final CongresoRepository congresoRepository;
     private final GameIdUtil gameIdUtil;
+    private final LogRepository logRepository;
 
     @Override
     public RevolucionarioResponse getData() {
@@ -82,7 +86,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
     }
 
     @Override
-    public String vote(VoteRequest request) {
+    public void vote(VoteRequest request) {
 
         RevolucionarioData revolucionarioData = revolucionarioRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
                         .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
@@ -112,11 +116,18 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
         votation.getVotes().add(vote);
         votationRepository.save(votation);
 
-        return VOTED;
+        Log log = Log.builder()
+                .turno(revolucionarioData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Votaste %s sobre el tema: %s", request.getVoteType(), votation.getPropuesta()))
+                .player(revolucionarioData)
+                .build();
+
+        logRepository.save(log);
     }
 
     @Override
-    public String propose(String proposal) {
+    public void propose(String proposal) {
 
         RevolucionarioData revolucionarioData = revolucionarioRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
                         .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
@@ -143,12 +154,19 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
 
         congresoRepository.save(congreso);
 
-        return PROPOSAL_CREATED;
+        Log log = Log.builder()
+                .turno(revolucionarioData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Propusiste que se vote %s", proposal))
+                .player(revolucionarioData)
+                .build();
+
+        logRepository.save(log);
 
     }
 
     @Override
-    public String closeVotation() {
+    public void closeVotation() {
         RevolucionarioData revolucionarioData = revolucionarioRepository.findById(userUtil.getCurrentUser().getPlayerDataList().stream()
                         .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
                         .findFirst()
@@ -164,8 +182,15 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
 
         votation.setActive(false);
         votationRepository.save(votation);
+        Log log = Log.builder()
+                .turno(revolucionarioData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Cerraste las votaciones sobre el tema: %s", votation.getPropuesta()))
+                .player(revolucionarioData)
+                .build();
 
-        return VOTATION_CLOSED;
+        logRepository.save(log);
+
     }
 
     /*---------------------------------------------------------------------------

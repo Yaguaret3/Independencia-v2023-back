@@ -11,10 +11,7 @@ import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.data.CapitanData;
 import com.megajuegos.independencia.entities.data.MercaderData;
 import com.megajuegos.independencia.entities.data.PlayerData;
-import com.megajuegos.independencia.enums.ActionTypeEnum;
-import com.megajuegos.independencia.enums.BattleTypeEnum;
-import com.megajuegos.independencia.enums.PersonalPricesEnum;
-import com.megajuegos.independencia.enums.PhaseEnum;
+import com.megajuegos.independencia.enums.*;
 import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.CapitanDataRepository;
@@ -30,6 +27,8 @@ import javax.management.InstanceNotFoundException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static com.megajuegos.independencia.enums.ActionTypeEnum.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -44,6 +43,7 @@ public class CapitanServiceImpl implements CapitanService {
     private final GameRegionRepository gameRegionRepository;
     private final ArmyRepository armyRepository;
     private final GameIdUtil gameIdUtil;
+    private final LogRepository logRepository;
 
     @Override
     public CapitanResponse getData() {
@@ -91,6 +91,15 @@ public class CapitanServiceImpl implements CapitanService {
 
         cardRepository.save(card);
         capitanDataRepository.save(capitanData);
+
+        Log log = Log.builder()
+                .turno(capitanData.getGameData().getTurno())
+                .tipo(LogTypeEnum.RECIBIDO)
+                .nota(String.format("Compraste una carta de acción: %s", actionType.getNombre()))
+                .player(capitanData)
+                .build();
+
+        logRepository.save(log);
     }
 
     @Override
@@ -113,6 +122,16 @@ public class CapitanServiceImpl implements CapitanService {
                 .playerData(capitanData)
                 .build();
         capitanData.getCards().add(card);
+
+        Log log = Log.builder()
+                .turno(capitanData.getGameData().getTurno())
+                .tipo(LogTypeEnum.RECIBIDO)
+                .nota(String.format("Compraste una orden de batalla: %s", battleType.getNombre()))
+                .player(capitanData)
+                .build();
+
+        logRepository.save(log);
+        capitanData.getLogs().add(log);
 
         cardRepository.save(card);
         capitanDataRepository.save(capitanData);
@@ -141,7 +160,7 @@ public class CapitanServiceImpl implements CapitanService {
 
         ActionCard actionCard = (ActionCard) card;
 
-        if(Arrays.asList(ActionTypeEnum.ACAMPE, ActionTypeEnum.MOVIMIENTO, ActionTypeEnum.REACCION).contains(actionCard.getTipoAccion())){
+        if(Arrays.asList(ActionTypeEnum.ACAMPE, ActionTypeEnum.MOVIMIENTO, REACCION).contains(actionCard.getTipoAccion())){
             throw new IncorrectPhaseException();
         }
 
@@ -158,6 +177,16 @@ public class CapitanServiceImpl implements CapitanService {
             default:
                 throw new IncorrectActionTypeException();
         }
+
+        Log log = Log.builder()
+                .turno(capitanData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Jugaste una carta de acción: %s", actionCard.getTipoAccion().getNombre()))
+                .player(capitanData)
+                .build();
+
+        logRepository.save(log);
+        capitanData.getLogs().add(log);
 
         actionCard.setTurnWhenPlayed(turno);
         actionCard.setAlreadyPlayed(true);
@@ -178,9 +207,19 @@ public class CapitanServiceImpl implements CapitanService {
 
         Card card = capitanData.getCards().stream().filter(c -> c.getId().equals(request.getCardId())).findFirst().orElseThrow(() -> new CardNotFoundException());
 
-        if(!(card instanceof ActionCard)){
+        if(!(card instanceof ActionCard && ((ActionCard) card).getTipoAccion().equals(REACCION))){
             throw new IncorrectCardTypeException();
         }
+
+        Log log = Log.builder()
+                .turno(capitanData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Jugaste una carta de acción: %s", REACCION))
+                .player(capitanData)
+                .build();
+
+        logRepository.save(log);
+
         card.setTurnWhenPlayed(turno);
         card.setAlreadyPlayed(true);
         cardRepository.save(card);
@@ -207,6 +246,14 @@ public class CapitanServiceImpl implements CapitanService {
         army.setMilicias(milicia);
         armyRepository.save(army);
 
+        Log log = Log.builder()
+                .turno(capitanData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Asignaste %s milicias a la batalla en ", milicia, battle.getSubregion().getNombre()))
+                .player(capitanData)
+                .build();
+
+        logRepository.save(log);
     }
 
     @Override
@@ -244,6 +291,17 @@ public class CapitanServiceImpl implements CapitanService {
         card.setTurnWhenPlayed(turno);
         card.setAlreadyPlayed(true);
         cardRepository.save(card);
+
+        Log log = Log.builder()
+                .turno(capitanData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Jugaste la orden de batalla %s durante el combate en %s",
+                        battleCard.getTipoOrdenDeBatalla().getNombre(),
+                        battle.getSubregion().getNombre()))
+                .player(capitanData)
+                .build();
+
+        logRepository.save(log);
     }
 
     @Override
@@ -284,6 +342,15 @@ public class CapitanServiceImpl implements CapitanService {
         actionCard.setTurnWhenPlayed(turno);
         actionCard.setAlreadyPlayed(true);
         cardRepository.save(actionCard);
+
+        Log log = Log.builder()
+                .turno(capitanData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Jugaste la carta de acción de %s ", MOVIMIENTO))
+                .player(capitanData)
+                .build();
+
+        logRepository.save(log);
     }
 
     @Override
@@ -324,6 +391,15 @@ public class CapitanServiceImpl implements CapitanService {
         actionCard.setAlreadyPlayed(true);
         cardRepository.save(actionCard);
         capitanDataRepository.save(capitanData);
+
+        Log log = Log.builder()
+                .turno(capitanData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Jugaste la carta de acción de %s", ACAMPE))
+                .player(capitanData)
+                .build();
+
+        logRepository.save(log);
     }
 
     private void deploy(Long subregionId, CapitanData capitanData){

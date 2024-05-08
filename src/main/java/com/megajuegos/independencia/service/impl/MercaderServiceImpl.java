@@ -4,6 +4,7 @@ import com.megajuegos.independencia.dto.request.mercader.*;
 import com.megajuegos.independencia.dto.response.MercaderResponse;
 import com.megajuegos.independencia.dto.response.tiny.GameDataTinyResponse;
 import com.megajuegos.independencia.entities.GameSubRegion;
+import com.megajuegos.independencia.entities.Log;
 import com.megajuegos.independencia.entities.PersonalPrice;
 import com.megajuegos.independencia.entities.Route;
 import com.megajuegos.independencia.entities.card.Card;
@@ -11,15 +12,9 @@ import com.megajuegos.independencia.entities.card.MarketCard;
 import com.megajuegos.independencia.entities.card.ResourceCard;
 import com.megajuegos.independencia.entities.data.MercaderData;
 import com.megajuegos.independencia.entities.data.PlayerData;
-import com.megajuegos.independencia.enums.PersonalPricesEnum;
-import com.megajuegos.independencia.enums.PhaseEnum;
-import com.megajuegos.independencia.enums.ResourceTypeEnum;
-import com.megajuegos.independencia.enums.SubRegionEnum;
+import com.megajuegos.independencia.enums.*;
 import com.megajuegos.independencia.exceptions.*;
-import com.megajuegos.independencia.repository.CardRepository;
-import com.megajuegos.independencia.repository.GameSubRegionRepository;
-import com.megajuegos.independencia.repository.RouteRepository;
-import com.megajuegos.independencia.repository.UserIndependenciaRepository;
+import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.MercaderDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
 import com.megajuegos.independencia.service.MercaderService;
@@ -47,6 +42,7 @@ public class MercaderServiceImpl implements MercaderService {
     private final RouteRepository routeRepository;
     private final GameSubRegionRepository subregionRepository;
     private final GameIdUtil gameIdUtil;
+    private final LogRepository logRepository;
 
     @Override
     public MercaderResponse getData() {
@@ -112,6 +108,17 @@ public class MercaderServiceImpl implements MercaderService {
 
         mercaderData.getRoutes().add(route);
         playerDataRepository.save(mercaderData);
+
+        Log log = Log.builder()
+                .turno(mercaderData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste una ruta comercial que atraviesa %s subregiones y %s ciudades",
+                        route.getSubregions().size(),
+                        route.getSubregions().stream().filter(s -> s.getCity() != null).count()))
+                .player(mercaderData)
+                .build();
+
+        logRepository.save(log);
     }
 
     @Override
@@ -139,6 +146,15 @@ public class MercaderServiceImpl implements MercaderService {
                         .build());
 
         mercaderDataRepository.save(mercaderData);
+
+        Log log = Log.builder()
+                .turno(mercaderData.getGameData().getTurno())
+                .tipo(LogTypeEnum.RECIBIDO)
+                .nota(String.format("Compraste un recurso de: %s", ResourceTypeEnum.valueOf(priceEnum.name()).name()))
+                .player(mercaderData)
+                .build();
+
+        logRepository.save(log);
     }
 
     @Override
@@ -173,6 +189,14 @@ public class MercaderServiceImpl implements MercaderService {
             }
         }
         mercaderDataRepository.save(mercaderData);
+        Log log = Log.builder()
+                .turno(mercaderData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota("Mejoraste la productividad y bajaste los costos")
+                .player(mercaderData)
+                .build();
+
+        logRepository.save(log);
     }
 
     /*

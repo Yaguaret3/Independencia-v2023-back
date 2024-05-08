@@ -3,6 +3,7 @@ package com.megajuegos.independencia.dto.response;
 import com.megajuegos.independencia.dto.response.util.PlayerDataCardsUtil;
 import com.megajuegos.independencia.entities.Congreso;
 import com.megajuegos.independencia.entities.data.RevolucionarioData;
+import com.megajuegos.independencia.enums.LogTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class RevolucionarioResponse {
     private List<RepresentationCardResponse> representacion;
     private List<ResourceCardResponse> recursos;
     private List<ExtraCardResponse> extras;
+    private List<String> historial;
 
     public static RevolucionarioResponse toDtoResponse(RevolucionarioData entity){
 
@@ -47,6 +49,13 @@ public class RevolucionarioResponse {
                 .extras(util.getExtraCardList()
                         .stream()
                         .map(ExtraCardResponse::toDtoResponse)
+                        .collect(Collectors.toList()))
+                .historial(entity.getLogs().stream()
+                        .map(l -> String.format("Turno %s %s %s",
+                                l.getTurno(),
+                                l.getTipo().getSymbol(),
+                                l.getNota()
+                        ))
                         .collect(Collectors.toList()))
                 .build();
     }

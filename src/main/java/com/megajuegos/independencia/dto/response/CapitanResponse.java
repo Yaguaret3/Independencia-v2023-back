@@ -2,6 +2,7 @@ package com.megajuegos.independencia.dto.response;
 
 import com.megajuegos.independencia.dto.response.util.PlayerDataCardsUtil;
 import com.megajuegos.independencia.entities.data.CapitanData;
+import com.megajuegos.independencia.enums.LogTypeEnum;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,6 +20,7 @@ public class CapitanResponse {
     private List<BattleCardFullResponse> battleCards;
     private List<ResourceCardResponse> recursos;
     private CapitanPricesResponse prices;
+    private List<String> historial;
 
     public static CapitanResponse toDtoResponse(CapitanData entity){
 
@@ -48,6 +50,13 @@ public class CapitanResponse {
                         .map(ResourceCardResponse::toDtoResponse)
                         .collect(Collectors.toList())))
                 .prices(CapitanPricesResponse.toDtoResponse(entity.getPrices()))
+                .historial(entity.getLogs().stream()
+                        .map(l -> String.format("Turno %s %s %s",
+                                l.getTurno(),
+                                l.getTipo().getSymbol(),
+                                l.getNota()
+                        ))
+                        .collect(Collectors.toList()))
                 .build();
 
     }
