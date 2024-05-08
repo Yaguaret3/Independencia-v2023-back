@@ -20,7 +20,7 @@ public class CapitanResponse {
     private List<BattleCardFullResponse> battleCards;
     private List<ResourceCardResponse> recursos;
     private CapitanPricesResponse prices;
-    private List<String> historial;
+    private List<LogResponse> historial;
 
     public static CapitanResponse toDtoResponse(CapitanData entity){
 
@@ -51,11 +51,7 @@ public class CapitanResponse {
                         .collect(Collectors.toList())))
                 .prices(CapitanPricesResponse.toDtoResponse(entity.getPrices()))
                 .historial(entity.getLogs().stream()
-                        .map(l -> String.format("Turno %s %s %s",
-                                l.getTurno(),
-                                l.getTipo().getSymbol(),
-                                l.getNota()
-                        ))
+                        .map(LogResponse::toResponse)
                         .collect(Collectors.toList()))
                 .build();
 

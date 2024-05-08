@@ -24,7 +24,7 @@ public class RevolucionarioResponse {
     private List<RepresentationCardResponse> representacion;
     private List<ResourceCardResponse> recursos;
     private List<ExtraCardResponse> extras;
-    private List<String> historial;
+    private List<LogResponse> historial;
 
     public static RevolucionarioResponse toDtoResponse(RevolucionarioData entity){
 
@@ -51,11 +51,7 @@ public class RevolucionarioResponse {
                         .map(ExtraCardResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .historial(entity.getLogs().stream()
-                        .map(l -> String.format("Turno %s %s %s",
-                                l.getTurno(),
-                                l.getTipo().getSymbol(),
-                                l.getNota()
-                        ))
+                        .map(LogResponse::toResponse)
                         .collect(Collectors.toList()))
                 .build();
     }

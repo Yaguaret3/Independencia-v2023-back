@@ -32,7 +32,7 @@ public class GobernadorResponse {
     private List<ExtraCardResponse> extras;
     private List<ResourceTypeEnum> tiposDeRecurso;
     private GobernadorPricesResponse precios;
-    private List<String> historial;
+    private List<LogResponse> historial;
 
     public static GobernadorResponse toDtoResponse(GobernadorData entity, GameRegion gameRegion) {
 
@@ -62,11 +62,7 @@ public class GobernadorResponse {
                 .tiposDeRecurso(Arrays.stream(ResourceTypeEnum.values()).collect(Collectors.toList()))
                 .precios(GobernadorPricesResponse.toDto(entity.getPrices()))
                 .historial(entity.getLogs().stream()
-                        .map(l -> String.format("Turno %s %s %s",
-                                l.getTurno(),
-                                l.getTipo().getSymbol(),
-                                l.getNota()
-                        ))
+                        .map(LogResponse::toResponse)
                         .collect(Collectors.toList()))
                 .build();
     }
