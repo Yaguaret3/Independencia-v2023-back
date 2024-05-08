@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -58,10 +59,10 @@ public class JwtTokenProvider {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public boolean isTokenValid(String token, UserIndependencia userDetails){
+    public boolean isTokenValid(String token, UserDetails userDetails){
 
         final String email = extractUsername(token);
-        return email.equals(userDetails.getEmail()) && !isTokenExpired(token);
+        return email.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token){
@@ -71,7 +72,6 @@ public class JwtTokenProvider {
     private Date extractExpiration(String token){
         return extractClaim(token, Claims::getExpiration);
     }
-
 
 
     private Key getSigninKey(){

@@ -5,6 +5,7 @@ import com.megajuegos.independencia.repository.UserIndependenciaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +18,8 @@ public class UserUtil {
     public UserIndependencia getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        UserIndependencia user = (UserIndependencia) auth.getPrincipal();
+        User user = (User) auth.getPrincipal();
 
-        return userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException(""));
+        return userRepository.findByEmail(user.getUsername()).orElseThrow(() -> new UsernameNotFoundException(""));
     }
 }

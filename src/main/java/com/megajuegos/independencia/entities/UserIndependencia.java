@@ -4,13 +4,12 @@ import com.megajuegos.independencia.entities.data.PlayerData;
 import com.megajuegos.independencia.enums.RoleEnum;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -37,8 +36,8 @@ public class UserIndependencia implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
-                .map(rol -> (GrantedAuthority) rol::name)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .map(rol -> new SimpleGrantedAuthority(rol.name()))
+                .collect(Collectors.toList());
     }
 
     @Override
