@@ -4,6 +4,7 @@ import com.megajuegos.independencia.entities.GameSubRegion;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,10 @@ public class GameSubRegionFullResponse {
     private List<CampResponse> campamentos;
     private List<BattleFullResponse> batallas;
     private List<ActionResponse> accionesMilitares;
+
+    private String nombre;
+    private String area;
+    private String color;
 
     public static GameSubRegionFullResponse toFullResponse(GameSubRegion entity){
 
@@ -42,6 +47,10 @@ public class GameSubRegionFullResponse {
                 .accionesMilitares(entity.getAttackActions().stream()
                         .map(ActionResponse::toDto)
                         .collect(Collectors.toList()))
+
+                .nombre(entity.getNombre())
+                .area(entity.getArea())
+                .color(entity.getColor())
                 .build();
     }
 
