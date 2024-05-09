@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class GameRegionFullResponse {
 
     private Long id;
-    private String name;
+    private String nombre;
     private List<GameSubRegionFullResponse> subregions;
     private List<ActionResponse> accionesMilitares;
 
@@ -31,7 +31,7 @@ public class GameRegionFullResponse {
     public static GameRegionFullResponse toFullResponse(GameRegion entity){
         return GameRegionFullResponse.builder()
                 .id(entity.getId())
-                .name(entity.getRegionEnum().getNombre())
+                .nombre(entity.getRegionEnum().getNombre())
                 .subregions(entity.getSubRegions()
                         .stream()
                         .map(GameSubRegionFullResponse::toFullResponse)

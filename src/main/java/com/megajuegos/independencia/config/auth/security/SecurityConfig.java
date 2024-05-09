@@ -57,6 +57,9 @@ public class SecurityConfig {
                 //WEBSOCKETS
                 .antMatchers("/ws").permitAll()
                 .antMatchers("/ws/**").permitAll()
+                //
+                .antMatchers("/api/player").authenticated()
+                .antMatchers("/api/player/**").authenticated()
 
                 .anyRequest().denyAll()
                 .and()
