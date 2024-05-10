@@ -1,6 +1,8 @@
 package com.megajuegos.independencia.service.impl;
 
 import com.megajuegos.independencia.dto.request.auth.ManageRolesRequest;
+import com.megajuegos.independencia.dto.response.settings.SettingsGameDataResponse;
+import com.megajuegos.independencia.dto.response.settings.SettingsUserResponse;
 import com.megajuegos.independencia.entities.*;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.card.MarketCard;
@@ -49,6 +51,7 @@ public class SettingServiceImpl implements SettingService {
                         .fase(PhaseEnum.REVEALING)
                         .congresos(new ArrayList<>())
                         .active(true)
+                        .createdOn(Calendar.getInstance().toInstant())
                         .build()
         );
 
@@ -103,7 +106,6 @@ public class SettingServiceImpl implements SettingService {
         UserIndependencia user = userRepository.findById(request.getId())
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_EMAIL));
 
-        // TODO Decidir qué hacer con rol ADMIN
         if((RoleEnum.ADMIN.equals(request.getRole()) || RoleEnum.USER.equals(request.getRole()))
                 && user.getRoles().contains(request.getRole())){
             throw new WrongRoleException();
@@ -118,7 +120,7 @@ public class SettingServiceImpl implements SettingService {
         setRevolucionarioData(playerData);
         setCapitanData(playerData);
 
-        GameData gameData = gameDataRepository.findFirstByOrderById()
+        GameData gameData = gameDataRepository.findFirstByOrderByIdDesc()
                 .orElseThrow(GameDataNotFoundException::new);
 
         playerData.setGameData(gameData);
@@ -183,6 +185,35 @@ public class SettingServiceImpl implements SettingService {
         gobernadorDataRepository.save(to);
 
         return CITY_ASSIGNED;
+    }
+
+    @Override
+    public List<SettingsGameDataResponse> getGames() {
+        return gameDataRepository.findAll().stream()
+                .map(SettingsGameDataResponse::toSettingsResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String deactivateGame(Long id) {
+        GameData gameData = gameDataRepository.findById(id)
+                .orElseThrow(() -> new GameDataNotFoundException(id));
+        gameData.setActive(false);
+        gameDataRepository.save(gameData);
+        return GAME_DEACTIVATED;
+    }
+
+    @Override
+    public String deleteGame(Long id) {
+        gameDataRepository.deleteById(id);
+        return GAME_DELETED;
+    }
+
+    @Override
+    public List<SettingsUserResponse> getUsers() {
+        return userRepository.findAll().stream()
+                .map(SettingsUserResponse::toSettingsResponse)
+                .collect(Collectors.toList());
     }
 
     /*

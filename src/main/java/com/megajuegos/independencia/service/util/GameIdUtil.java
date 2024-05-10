@@ -13,7 +13,7 @@ public class GameIdUtil {
     private final GameDataRepository gameDataRepository;
 
     public Long currentGameId(){
-        return gameDataRepository.findFirstByOrderById()
+        return gameDataRepository.findFirstByOrderByIdDesc()
                 .map(GameData::getId)
                 .orElseThrow(GameDataNotFoundException::new);
     }

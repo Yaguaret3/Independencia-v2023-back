@@ -23,6 +23,8 @@ public class Messages {
     public static final String CARD_REMOVED = "Carta quitada con éxito";
     public static final String PERSONAL_PRICE_ASSIGNED = "Precios asignados";
     public static final String NEW_GAME_CREATED = "Juego nuevo creado";
+    public static final String GAME_DEACTIVATED = "Juego desactivado";
+    public static final String GAME_DELETED = "Juego borrado";
     public static final String CONGRESS_PRESIDENT_ASSIGNED = "Presidente del congreso asignado";
     public static final String PROPOSAL_CREATED = "Propuesta nueva creada con éxito";
     public static final String VOTED = "Voto enviado de manera exitosa";

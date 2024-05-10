@@ -4,8 +4,11 @@ import com.megajuegos.independencia.entities.Congreso;
 import com.megajuegos.independencia.entities.GameRegion;
 import com.megajuegos.independencia.enums.PhaseEnum;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.Instant;
+import java.util.Calendar;
 import java.util.List;
 
 @Entity
@@ -35,4 +38,7 @@ public class GameData {
     @Enumerated(EnumType.STRING)
     private PhaseEnum fase;
     private boolean active;
+
+    @CreationTimestamp
+    private Instant createdOn;
 }

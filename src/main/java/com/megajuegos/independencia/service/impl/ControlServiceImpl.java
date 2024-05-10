@@ -8,7 +8,6 @@ import com.megajuegos.independencia.entities.card.*;
 import com.megajuegos.independencia.entities.data.*;
 import com.megajuegos.independencia.enums.PhaseEnum;
 import com.megajuegos.independencia.enums.RepresentationEnum;
-import com.megajuegos.independencia.enums.ResourceTypeEnum;
 import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.*;
@@ -55,6 +54,7 @@ public class ControlServiceImpl implements ControlService {
     private final GameIdUtil gameIdUtil;
     private final BuildingRepository buildingRepository;
 
+    private static Random random = new Random();
     private static final int DADO_CUATRO_MAX = 5;
     private static final int DADO_CUATRO_MIN = 1;
     private static final int CERO_DEFAULT = 0;
@@ -480,14 +480,12 @@ public class ControlServiceImpl implements ControlService {
         Battle battle = battleRepository.findById(battleId).orElseThrow(() -> new BattleNotFoundException(battleId));
         List<Army> ejercitosInvolucrados = battle.getCombatientes();
 
-        Random random = new Random();
         List<Integer> valoresAzar = new ArrayList<>();
 
         //Asigna iniciativa random y tira los dados
         ejercitosInvolucrados.forEach(e -> {
             e.setIniciativa(random.nextInt());
             valoresAzar.add(random.nextInt(DADO_CUATRO_MAX - DADO_CUATRO_MIN) + DADO_CUATRO_MIN);
-            System.out.println();
         });
 
         //Ordena para hacer coincidir los ejércitos que atacan con los dados mayores
@@ -695,7 +693,7 @@ public class ControlServiceImpl implements ControlService {
         });
         revolucionarioRepository.saveAll(revolucionarios);
 
-        GameData gameData = gameDataRepository.findFirstByOrderById()
+        GameData gameData = gameDataRepository.findFirstByOrderByIdDesc()
                 .orElseThrow(GameDataNotFoundException::new);
         gameData.getCongresos().add(congreso);
         gameDataRepository.save(gameData);
