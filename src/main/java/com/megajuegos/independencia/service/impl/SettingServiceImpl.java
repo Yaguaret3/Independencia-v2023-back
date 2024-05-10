@@ -48,6 +48,7 @@ public class SettingServiceImpl implements SettingService {
                         .turno(0)
                         .fase(PhaseEnum.REVEALING)
                         .congresos(new ArrayList<>())
+                        .active(true)
                         .build()
         );
 
@@ -129,7 +130,7 @@ public class SettingServiceImpl implements SettingService {
         user.getPlayerDataList().add(playerSaved);
         userRepository.save(user);
 
-        return ROLES_ACTUALIZADOS_CON_ÉXITO;
+        return ROLES_ACTUALIZADOS_CON_EXITO;
     }
 
     @Override
@@ -138,8 +139,7 @@ public class SettingServiceImpl implements SettingService {
         UserIndependencia user = userRepository.findById(request.getId())
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_EMAIL));
 
-        if(!user.getRoles().contains(request.getRole())
-                || request.equals(RoleEnum.USER)){
+        if(!user.getRoles().contains(request.getRole())){
             throw new WrongRoleException();
         }
 
@@ -148,7 +148,7 @@ public class SettingServiceImpl implements SettingService {
                 .collect(Collectors.toList());
 
         playerDataRepository.deleteAll(playerDatas);
-        return ROLES_ACTUALIZADOS_CON_ÉXITO;
+        return ROLES_ACTUALIZADOS_CON_EXITO;
     }
 
     @Override

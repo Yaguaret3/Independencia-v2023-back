@@ -34,4 +34,5 @@ public class GameData {
 
     @Enumerated(EnumType.STRING)
     private PhaseEnum fase;
+    private boolean active;
 }

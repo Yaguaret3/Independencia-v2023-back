@@ -9,8 +9,9 @@ import java.util.Set;
 @Builder
 public class AuthenticateResponse {
 
-    String username;
-    String email;
-    Set<String> roles;
-    String token;
+    private String username;
+    private String email;
+    private Set<String> roles;
+    private String token;
+    private boolean isPlayerAllowed;
 }
