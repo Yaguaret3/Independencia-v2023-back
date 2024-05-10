@@ -10,8 +10,8 @@ public class Messages {
     public static final String USER_NOT_FOUND_BY_ID = "No existe un usuario con esa id";
     public static final String PLAYER_DATA_NOT_FOUND_BY_ID = "No existe jugador con esa id";
     public static final String ORIGINAL_PASS_NOT_MATCHES = "Contraseña original inválida";
-    public static final String CONTRASEÑA_ACTUALIZADA_CON_ÉXITO = "Contraseña actualizada con éxito";
-    public static final String ROLES_ACTUALIZADOS_CON_ÉXITO = "Roles actualizados con éxito";
+    public static final String CONTRASENA_ACTUALIZADA_CON_EXITO = "Contraseña actualizada con éxito";
+    public static final String ROLES_ACTUALIZADOS_CON_EXITO = "Roles actualizados con éxito";
     public static final String INIT_COMPLETED = "Inicialización finalizada";
     public static final String CARD_GIVEN = "Carta cedida con éxito";
     public static final String CARD_MOVED = "Carta movida con éxito";
