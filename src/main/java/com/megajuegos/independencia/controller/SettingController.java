@@ -1,6 +1,10 @@
 package com.megajuegos.independencia.controller;
 
-import com.megajuegos.independencia.dto.request.auth.ManageRolesRequest;
+import com.megajuegos.independencia.dto.request.settings.AssignCityRequest;
+import com.megajuegos.independencia.dto.request.settings.ManageRolesRequest;
+import com.megajuegos.independencia.dto.response.settings.SettingsCityResponse;
+import com.megajuegos.independencia.dto.response.settings.SettingsGameDataResponse;
+import com.megajuegos.independencia.dto.response.settings.SettingsUserResponse;
 import com.megajuegos.independencia.entities.City;
 import com.megajuegos.independencia.service.SettingService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/setting")
@@ -37,8 +42,27 @@ public class SettingController {
     }
 
     @PostMapping("/assign-city")
-    public ResponseEntity<String> assignCity(@RequestParam Long to,
-                                             @RequestParam String city) throws InstanceNotFoundException {
-        return ResponseEntity.ok(service.assignCity(to, city));
+    public ResponseEntity<String> assignCity(@RequestBody AssignCityRequest request) throws InstanceNotFoundException {
+        return ResponseEntity.ok(service.assignCity(request));
+    }
+    @GetMapping("/users")
+    public ResponseEntity<List<SettingsUserResponse>> getUsers(){
+        return ResponseEntity.ok(service.getUsers());
+    }
+    @GetMapping("/games")
+    public ResponseEntity<List<SettingsGameDataResponse>> getGames(){
+        return ResponseEntity.ok(service.getGames());
+    }
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<String> deactivateGame(@PathVariable Long id){
+        return ResponseEntity.ok(service.deactivateGame(id));
+    }
+    @DeleteMapping("/{id}/")
+    public ResponseEntity<String> deleteGame(@PathVariable Long id){
+        return ResponseEntity.ok(service.deleteGame(id));
+    }
+    @GetMapping("/cities")
+    public ResponseEntity<List<SettingsCityResponse>> getCities(){
+        return ResponseEntity.ok(service.getCities());
     }
 }

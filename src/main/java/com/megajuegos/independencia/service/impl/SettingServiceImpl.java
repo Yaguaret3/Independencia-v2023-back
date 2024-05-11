@@ -1,6 +1,8 @@
 package com.megajuegos.independencia.service.impl;
 
-import com.megajuegos.independencia.dto.request.auth.ManageRolesRequest;
+import com.megajuegos.independencia.dto.request.settings.AssignCityRequest;
+import com.megajuegos.independencia.dto.request.settings.ManageRolesRequest;
+import com.megajuegos.independencia.dto.response.settings.SettingsCityResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsGameDataResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsUserResponse;
 import com.megajuegos.independencia.entities.*;
@@ -160,24 +162,28 @@ public class SettingServiceImpl implements SettingService {
 
 
     @Override
-    public String assignCity(Long toId, String ciudadNombre) throws InstanceNotFoundException {
+    public String assignCity(AssignCityRequest request) throws InstanceNotFoundException {
 
-        GobernadorData to = gobernadorDataRepository.findById(toId)
-                .orElseThrow(() -> new PlayerNotFoundException(toId));
+        GobernadorData to = gobernadorDataRepository.findById(request.getPlayerId())
+                .orElseThrow(() -> new PlayerNotFoundException(request.getPlayerId()));
 
-        City city = cityRepository.findByName(ciudadNombre)
-                .orElseThrow(() -> new CityNotFoundException(ciudadNombre));
+        City city = cityRepository.findById(request.getCityId())
+                .orElseThrow(() -> new CityNotFoundException(request.getCityId()));
+
+        if(city.getGobernadorData() != null){
+            throw new CityAlreadyHasGovernorException(city.getName(), city.getGobernadorData().getUser().getUsername());
+        }
 
         to.setCity(city);
 
         List<Card> cards = new ArrayList<>();
         cards.add(RepresentationCard.builder()
-                        .representacion(RepresentationEnum.byNombre(ciudadNombre))
+                        .representacion(RepresentationEnum.byNombre(city.getName()))
                         .build());
         for(int i = 1; i<=city.getMarketLevel();i++){
             cards.add(MarketCard.builder()
                             .level(i)
-                            .nombreCiudad(ciudadNombre)
+                            .nombreCiudad(city.getName())
                     .build());
         }
 
@@ -213,6 +219,21 @@ public class SettingServiceImpl implements SettingService {
     public List<SettingsUserResponse> getUsers() {
         return userRepository.findAll().stream()
                 .map(SettingsUserResponse::toSettingsResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SettingsCityResponse> getCities() {
+        GameData gameData = gameDataRepository.findFirstByOrderByIdDesc()
+                .filter(GameData::isActive)
+                .orElseThrow(GameDataNotFoundException::new);
+
+        return gameData.getGameRegions()
+                .stream()
+                .flatMap(r -> r.getSubRegions().stream())
+                .map(GameSubRegion::getCity)
+                .filter(Objects::nonNull)
+                .map(SettingsCityResponse::toSettingsReponse)
                 .collect(Collectors.toList());
     }
 

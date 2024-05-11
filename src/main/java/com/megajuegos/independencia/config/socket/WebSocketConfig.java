@@ -26,6 +26,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                                                      "/actualizar-capitanes",
                                                      "/actualizar-revolucionarios",
                                                      "/actualizar-mercaderes",
-                                                     "/actualizar-todos");
+                                                     "/actualizar-todos",
+                                                     "/actualizar-settings");
     }
 }

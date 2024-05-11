@@ -1,4 +1,4 @@
-package com.megajuegos.independencia.dto.request.auth;
+package com.megajuegos.independencia.dto.request.settings;
 
 import com.megajuegos.independencia.enums.RoleEnum;
 import lombok.AllArgsConstructor;

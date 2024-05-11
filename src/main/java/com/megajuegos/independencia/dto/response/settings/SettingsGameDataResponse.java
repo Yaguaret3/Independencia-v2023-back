@@ -16,6 +16,7 @@ public class SettingsGameDataResponse {
 
     private long id;
     private Instant createdOn;
+    private boolean habilitado;
     private List<SettingsPlayerDataTinyResponse> players;
 
     public static SettingsGameDataResponse toSettingsResponse(GameData entity) {
@@ -23,6 +24,7 @@ public class SettingsGameDataResponse {
         return SettingsGameDataResponse.builder()
                 .createdOn(entity.getCreatedOn())
                 .id(entity.getId())
+                .habilitado(entity.isActive())
                 .players(entity.getPlayers().stream()
                         .map(SettingsPlayerDataTinyResponse::toSettingsResponse)
                         .collect(Collectors.toList()))
