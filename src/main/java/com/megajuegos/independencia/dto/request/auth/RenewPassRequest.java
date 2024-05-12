@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RenewPassRequest {
 
+    private String email;
     private String oldPass;
     private String newPass;
 }

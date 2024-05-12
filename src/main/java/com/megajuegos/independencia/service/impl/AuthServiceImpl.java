@@ -10,6 +10,7 @@ import com.megajuegos.independencia.entities.data.PlayerData;
 import com.megajuegos.independencia.enums.RoleEnum;
 import com.megajuegos.independencia.exceptions.CredentialsException;
 import com.megajuegos.independencia.exceptions.EmailAlreadyExistsException;
+import com.megajuegos.independencia.exceptions.EmailNotFoundException;
 import com.megajuegos.independencia.repository.UserIndependenciaRepository;
 import com.megajuegos.independencia.service.AuthService;
 import com.megajuegos.independencia.service.util.UserUtil;
@@ -94,7 +95,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String renewPass(RenewPassRequest request) {
 
-        UserIndependencia userDetails = userUtil.getCurrentUser();
+        UserIndependencia userDetails;
+        try{
+            userDetails = userUtil.getCurrentUser();
+        } catch (Exception e){
+            userDetails = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new EmailNotFoundException(request.getEmail()));
+        }
 
         if(!passwordEncoder.matches(request.getOldPass(), userDetails.getPassword())){
             throw new CredentialsException(ORIGINAL_PASS_NOT_MATCHES);

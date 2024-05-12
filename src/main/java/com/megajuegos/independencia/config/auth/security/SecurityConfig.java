@@ -53,7 +53,8 @@ public class SecurityConfig {
                 .antMatchers("/api/control").hasRole(CONTROL.name())
                 .antMatchers("/api/control/**").hasRole(CONTROL.name())
                 //ADMIN
-                //.antMatchers("/api/settings/**").hasRole(ADMIN.name())
+                .antMatchers("/api/settings").hasRole(ADMIN.name())
+                .antMatchers("/api/settings/**").hasRole(ADMIN.name())
                 //WEBSOCKETS
                 .antMatchers("/ws").permitAll()
                 .antMatchers("/ws/**").permitAll()
