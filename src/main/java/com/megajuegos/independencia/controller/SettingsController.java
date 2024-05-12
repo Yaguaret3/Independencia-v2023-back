@@ -1,12 +1,13 @@
 package com.megajuegos.independencia.controller;
 
 import com.megajuegos.independencia.dto.request.settings.AssignCityRequest;
+import com.megajuegos.independencia.dto.request.settings.CreateGameRequest;
 import com.megajuegos.independencia.dto.request.settings.ManageRolesRequest;
 import com.megajuegos.independencia.dto.response.settings.SettingsCityResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsGameDataResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsUserResponse;
 import com.megajuegos.independencia.entities.City;
-import com.megajuegos.independencia.service.SettingService;
+import com.megajuegos.independencia.service.SettingsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +16,15 @@ import javax.management.InstanceNotFoundException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/setting")
+@RequestMapping("/api/settings")
 @RequiredArgsConstructor
-public class SettingController {
+public class SettingsController {
 
-    private final SettingService service;
+    private final SettingsService service;
 
     @PostMapping("/create-game")
-    public ResponseEntity<String> createGame(){
-        return ResponseEntity.ok(service.createGame());
+    public ResponseEntity<String> createGame(@RequestBody CreateGameRequest request){
+        return ResponseEntity.ok(service.createGame(request));
     }
 
     @PostMapping("/add-role")

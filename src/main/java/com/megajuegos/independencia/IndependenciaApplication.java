@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +29,8 @@ public class IndependenciaApplication implements CommandLineRunner {
     @Value("${ar.com.independencia.admin.password}")
     private String password;
 
+    private final PasswordEncoder passwordEncoder;
+
     public static void main(String[] args) {
         SpringApplication.run(IndependenciaApplication.class, args);
     }
@@ -41,7 +46,7 @@ public class IndependenciaApplication implements CommandLineRunner {
                 UserIndependencia.builder()
                         .email(email)
                         .username(username)
-                        .password(password)
+                        .password(passwordEncoder.encode(password))
                         .roles(Stream.of(RoleEnum.ADMIN).collect(Collectors.toList()))
                         .playerDataList(Stream.of(RoleEnum.CONTROL.createPlayerData()).collect(Collectors.toList()))
                         .build());

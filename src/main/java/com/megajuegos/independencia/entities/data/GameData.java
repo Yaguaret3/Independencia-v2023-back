@@ -22,6 +22,8 @@ public class GameData {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String nombre;
+
     @OneToMany(mappedBy = "gameData")
     private List<PlayerData> players;
 

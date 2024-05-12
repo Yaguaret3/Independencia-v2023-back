@@ -1,6 +1,7 @@
 package com.megajuegos.independencia.service.impl;
 
 import com.megajuegos.independencia.dto.request.settings.AssignCityRequest;
+import com.megajuegos.independencia.dto.request.settings.CreateGameRequest;
 import com.megajuegos.independencia.dto.request.settings.ManageRolesRequest;
 import com.megajuegos.independencia.dto.response.settings.SettingsCityResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsGameDataResponse;
@@ -15,7 +16,7 @@ import com.megajuegos.independencia.exceptions.*;
 import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
-import com.megajuegos.independencia.service.SettingService;
+import com.megajuegos.independencia.service.SettingsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ import static com.megajuegos.independencia.util.Messages.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class SettingServiceImpl implements SettingService {
+public class SettingsServiceImpl implements SettingsService {
 
     private final UserIndependenciaRepository userRepository;
     private final CityRepository cityRepository;
@@ -44,11 +45,12 @@ public class SettingServiceImpl implements SettingService {
     private final PersonalPriceRepository personalPriceRepository;
 
     @Override
-    public String createGame() {
+    public String createGame(CreateGameRequest request) {
 
         //Juego vacío
         GameData game = gameDataRepository.save(
                 GameData.builder()
+                        .nombre(request.getNombre())
                         .turno(0)
                         .fase(PhaseEnum.REVEALING)
                         .congresos(new ArrayList<>())

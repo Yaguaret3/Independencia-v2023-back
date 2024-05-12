@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,15 +17,17 @@ import java.util.stream.Collectors;
 public class SettingsGameDataResponse {
 
     private long id;
-    private Instant createdOn;
+    private String nombre;
+    private LocalDate createdOn;
     private boolean habilitado;
     private List<SettingsPlayerDataTinyResponse> players;
 
     public static SettingsGameDataResponse toSettingsResponse(GameData entity) {
 
         return SettingsGameDataResponse.builder()
-                .createdOn(entity.getCreatedOn())
+                .createdOn(entity.getCreatedOn() == null ? null : entity.getCreatedOn().atZone(ZoneId.systemDefault()).toLocalDate())
                 .id(entity.getId())
+                .nombre(entity.getNombre())
                 .habilitado(entity.isActive())
                 .players(entity.getPlayers().stream()
                         .map(SettingsPlayerDataTinyResponse::toSettingsResponse)
