@@ -15,6 +15,7 @@ public class GameRegionTinyResponse {
 
     private Long id;
     private String nombre;
+    private String jpg;
     private String area;
     private String fgTop;
     private String fgLeft;
@@ -28,6 +29,7 @@ public class GameRegionTinyResponse {
         return GameRegionTinyResponse.builder()
                 .id(entity.getId())
                 .nombre(entity.getRegionEnum().getNombre())
+                .jpg(entity.getRegionEnum().getJpg())
                 .area(entity.getRegionEnum().getFgArea())
                 .fgTop(entity.getRegionEnum().getFgTop())
                 .fgLeft(entity.getRegionEnum().getFgLeft())

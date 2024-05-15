@@ -16,7 +16,7 @@ public class GameRegionFullResponse {
     private List<GameSubRegionFullResponse> subregions;
     private List<ActionResponse> accionesMilitares;
 
-
+    private String jpg;
     private String area;
     private String bgTop;
     private String bgLeft;
@@ -42,10 +42,8 @@ public class GameRegionFullResponse {
                         .collect(Collectors.toList())
                 )
 
+                .jpg(entity.getRegionEnum().getJpg())
                 .area(entity.getRegionEnum().getFgArea())
-                .bgTop(entity.getRegionEnum().getBgTop())
-                .bgLeft(entity.getRegionEnum().getBgLeft())
-                .bgScale(entity.getRegionEnum().getBgScale())
                 .fgTop(entity.getRegionEnum().getFgTop())
                 .fgLeft(entity.getRegionEnum().getFgLeft())
                 .fgViewBox(entity.getRegionEnum().getFgViewBox())

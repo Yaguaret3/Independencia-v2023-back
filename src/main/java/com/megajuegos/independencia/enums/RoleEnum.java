@@ -41,6 +41,7 @@ public enum RoleEnum {
         @Override
         public PlayerData createPlayerData() {
             return ControlData.builder()
+                    .siguienteFaseSolicitada(false)
                     .build();
         }
 

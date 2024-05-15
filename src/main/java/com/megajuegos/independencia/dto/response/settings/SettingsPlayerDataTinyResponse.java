@@ -19,11 +19,16 @@ public class SettingsPlayerDataTinyResponse {
 
     public static SettingsPlayerDataTinyResponse toSettingsResponse(PlayerData entity){
 
+        String nombreCiudad = null;
+        if(entity instanceof GobernadorData && ((GobernadorData) entity).getCity() != null){
+            nombreCiudad = ((GobernadorData) entity).getCity().getName();
+        }
+
         return SettingsPlayerDataTinyResponse.builder()
                 .id(entity.getId())
                 .username(entity.getUser().getUsername())
                 .rol(entity.getRol())
-                .ciudad(entity instanceof GobernadorData ? ((GobernadorData) entity).getCity().getName() : null)
+                .ciudad(nombreCiudad)
                 .build();
     }
 

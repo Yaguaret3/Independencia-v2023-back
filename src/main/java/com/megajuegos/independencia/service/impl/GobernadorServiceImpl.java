@@ -59,6 +59,9 @@ public class GobernadorServiceImpl implements GobernadorService {
 
         GameRegion gameRegion = gameRegionRepository
                 .findByRegionEnum(RegionEnum.containingSubRegion(gobernadorData.getCity().getSubRegion().getSubRegionEnum()))
+                .stream()
+                .filter(r -> r.getGameData().isActive())
+                .findFirst()
                 .orElseThrow(() -> new RegionNotFoundException(gobernadorData.getCity().getSubRegion().getSubRegionEnum()));
 
         return GobernadorResponse.toDtoResponse(gobernadorData, gameRegion);

@@ -12,13 +12,11 @@ public enum RegionEnum {
 
     RIO_DE_LA_PLATA(1,
             "Río de la Plata",
+            "rdp",
             "red",
-            "-926px",
-            "-549px",
-            "1.61",
-            "7vh",
-            "1vh",
-            "71vh",
+            "8vh",
+            "3vh",
+            "69vh",
             "542",
             "560 825 350 345",
             "M910.18,961.18c-3.58-7.96-7.4-15.86-10.99-23.21c-1.64-3.36-4.85-4.74-6.16-5.17\n" +
@@ -67,13 +65,11 @@ public enum RegionEnum {
     },
     LITORAL(2,
             "Litoral",
+            "lit",
             "lime",
-            "-306px",
-            "-347px",
-            "1.19",
             "3vh",
-            "7vh",
-            "89vh",
+            "2vh",
+            "75vh",
             "",
             "690 365 230 480",
             "M918.33,513.15c-1.03-3.78-1.42-7.93-1.67-11.49l-0.03-0.39c-0.38-5.39-0.68-9.65-4.4-13\n" +
@@ -126,13 +122,11 @@ public enum RegionEnum {
     },
     CORDOBA_DEL_TUCUMAN(3,
             "Córdoba del Tucumán",
+            "cdt",
             "orange",
-            "-903px",
-            "100px",
-            "1.8",
-            "3vh",
-            "11vh",
-            "84vh",
+            "0vh",
+            "1vh",
+            "60vh",
             "",
             "255 805 355 295",
             "M613.16,870.59c-0.14-1.02-0.28-1.99-0.35-2.83c-0.21-2.4-0.9-4.43-1.45-6.06c-0.14-0.41-0.28-0.82-0.41-1.23\n" +
@@ -180,13 +174,11 @@ public enum RegionEnum {
     },
     SALTA_DEL_TUCUMAN(4,
             "Salta del Tucumán",
+            "sdt",
             "aqua",
-            "-352px",
-            "28px",
-            "1.2",
-            "1vh",
-            "6vh",
-            "91vh",
+            "3vh",
+            "9vh",
+            "78vh",
             "",
             "250 415 315 450",
             "M565.37,772.16c-0.73-1.34-1.37-2.5-1.99-3.68c-4.92-9.46-11.76-18.08-20.9-26.36\n" +
@@ -240,10 +232,8 @@ public enum RegionEnum {
     },
     ALTO_PERU(5,
             "Charcas",
+            "cha",
             "yellow",
-            "-66px",
-            "-66px",
-            "0.98",
             "1vh",
             "7vh",
             "94vh",
@@ -321,10 +311,8 @@ public enum RegionEnum {
     },
     CHILE(6,
             "Chile",
+            "chi",
             "purple",
-            "-589px",
-            "-113px",
-            "0.88",
             "-1vh",
             "-6vh",
             "156vh",
@@ -372,10 +360,8 @@ public enum RegionEnum {
 
     private final Integer id;
     private final String nombre;
+    private final String jpg;
     private final String color;
-    private final String bgTop;
-    private final String bgLeft;
-    private final String bgScale;
     private final String fgTop;
     private final String fgLeft;
     private final String fgHeight;
@@ -383,17 +369,14 @@ public enum RegionEnum {
     private final String fgViewBox;
     private final String fgArea;
 
-    RegionEnum(Integer id, String nombre, String color,
-               String bgTop, String bgLeft, String bgScale,
+    RegionEnum(Integer id, String nombre, String jpg, String color,
                String fgTop, String fgLeft, String fgHeight,
                String fgWidth,
                String fgViewBox, String fgArea){
         this.id = id;
         this.nombre = nombre;
+        this.jpg = jpg;
         this.color = color;
-        this.bgTop = bgTop;
-        this.bgLeft = bgLeft;
-        this.bgScale = bgScale;
         this.fgTop = fgTop;
         this.fgLeft = fgLeft;
         this.fgHeight = fgHeight;

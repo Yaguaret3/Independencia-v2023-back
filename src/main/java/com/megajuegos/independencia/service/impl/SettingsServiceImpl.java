@@ -18,7 +18,6 @@ import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
 import com.megajuegos.independencia.service.SettingsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,7 +107,7 @@ public class SettingsServiceImpl implements SettingsService {
     public String addRoles(ManageRolesRequest request) {
 
         UserIndependencia user = userRepository.findById(request.getId())
-                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_EMAIL));
+                .orElseThrow(() -> new UserIndependenciaNotFound(request.getId()));
 
         if((RoleEnum.ADMIN.equals(request.getRole()) || RoleEnum.USER.equals(request.getRole()))
                 && user.getRoles().contains(request.getRole())){
@@ -132,8 +131,9 @@ public class SettingsServiceImpl implements SettingsService {
 
         setPrecios(playerData);
 
-        PlayerData playerSaved = playerDataRepository.save(playerData);
-        user.getPlayerDataList().add(playerSaved);
+        playerDataRepository.save(playerData);
+
+        user.getPlayerDataList().add(playerData);
         userRepository.save(user);
 
         return ROLES_ACTUALIZADOS_CON_EXITO;
@@ -142,8 +142,11 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public String removeRoles(ManageRolesRequest request) {
 
-        UserIndependencia user = userRepository.findById(request.getId())
-                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_EMAIL));
+        PlayerData playerData = playerDataRepository.findById(request.getId())
+                .orElseThrow(() -> new UserIndependenciaNotFound(request.getId()));
+        Long gameDataId = playerData.getGameData().getId();
+
+        UserIndependencia user = playerData.getUser();
 
         if(!user.getRoles().contains(request.getRole())){
             throw new WrongRoleException();
@@ -151,9 +154,25 @@ public class SettingsServiceImpl implements SettingsService {
 
         List<PlayerData> playerDatas = user.getPlayerDataList().stream()
                 .filter(p -> request.getRole().equals(p.getRol()))
+                .filter(p -> p.getGameData().getId().equals(gameDataId))
                 .collect(Collectors.toList());
 
+        List<PersonalPrice> prices = playerDatas.stream()
+                .flatMap(p -> p.getPrices().stream())
+                        .collect(Collectors.toList());
+
+        personalPriceRepository.deleteAll(prices);
+
         playerDataRepository.deleteAll(playerDatas);
+
+        if(playerData instanceof GobernadorData){
+            City city = ((GobernadorData) playerData).getCity();
+            if(city != null){
+                city.setGobernadorData(null);
+                cityRepository.save(city);
+            }
+        }
+
         return ROLES_ACTUALIZADOS_CON_EXITO;
     }
 
@@ -166,8 +185,15 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public String assignCity(AssignCityRequest request) throws InstanceNotFoundException {
 
-        GobernadorData to = gobernadorDataRepository.findById(request.getPlayerId())
-                .orElseThrow(() -> new PlayerNotFoundException(request.getPlayerId()));
+        UserIndependencia user = userRepository.findById(request.getPlayerId())
+                .orElseThrow(() -> new UserIndependenciaNotFound(request.getPlayerId()));
+
+        GobernadorData to = user.getPlayerDataList().stream()
+                .filter(p -> p.getGameData().isActive())
+                .filter(GobernadorData.class::isInstance)
+                .map(p -> (GobernadorData) p)
+                .findFirst()
+                .orElseThrow(WrongRoleException::new);
 
         City city = cityRepository.findById(request.getCityId())
                 .orElseThrow(() -> new CityNotFoundException(request.getCityId()));
@@ -331,40 +357,12 @@ public class SettingsServiceImpl implements SettingsService {
         }
     }
 
-    // TODO: Ver cómo asignar precios iniciales
     private void setPrecios(PlayerData playerData) {
 
-        if(playerData instanceof GobernadorData){
-            personalPriceRepository.saveAll(Arrays.stream(PersonalPricesEnum.values()).filter(pp -> pp.getRol().equals(RoleEnum.GOBERNADOR))
-                    .map(pp -> PersonalPrice.builder()
-                            .name(pp)
-                            .playerData(playerData)
-                            .build())
-                    .collect(Collectors.toList()));
-        }
-        if(playerData instanceof CapitanData){
-            personalPriceRepository.saveAll(Arrays.stream(PersonalPricesEnum.values()).filter(pp -> pp.getRol().equals(RoleEnum.CAPITAN))
-                    .map(pp -> PersonalPrice.builder()
-                            .name(pp)
-                            .playerData(playerData)
-                            .build())
-                    .collect(Collectors.toList()));
-        }
-        if(playerData instanceof RevolucionarioData){
-            personalPriceRepository.saveAll(Arrays.stream(PersonalPricesEnum.values()).filter(pp -> pp.getRol().equals(RoleEnum.REVOLUCIONARIO))
-                    .map(pp -> PersonalPrice.builder()
-                            .name(pp)
-                            .playerData(playerData)
-                            .build())
-                    .collect(Collectors.toList()));
-        }
-        if(playerData instanceof MercaderData){
-            personalPriceRepository.saveAll(Arrays.stream(PersonalPricesEnum.values()).filter(pp -> pp.getRol().equals(RoleEnum.MERCADER))
-                    .map(pp -> PersonalPrice.builder()
-                            .name(pp)
-                            .playerData(playerData)
-                            .build())
-                    .collect(Collectors.toList()));
+        if(!(playerData instanceof ControlData)){
+            List<PersonalPrice> prices = playerData.getPrices();
+            prices.forEach(p -> p.setPlayerData(playerData));
+            personalPriceRepository.saveAll(prices);
         }
     }
 }
