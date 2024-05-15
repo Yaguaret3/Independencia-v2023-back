@@ -4,6 +4,7 @@ import com.megajuegos.independencia.config.auth.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,39 +28,39 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .cors()
-                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
 
+                //PUBLIC
+                .antMatchers(HttpMethod.GET, "/").permitAll()
+                .antMatchers(HttpMethod.GET, "/src/assets/img/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/assets/**").permitAll()
                 //LOGIN
                 .antMatchers("/api/auth/**").permitAll()
-
                 //GOBERNADOR
-                .antMatchers("/api/ciudad").hasRole(GOBERNADOR.name())
+                .antMatchers("/ciudad").permitAll()
                 .antMatchers("/api/ciudad/**").hasRole(GOBERNADOR.name())
                 //CAPITAN
-                .antMatchers("/api/militares").hasRole(CAPITAN.name())
+                .antMatchers("/militares").permitAll()
                 .antMatchers("/api/militares/**").hasRole(CAPITAN.name())
                 //MERCADER
-                .antMatchers("/api/comercio").hasRole(MERCADER.name())
+                .antMatchers("/comercio").permitAll()
                 .antMatchers("/api/comercio/**").hasRole(MERCADER.name())
                 //REVOLUCIONARIO
-                .antMatchers("/api/revolucion").hasRole(REVOLUCIONARIO.name())
+                .antMatchers("/revolucion").permitAll()
                 .antMatchers("/api/revolucion/**").hasRole(REVOLUCIONARIO.name())
                 //CONTROL
-                .antMatchers("/api/control").hasRole(CONTROL.name())
+                .antMatchers("/control").permitAll()
                 .antMatchers("/api/control/**").hasRole(CONTROL.name())
                 //ADMIN
-                .antMatchers("/api/settings").hasRole(ADMIN.name())
+                .antMatchers("/settings").permitAll()
                 .antMatchers("/api/settings/**").hasRole(ADMIN.name())
                 //WEBSOCKETS
                 .antMatchers("/ws").permitAll()
                 .antMatchers("/ws/**").permitAll()
-                //
-                .antMatchers("/api/player").authenticated()
+                //PLAYER
                 .antMatchers("/api/player/**").authenticated()
 
                 .anyRequest().denyAll()
