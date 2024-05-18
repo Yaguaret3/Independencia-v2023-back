@@ -42,6 +42,8 @@ public class SettingsServiceImpl implements SettingsService {
     private final GameRegionRepository gameRegionRepository;
     private final CampRepository campRepository;
     private final PersonalPriceRepository personalPriceRepository;
+    private final LogRepository logRepository;
+    private final CardRepository cardRepository;
 
     @Override
     public String createGame(CreateGameRequest request) {
@@ -85,11 +87,11 @@ public class SettingsServiceImpl implements SettingsService {
                 .orElseThrow(PoorlyCreatedGame::new);
 
         Congreso congreso = congresoRepository.save(Congreso.builder()
-                                                            .plata(0)
-                                                            .milicia(0)
-                                                            .sede(sede)
-                                                            .gameData(game)
-                                                            .build());
+                .plata(0)
+                .milicia(0)
+                .sede(sede)
+                .gameData(game)
+                .build());
 
         sede.setSedeDelCongreso(congreso);
         cityRepository.save(sede);
@@ -109,8 +111,8 @@ public class SettingsServiceImpl implements SettingsService {
         UserIndependencia user = userRepository.findById(request.getId())
                 .orElseThrow(() -> new UserIndependenciaNotFound(request.getId()));
 
-        if((RoleEnum.ADMIN.equals(request.getRole()) || RoleEnum.USER.equals(request.getRole()))
-                && user.getRoles().contains(request.getRole())){
+        if ((RoleEnum.ADMIN.equals(request.getRole()) || RoleEnum.USER.equals(request.getRole()))
+                && user.getRoles().contains(request.getRole())) {
             throw new WrongRoleException();
         }
 
@@ -148,10 +150,11 @@ public class SettingsServiceImpl implements SettingsService {
 
         UserIndependencia user = playerData.getUser();
 
-        if(!user.getRoles().contains(request.getRole())){
+        if (!user.getRoles().contains(request.getRole())) {
             throw new WrongRoleException();
         }
 
+        // BEGIN - Constraints from other tables (orphan removal? cascade?)
         List<PlayerData> playerDatas = user.getPlayerDataList().stream()
                 .filter(p -> request.getRole().equals(p.getRol()))
                 .filter(p -> p.getGameData().getId().equals(gameDataId))
@@ -159,15 +162,20 @@ public class SettingsServiceImpl implements SettingsService {
 
         List<PersonalPrice> prices = playerDatas.stream()
                 .flatMap(p -> p.getPrices().stream())
-                        .collect(Collectors.toList());
+                .collect(Collectors.toList());
+        List<Log> logs = playerDatas.stream()
+                .flatMap(p -> p.getLogs().stream())
+                .collect(Collectors.toList());
 
         personalPriceRepository.deleteAll(prices);
+        logRepository.deleteAll(logs);
+        // END - Constraints from other tables (orphan removal? cascade?)
 
         playerDataRepository.deleteAll(playerDatas);
 
-        if(playerData instanceof GobernadorData){
+        if (playerData instanceof GobernadorData) {
             City city = ((GobernadorData) playerData).getCity();
-            if(city != null){
+            if (city != null) {
                 city.setGobernadorData(null);
                 cityRepository.save(city);
             }
@@ -198,7 +206,7 @@ public class SettingsServiceImpl implements SettingsService {
         City city = cityRepository.findById(request.getCityId())
                 .orElseThrow(() -> new CityNotFoundException(request.getCityId()));
 
-        if(city.getGobernadorData() != null){
+        if (city.getGobernadorData() != null) {
             throw new CityAlreadyHasGovernorException(city.getName(), city.getGobernadorData().getUser().getUsername());
         }
 
@@ -206,15 +214,17 @@ public class SettingsServiceImpl implements SettingsService {
 
         List<Card> cards = new ArrayList<>();
         cards.add(RepresentationCard.builder()
-                        .representacion(RepresentationEnum.byNombre(city.getName()))
-                        .build());
-        for(int i = 1; i<=city.getMarketLevel();i++){
+                .representacion(RepresentationEnum.byNombre(city.getName()))
+                .playerData(to)
+                .build());
+        for (int i = 1; i <= city.getMarketLevel(); i++) {
             cards.add(MarketCard.builder()
-                            .level(i)
-                            .nombreCiudad(city.getName())
+                    .level(i)
+                    .nombreCiudad(city.getName())
+                    .playerData(to)
                     .build());
         }
-
+        cardRepository.saveAll(cards);
         to.setCards(cards);
         gobernadorDataRepository.save(to);
 
@@ -273,35 +283,37 @@ public class SettingsServiceImpl implements SettingsService {
     --------------------------------------------------------------------------------------------
      */
 
-    private List<GameRegion> createRegions(GameData game){
+    private List<GameRegion> createRegions(GameData game) {
         List<GameRegion> gameRegions = new ArrayList<>();
         Arrays.stream(RegionEnum.values()).forEach(r ->
                 gameRegions.add(GameRegion.builder()
-                                    .regionEnum(r)
-                                    .gameData(game)
-                                    .build())
+                        .regionEnum(r)
+                        .gameData(game)
+                        .build())
         );
         return gameRegions;
     }
-    private List<GameSubRegion> createSubregions(List<GameRegion> regions){
+
+    private List<GameSubRegion> createSubregions(List<GameRegion> regions) {
 
         List<GameSubRegion> gameSubregions = new ArrayList<>();
 
         regions.forEach(r -> gameSubregions.addAll(
                 r.getRegionEnum().getSubRegions().stream()
-                    .map(s -> GameSubRegion.builder()
-                            .subRegionEnum(s)
-                            .nombre(s.getNombre())
-                            .area(s.getArea())
-                            .color(s.getColor())
-                            .adjacent(new ArrayList<>())
-                            .gameRegion(r)
-                            .build())
-                    .collect(Collectors.toList())));
+                        .map(s -> GameSubRegion.builder()
+                                .subRegionEnum(s)
+                                .nombre(s.getNombre())
+                                .area(s.getArea())
+                                .color(s.getColor())
+                                .adjacent(new ArrayList<>())
+                                .gameRegion(r)
+                                .build())
+                        .collect(Collectors.toList())));
         return gameSubregions;
 
     }
-    private List<City> createCities(List<GameSubRegion> subregions){
+
+    private List<City> createCities(List<GameSubRegion> subregions) {
 
         return subregions.stream()
                 .filter(sr -> sr.getSubRegionEnum().getCity() != null)
@@ -322,19 +334,19 @@ public class SettingsServiceImpl implements SettingsService {
                 .build();
     }
 
-    private List<GameSubRegion> subregionsAdyacents(List<GameSubRegion> totalList, GameSubRegion subRegion){
+    private List<GameSubRegion> subregionsAdyacents(List<GameSubRegion> totalList, GameSubRegion subRegion) {
 
         return totalList.stream()
                 .filter(sr -> sr.getSubRegionEnum().getAdyacentes().contains(subRegion.getSubRegionEnum()))
                 .collect(Collectors.toList());
     }
 
-    private void setRevolucionarioData(PlayerData playerData){
+    private void setRevolucionarioData(PlayerData playerData) {
 
-        if(playerData instanceof RevolucionarioData){
+        if (playerData instanceof RevolucionarioData) {
             List<Congreso> congresos = congresoRepository.findAll();
             congresos.sort(Comparator.comparing(Congreso::getId));
-            if(!congresos.isEmpty()){
+            if (!congresos.isEmpty()) {
                 Congreso congreso = congresos.get(0);
                 ((RevolucionarioData) playerData).setCongreso(congreso);
             }
@@ -343,7 +355,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     private void setCapitanData(PlayerData playerData) {
 
-        if(playerData instanceof CapitanData){
+        if (playerData instanceof CapitanData) {
 
             List<GameSubRegion> subregionList = gameSubregionRepository.findAllBySubRegionEnumIn(Collections.singletonList(SubRegionEnum.BUENOS_AIRES));
 
@@ -359,7 +371,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     private void setPrecios(PlayerData playerData) {
 
-        if(!(playerData instanceof ControlData)){
+        if (!(playerData instanceof ControlData)) {
             List<PersonalPrice> prices = playerData.getPrices();
             prices.forEach(p -> p.setPlayerData(playerData));
             personalPriceRepository.saveAll(prices);

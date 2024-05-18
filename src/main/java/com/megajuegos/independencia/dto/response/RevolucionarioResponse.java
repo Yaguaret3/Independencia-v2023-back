@@ -30,6 +30,10 @@ public class RevolucionarioResponse {
 
         PlayerDataCardsUtil util = new PlayerDataCardsUtil(entity);
 
+        List<LogResponse> historial = entity.getLogs().stream()
+                .map(LogResponse::toResponse)
+                .collect(Collectors.toList());
+
         return RevolucionarioResponse.builder()
                 .id(entity.getId())
                 .votos(entity.getVotos()
@@ -50,9 +54,7 @@ public class RevolucionarioResponse {
                         .stream()
                         .map(ExtraCardResponse::toDtoResponse)
                         .collect(Collectors.toList()))
-                .historial(entity.getLogs().stream()
-                        .map(LogResponse::toResponse)
-                        .collect(Collectors.toList()))
+                .historial(historial)
                 .build();
     }
 }

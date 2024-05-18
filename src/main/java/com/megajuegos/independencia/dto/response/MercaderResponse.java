@@ -24,6 +24,10 @@ public class MercaderResponse {
 
         PlayerDataCardsUtil util = new PlayerDataCardsUtil(entity);
 
+        List<LogResponse> historial = entity.getLogs().stream()
+                .map(LogResponse::toResponse)
+                .collect(Collectors.toList());
+
         return MercaderResponse.builder()
                 .id(entity.getId())
                 .preciosDeRecursos(entity.getPrices()
@@ -44,9 +48,7 @@ public class MercaderResponse {
                         .stream()
                         .map(ExtraCardResponse::toDtoResponse)
                         .collect(Collectors.toList()))
-                .historial(entity.getLogs().stream()
-                        .map(LogResponse::toResponse)
-                        .collect(Collectors.toList()))
+                .historial(historial)
                 .build();
     }
 }

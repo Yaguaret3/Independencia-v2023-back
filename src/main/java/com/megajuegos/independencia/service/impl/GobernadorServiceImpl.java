@@ -14,10 +14,7 @@ import com.megajuegos.independencia.enums.LogTypeEnum;
 import com.megajuegos.independencia.enums.PersonalPricesEnum;
 import com.megajuegos.independencia.enums.RegionEnum;
 import com.megajuegos.independencia.exceptions.*;
-import com.megajuegos.independencia.repository.CardRepository;
-import com.megajuegos.independencia.repository.CityRepository;
-import com.megajuegos.independencia.repository.GameRegionRepository;
-import com.megajuegos.independencia.repository.LogRepository;
+import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.CapitanDataRepository;
 import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
@@ -52,6 +49,7 @@ public class GobernadorServiceImpl implements GobernadorService {
     private final GameIdUtil gameIdUtil;
     private final CardRepository cardRepository;
     private final LogRepository logRepository;
+    private final BuildingRepository buildingRepository;
 
     @Override
     public GobernadorResponse getData() {
@@ -175,11 +173,14 @@ public class GobernadorServiceImpl implements GobernadorService {
         if (maxTypeOfBuildingReached(buildingType.getId(), gobernadorData)) throw new MaxNumberOfBuildingTypeReachedException(buildingType.name());
         if (!paymentService.succesfulPay(gobernadorData, request.getPayment(), priceEnum)) throw new PaymentNotPossibleException();
 
-        gobernadorData.getCity().getBuildings().add(
-                Building.builder()
+        City city = gobernadorData.getCity();
+
+        Building building = Building.builder()
                 .buildingType(buildingType)
-                .build());
-        gobernadorRepository.save(gobernadorData);
+                .city(city)
+                .build();
+
+        buildingRepository.save(building);
 
         Log log = Log.builder()
                 .turno(gobernadorData.getGameData().getTurno())

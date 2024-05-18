@@ -26,6 +26,10 @@ public class CapitanResponse {
 
         PlayerDataCardsUtil util = new PlayerDataCardsUtil(entity);
 
+        List<LogResponse> historial = entity.getLogs().stream()
+                .map(LogResponse::toResponse)
+                .collect(Collectors.toList());
+
         return CapitanResponse.builder()
                 .id(entity.getId())
                 .reserva(entity.getReserva())
@@ -50,9 +54,7 @@ public class CapitanResponse {
                         .map(ResourceCardResponse::toDtoResponse)
                         .collect(Collectors.toList())))
                 .prices(CapitanPricesResponse.toDtoResponse(entity.getPrices()))
-                .historial(entity.getLogs().stream()
-                        .map(LogResponse::toResponse)
-                        .collect(Collectors.toList()))
+                .historial(historial)
                 .build();
 
     }

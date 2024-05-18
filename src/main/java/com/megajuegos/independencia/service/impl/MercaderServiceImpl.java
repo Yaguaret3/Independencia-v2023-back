@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class MercaderServiceImpl implements MercaderService {
 
-    private final UserIndependenciaRepository userRepository;
     private final CardRepository cardRepository;
     private final PaymentService paymentService;
     private final UserUtil userUtil;

@@ -12,6 +12,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,12 @@ public class GobernadorResponse {
         RepresentationCardResponse representationUtil = util.getRepresentationCardList().isEmpty() ? null :
                 RepresentationCardResponse.toDtoResponse(util.getRepresentationCardList().get(0));
 
+        List<LogResponse> historial = entity.getLogs().stream()
+                .map(LogResponse::toResponse)
+                .collect(Collectors.toList());
+
+        Collections.reverse(historial);
+
         return GobernadorResponse.builder()
                 .id(entity.getId())
                 .city(CityFullResponse.toDtoResponse(entity.getCity()))
@@ -61,9 +69,7 @@ public class GobernadorResponse {
                         .collect(Collectors.toList()))
                 .tiposDeRecurso(Arrays.stream(ResourceTypeEnum.values()).collect(Collectors.toList()))
                 .precios(GobernadorPricesResponse.toDto(entity.getPrices()))
-                .historial(entity.getLogs().stream()
-                        .map(LogResponse::toResponse)
-                        .collect(Collectors.toList()))
+                .historial(historial)
                 .build();
     }
 }
