@@ -39,17 +39,18 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/assets/**").permitAll()
                 //LOGIN
                 .antMatchers("/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/register").permitAll()
                 //GOBERNADOR
-                .antMatchers("/ciudad").permitAll()
+                .antMatchers("/gobernador").permitAll()
                 .antMatchers("/api/ciudad/**").hasRole(GOBERNADOR.name())
                 //CAPITAN
-                .antMatchers("/militares").permitAll()
+                .antMatchers("/capitan").permitAll()
                 .antMatchers("/api/militares/**").hasRole(CAPITAN.name())
                 //MERCADER
-                .antMatchers("/comercio").permitAll()
+                .antMatchers("/mercader").permitAll()
                 .antMatchers("/api/comercio/**").hasRole(MERCADER.name())
                 //REVOLUCIONARIO
-                .antMatchers("/revolucion").permitAll()
+                .antMatchers("/revolucionario").permitAll()
                 .antMatchers("/api/revolucion/**").hasRole(REVOLUCIONARIO.name())
                 //CONTROL
                 .antMatchers("/control").permitAll()
