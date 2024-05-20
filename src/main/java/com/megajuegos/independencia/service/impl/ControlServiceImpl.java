@@ -102,7 +102,11 @@ public class ControlServiceImpl implements ControlService {
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
 
         Card card = MarketCard.builder()
-                .nombreCiudad(cityRepository.findByName(request.getCityName()).orElseThrow(() -> new CityNotFoundException(request.getCityName())).getName())
+                .nombreCiudad(cityRepository.findByName(request.getCityName())
+                                .stream()
+                                .filter(c -> c.getSubRegion().getGameRegion().getGameData().getId().equals(playerData.getGameData().getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new CityNotFoundException(request.getCityName())).getName())
                 .level(request.getLevel())
                 .playerData(playerData)
                 .build();
