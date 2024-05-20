@@ -166,9 +166,13 @@ public class SettingsServiceImpl implements SettingsService {
         List<Log> logs = playerDatas.stream()
                 .flatMap(p -> p.getLogs().stream())
                 .collect(Collectors.toList());
+        List<Card> cards = playerDatas.stream()
+                .flatMap(p -> p.getCards().stream())
+                .collect(Collectors.toList());
 
         personalPriceRepository.deleteAll(prices);
         logRepository.deleteAll(logs);
+        cardRepository.deleteAll(cards);
         // END - Constraints from other tables (orphan removal? cascade?)
 
         playerDataRepository.deleteAll(playerDatas);
