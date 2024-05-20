@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Independencia-v2023-front/Independencia-v2023-front.iml" filepath="$PROJECT_DIR$/../Independencia-v2023-front/Independencia-v2023-front.iml" />
+      <module fileurl="file://$PROJECT_DIR$/independencia.iml" filepath="$PROJECT_DIR$/independencia.iml" />
+    </modules>
+  </component>
+</project>

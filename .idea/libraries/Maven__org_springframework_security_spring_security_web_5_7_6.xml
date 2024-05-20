@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Maven: org.springframework.security:spring-security-web:5.7.6" type="java-imported" external-system-id="Maven">
+    <properties groupId="org.springframework.security" artifactId="spring-security-web" version="5.7.6" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-web/5.7.6/spring-security-web-5.7.6.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-web/5.7.6/spring-security-web-5.7.6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-web/5.7.6/spring-security-web-5.7.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
