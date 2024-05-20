@@ -116,12 +116,13 @@ public class MercaderServiceImpl implements MercaderService {
 
         if (Boolean.FALSE.equals(paymentService.succesfulPay(mercaderData, request.getPayment(), priceEnum))) throw new PaymentNotPossibleException();
 
-        mercaderData.getCards().add(ResourceCard.builder()
-                        .resourceTypeEnum(ResourceTypeEnum.valueOf(priceEnum.name()))
-                        .alreadyPlayed(false)
-                        .build());
+        Card card = ResourceCard.builder()
+                .resourceTypeEnum(ResourceTypeEnum.valueOf(priceEnum.name()))
+                .alreadyPlayed(false)
+                .playerData(mercaderData)
+                .build();
 
-        mercaderDataRepository.save(mercaderData);
+        cardRepository.save(card);
 
         Log log = Log.builder()
                 .turno(mercaderData.getGameData().getTurno())
