@@ -18,10 +18,10 @@ public enum BattleTypeEnum {
         this.nombre = nombre;
     }
 
-    public static BattleTypeEnum fromId(Integer id) throws InstanceNotFoundException {
+    public static BattleTypeEnum fromName(String name) throws InstanceNotFoundException {
 
         for(BattleTypeEnum type : BattleTypeEnum.values()){
-            if(Objects.equals(type.getId(), id)){
+            if(Objects.equals(type.name(), name)){
                 return type;
             }
         }

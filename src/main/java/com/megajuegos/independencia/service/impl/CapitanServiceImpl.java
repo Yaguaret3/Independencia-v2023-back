@@ -61,10 +61,15 @@ public class CapitanServiceImpl implements CapitanService {
     public void buyActionCards(BuyRequest request) throws InstanceNotFoundException {
 
         CapitanData capitanData = getPlayerData();
+        PersonalPricesEnum priceEnum = capitanData.getPrices().stream()
+                .filter(p -> request.getCardTypeId().equals(p.getId()))
+                .map(PersonalPrice::getName)
+                .findFirst()
+                .orElseThrow(PriceNotFoundException::new);
 
-        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.fromId(request.getCardTypeId())))) throw new PaymentNotPossibleException();
+        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), priceEnum))) throw new PaymentNotPossibleException();
 
-        ActionTypeEnum actionType = ActionTypeEnum.fromId(request.getCardTypeId());
+        ActionTypeEnum actionType = ActionTypeEnum.fromName(priceEnum.name());
         Card card = ActionCard.builder()
                 .tipoAccion(actionType)
                 .playerData(capitanData)
@@ -88,10 +93,15 @@ public class CapitanServiceImpl implements CapitanService {
     public void buyBattleCards(BuyRequest request) throws InstanceNotFoundException {
 
         CapitanData capitanData = getPlayerData();
+        PersonalPricesEnum priceEnum = capitanData.getPrices().stream()
+                .filter(p -> request.getCardTypeId().equals(p.getId()))
+                .map(PersonalPrice::getName)
+                .findFirst()
+                .orElseThrow(PriceNotFoundException::new);
 
-        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), PersonalPricesEnum.BATTLE_CARD))) throw new PaymentNotPossibleException();
+        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), priceEnum))) throw new PaymentNotPossibleException();
 
-        BattleTypeEnum battleType = BattleTypeEnum.fromId(request.getCardTypeId());
+        BattleTypeEnum battleType = BattleTypeEnum.fromName(priceEnum.name());
 
         Card card = BattleCard.builder()
                 .tipoOrdenDeBatalla(battleType)

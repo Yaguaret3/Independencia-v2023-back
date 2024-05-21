@@ -24,9 +24,9 @@ public enum ActionTypeEnum {
     private Integer bonificador;
     private String condicion;
 
-    public static ActionTypeEnum fromId(Integer id) throws InstanceNotFoundException {
-        for (ActionTypeEnum e : ActionTypeEnum.values()){
-            if(Objects.equals(e.getId(), id)){
+    public static ActionTypeEnum fromName(String name) throws InstanceNotFoundException {
+        for(ActionTypeEnum e : ActionTypeEnum.values()){
+            if(Objects.equals(e.name(), name)){
                 return e;
             }
         }
