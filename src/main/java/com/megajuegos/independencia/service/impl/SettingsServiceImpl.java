@@ -184,6 +184,8 @@ public class SettingsServiceImpl implements SettingsService {
                 cityRepository.save(city);
             }
         }
+        user.getRoles().remove(request.getRole());
+        userRepository.save(user);
 
         return ROLES_ACTUALIZADOS_CON_EXITO;
     }
