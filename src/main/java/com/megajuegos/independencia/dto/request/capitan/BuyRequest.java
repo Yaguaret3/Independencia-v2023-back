@@ -8,6 +8,6 @@ import lombok.Data;
 public class BuyRequest {
 
     private PaymentRequestUtil payment;
-    private Integer cardTypeId;
+    private Long cardTypeId;
 
 }

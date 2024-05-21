@@ -28,13 +28,13 @@ public class CapitanController {
         return ResponseEntity.ok(service.getGameData());
     }
 
-    @PostMapping("/buy-action-cards")
-    public void buyActionCards(@Valid BuyRequest request) throws InstanceNotFoundException {
+    @PostMapping("/buy-action-card")
+    public void buyActionCards(@RequestBody BuyRequest request) throws InstanceNotFoundException {
         service.buyActionCards(request);
     }
 
-    @PostMapping("/buy-battle-cards")
-    public void buyBattleCards(@Valid BuyRequest request) throws InstanceNotFoundException {
+    @PostMapping("/buy-battle-card")
+    public void buyBattleCards(@RequestBody BuyRequest request) throws InstanceNotFoundException {
         service.buyBattleCards(request);
     }
 

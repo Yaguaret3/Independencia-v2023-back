@@ -42,7 +42,7 @@ public enum PersonalPricesEnum {
     ACAMPE(RoleEnum.CAPITAN,25, false, true, false),
     NADA(RoleEnum.CAPITAN,26, false, true, false),
     // BattleCards
-    /** Cada una? */ BATTLE_CARD(RoleEnum.CAPITAN,27, false, false, true),
+    /** Cada una? */ CARGA_DE_INFANTERIA(RoleEnum.CAPITAN,27, false, false, true),
     DISCIPLINE_SPENT(RoleEnum.CAPITAN,28, false, false, false);
 
 
