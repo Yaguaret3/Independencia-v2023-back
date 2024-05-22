@@ -5,10 +5,7 @@ import com.megajuegos.independencia.entities.data.*;
 import lombok.Getter;
 
 import javax.management.InstanceNotFoundException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -142,7 +139,9 @@ public enum RoleEnum {
     REVOLUCIONARIO(7){
         @Override
         public PlayerData createPlayerData() {
-            return RevolucionarioData.builder().build();
+            return RevolucionarioData.builder()
+                    .prices(Collections.emptyList())
+                    .build();
         }
 
         @Override
