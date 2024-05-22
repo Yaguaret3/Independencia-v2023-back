@@ -170,6 +170,10 @@ public class SettingsServiceImpl implements SettingsService {
                 .flatMap(p -> p.getCards().stream())
                 .collect(Collectors.toList());
 
+        if(playerData instanceof CapitanData){
+            Camp camp = ((CapitanData) playerData).getCamp();
+            campRepository.delete(camp);
+        }
         personalPriceRepository.deleteAll(prices);
         logRepository.deleteAll(logs);
         cardRepository.deleteAll(cards);
