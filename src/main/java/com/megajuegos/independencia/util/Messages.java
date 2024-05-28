@@ -9,6 +9,7 @@ public class Messages {
     public static final String USER_NOT_FOUND_BY_EMAIL = "No existe un usuario con ese email";
     public static final String USER_NOT_FOUND_BY_ID = "No existe un usuario con esa id";
     public static final String PLAYER_DATA_NOT_FOUND_BY_ID = "No existe jugador con esa id";
+    public static final String INCORRECT_CREDENTIALS = "Credenciales incorrectas";
     public static final String ORIGINAL_PASS_NOT_MATCHES = "Contraseña original inválida";
     public static final String CONTRASENA_ACTUALIZADA_CON_EXITO = "Contraseña actualizada con éxito";
     public static final String ROLES_ACTUALIZADOS_CON_EXITO = "Roles actualizados con éxito";

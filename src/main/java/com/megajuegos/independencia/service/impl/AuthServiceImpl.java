@@ -16,6 +16,7 @@ import com.megajuegos.independencia.service.AuthService;
 import com.megajuegos.independencia.service.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -70,7 +71,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthenticateResponse login(String email, String password) {
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        try{
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        }catch (BadCredentialsException e){
+            throw new CredentialsException(INCORRECT_CREDENTIALS);
+        }
+
 
         UserIndependencia user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_EMAIL));
