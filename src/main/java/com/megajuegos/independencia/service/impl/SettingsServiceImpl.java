@@ -44,6 +44,7 @@ public class SettingsServiceImpl implements SettingsService {
     private final PersonalPriceRepository personalPriceRepository;
     private final LogRepository logRepository;
     private final CardRepository cardRepository;
+    private final RouteRepository routeRepository;
 
     @Override
     public String createGame(CreateGameRequest request) {
@@ -169,6 +170,11 @@ public class SettingsServiceImpl implements SettingsService {
         List<Card> cards = playerDatas.stream()
                 .flatMap(p -> p.getCards().stream())
                 .collect(Collectors.toList());
+        List<Route> routes = playerDatas.stream()
+                .filter(MercaderData.class::isInstance)
+                .map(p -> (MercaderData) p)
+                .flatMap(p -> p.getRoutes().stream())
+                .collect(Collectors.toList());
 
         if(playerData instanceof CapitanData){
             Camp camp = ((CapitanData) playerData).getCamp();
@@ -177,6 +183,7 @@ public class SettingsServiceImpl implements SettingsService {
         personalPriceRepository.deleteAll(prices);
         logRepository.deleteAll(logs);
         cardRepository.deleteAll(cards);
+        routeRepository.deleteAll(routes);
         // END - Constraints from other tables (orphan removal? cascade?)
 
         playerDataRepository.deleteAll(playerDatas);
