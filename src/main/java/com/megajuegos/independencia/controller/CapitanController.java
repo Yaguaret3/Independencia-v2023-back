@@ -43,7 +43,7 @@ public class CapitanController {
         service.move(request);
     }
 
-    @PostMapping ("/play-action-cards")
+    @PostMapping ("/play-action-card")
     public void playActionCards(@RequestBody @Valid ActionRequest request){
         service.playActionRequest(request);
     }
@@ -52,7 +52,7 @@ public class CapitanController {
         service.assignMilitiaToBattle(request.getBattleId(), request.getMilicia());
     }
 
-    @PostMapping("/play-battle-cards")
+    @PostMapping("/play-battle-card")
     public void playBattleCards(@RequestBody @Valid BattleRequest request){
         service.playBattleCards(request);
     }

@@ -140,7 +140,7 @@ public class CapitanServiceImpl implements CapitanService {
 
         ActionCard actionCard = (ActionCard) card;
 
-        if(Arrays.asList(ActionTypeEnum.ACAMPE, ActionTypeEnum.MOVIMIENTO, REACCION).contains(actionCard.getTipoAccion())){
+        if(Arrays.asList(ActionTypeEnum.ACAMPE, ActionTypeEnum.MOVIMIENTO, ActionTypeEnum.REACCION).contains(actionCard.getTipoAccion())){
             throw new IncorrectPhaseException();
         }
 
