@@ -45,7 +45,6 @@ public class GobernadorResponse {
         List<LogResponse> historial = entity.getLogs().stream()
                 .map(LogResponse::toResponse)
                 .collect(Collectors.toList());
-
         Collections.reverse(historial);
 
         return GobernadorResponse.builder()

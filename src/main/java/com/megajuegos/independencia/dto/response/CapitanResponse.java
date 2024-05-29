@@ -6,6 +6,7 @@ import com.megajuegos.independencia.enums.LogTypeEnum;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ public class CapitanResponse {
         List<LogResponse> historial = entity.getLogs().stream()
                 .map(LogResponse::toResponse)
                 .collect(Collectors.toList());
+        Collections.reverse(historial);
 
         return CapitanResponse.builder()
                 .id(entity.getId())

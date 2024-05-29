@@ -5,6 +5,7 @@ import com.megajuegos.independencia.entities.data.MercaderData;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ public class MercaderResponse {
         List<LogResponse> historial = entity.getLogs().stream()
                 .map(LogResponse::toResponse)
                 .collect(Collectors.toList());
+        Collections.reverse(historial);
 
         return MercaderResponse.builder()
                 .id(entity.getId())
