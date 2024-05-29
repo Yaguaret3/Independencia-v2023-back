@@ -13,10 +13,7 @@ import com.megajuegos.independencia.entities.data.PlayerData;
 import com.megajuegos.independencia.entities.data.RevolucionarioData;
 import com.megajuegos.independencia.enums.LogTypeEnum;
 import com.megajuegos.independencia.exceptions.*;
-import com.megajuegos.independencia.repository.CongresoRepository;
-import com.megajuegos.independencia.repository.LogRepository;
-import com.megajuegos.independencia.repository.VotationRepository;
-import com.megajuegos.independencia.repository.VoteRepository;
+import com.megajuegos.independencia.repository.*;
 import com.megajuegos.independencia.repository.data.RevolucionarioRepository;
 import com.megajuegos.independencia.service.RevolucionarioService;
 import com.megajuegos.independencia.service.util.GameIdUtil;
@@ -43,6 +40,7 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
     private final CongresoRepository congresoRepository;
     private final GameIdUtil gameIdUtil;
     private final LogRepository logRepository;
+    private final CardRepository cardRepository;
 
     @Override
     public RevolucionarioResponse getData() {
@@ -76,16 +74,21 @@ public class RevolucionarioServiceImpl implements RevolucionarioService {
 
         validateVoteAlreadySent(votation, revolucionarioData);
 
+        List<RepresentationCard> cards = revolucionarioData.getCards().stream()
+                .filter(RepresentationCard.class::isInstance)
+                .map(RepresentationCard.class::cast)
+                .collect(Collectors.toList());
+
         Vote vote = Vote.builder()
                 .revolucionarioData(revolucionarioData)
                 .voteType(request.getVoteType())
-                .representacion(revolucionarioData.getCards().stream()
-                        .filter(RepresentationCard.class::isInstance)
-                        .map(RepresentationCard.class::cast)
-                        .collect(Collectors.toList()))
+                .representacion(cards)
                 .votation(votation)
                 .build();
         voteRepository.save(vote);
+
+        cards.forEach(c -> c.getVotes().add(vote));
+        cardRepository.saveAll(cards);
 
         votation.getVotes().add(vote);
         votationRepository.save(votation);

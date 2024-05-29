@@ -18,16 +18,12 @@ public class RepresentationCardResponse {
     private Long id;
     private String ciudad;
     private Integer poblacion;
-    private List<VoteResponse> votes;
 
     public static RepresentationCardResponse toDtoResponse(RepresentationCard entity){
         return RepresentationCardResponse.builder()
                 .id(entity.getId())
                 .ciudad(entity.getRepresentacion().getNombre())
                 .poblacion(entity.getRepresentacion().getPoblacion())
-                .votes(entity.getVotes().stream()
-                        .map(VoteResponse::toDtoResponse)
-                        .collect(Collectors.toList()))
                 .build();
     }
 }
