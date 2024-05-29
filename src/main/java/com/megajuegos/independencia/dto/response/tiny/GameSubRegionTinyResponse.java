@@ -22,7 +22,7 @@ public class GameSubRegionTinyResponse {
     private List<ArmyTinyResponse> ejercitos;
     private List<CampTinyResponse> campamentos;
     private List<BattleTinyResponse> batallas;
-    private List<PlayerDataTinyResponse> merchants;
+    //private List<PlayerDataTinyResponse> merchants;
 
     public static GameSubRegionTinyResponse toTinyResponse(GameSubRegion entity){
         return GameSubRegionTinyResponse.builder()
@@ -49,7 +49,7 @@ public class GameSubRegionTinyResponse {
                 .build();
     }
 
-    public GameSubRegionTinyResponse reveal(List<MercaderData> merchants){
+    /*public GameSubRegionTinyResponse reveal(List<MercaderData> merchants){
 
         this.setMerchants(merchants
                 .stream()
@@ -57,4 +57,6 @@ public class GameSubRegionTinyResponse {
                 .collect(Collectors.toList()));
         return this;
     }
+
+     */
 }

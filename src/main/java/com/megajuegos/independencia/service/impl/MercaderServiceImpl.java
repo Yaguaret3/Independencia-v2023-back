@@ -54,6 +54,7 @@ public class MercaderServiceImpl implements MercaderService {
         MercaderData mercaderData = getPlayerData();
 
         GameDataTinyResponse response = GameDataTinyResponse.toTinyResponse(mercaderData.getGameData());
+        /*
         if(response.getFase() == PhaseEnum.REVEALING){
             response.getGameRegions()
                     .forEach(r -> r.getSubregions()
@@ -68,6 +69,8 @@ public class MercaderServiceImpl implements MercaderService {
                                         .collect(Collectors.toList())
                         )));
         }
+
+         */
         return response;
     }
 
