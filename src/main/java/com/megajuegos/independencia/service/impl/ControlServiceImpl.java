@@ -748,6 +748,8 @@ public class ControlServiceImpl implements ControlService {
                     //Quita el ejército de la subregión (y del capitán)
                     capitanData.getEjercito().remove(army);
                     gameSubRegion.getEjercitos().remove(army);
+                    // Borra cartas asociadas al ejército (orphan removal)
+                    cardRepository.deleteAll(army.getCartasJugadas());
                     armyRepository.delete(army);
 
                 }

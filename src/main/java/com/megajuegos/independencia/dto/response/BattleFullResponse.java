@@ -15,7 +15,6 @@ public class BattleFullResponse {
     private String subregionName;
     private Long regionId;
     private String regionName;
-    private List<BattleCardFullResponse> cartasDeCombate;
     private List<ArmyFullResponse> combatientes;
     private Integer turnoDeJuego;
     private Boolean active;
