@@ -103,8 +103,8 @@ public class ControlServiceImpl implements ControlService {
 
         Card card = MarketCard.builder()
                 .nombreCiudad(cityRepository.findByName(request.getCityName())
-                                .stream()
-                                .filter(c -> c.getSubRegion().getGameRegion().getGameData().getId().equals(playerData.getGameData().getId()))
+                        .stream()
+                        .filter(c -> c.getSubRegion().getGameRegion().getGameData().getId().equals(playerData.getGameData().getId()))
                         .findFirst()
                         .orElseThrow(() -> new CityNotFoundException(request.getCityName())).getName())
                 .level(request.getLevel())
@@ -218,14 +218,14 @@ public class ControlServiceImpl implements ControlService {
     }
 
     @Override
-    public void concludePhase() {
+    public String concludePhase() {
         ControlData controlData = getControlDataFromLoggedUser();
         GameData gameData = controlData.getGameData();
 
         if (controlData.getSiguienteFaseSolicitada()) {
             controlData.setSiguienteFaseSolicitada(false);
             controlDataRepository.save(controlData);
-            return;
+            return CONCLUDE_PHASE_CANCELLED;
         }
 
         controlData.setSiguienteFaseSolicitada(true);
@@ -255,10 +255,11 @@ public class ControlServiceImpl implements ControlService {
             gameDataRepository.save(gameData);
             controles.forEach(c -> c.setSiguienteFaseSolicitada(false));
             controlDataRepository.saveAll(controles);
-            return;
+            return PHASE_CONCLUDED;
         }
 
         controlDataRepository.save(controlData);
+        return CONCLUDE_PHASE_REQUESTED;
     }
 
     @Override
@@ -854,8 +855,9 @@ public class ControlServiceImpl implements ControlService {
         mercaderes.forEach(m -> {
 
             m.setPuntajeComercial(m.getPuntajeComercial() + m.getRoutes().stream()
-                    .mapToLong(Route::getTradeScore)
-                    .mapToInt(Integer.class::cast)
+                    .filter(r -> r.getTurn().equals(gameData.getTurno()-1))
+                    .map(Route::getTradeScore)
+                    .mapToInt(Long::intValue)
                     .sum()
             );
             m.setPuntajeComercialAcumulado(m.getPuntajeComercialAcumulado() + m.getPuntajeComercial());
@@ -883,7 +885,8 @@ public class ControlServiceImpl implements ControlService {
 
         cardRepository.saveAll(representationCard);
     }
-    private ControlData getControlDataFromLoggedUser(){
+
+    private ControlData getControlDataFromLoggedUser() {
         Long playerId = userUtil.getCurrentUser().getPlayerDataList().stream()
                 .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
                 .findFirst()

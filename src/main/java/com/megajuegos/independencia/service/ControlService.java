@@ -19,7 +19,7 @@ public interface ControlService {
     String createAndAssignPersonalPrice(Long playerDataId);
     String assignCongressPresident(Long revolucionarioId);
 
-    void concludePhase();
+    String concludePhase();
 
     String createAndGiveExtraCard(Long playerId, ExtraCardRequest request);
 

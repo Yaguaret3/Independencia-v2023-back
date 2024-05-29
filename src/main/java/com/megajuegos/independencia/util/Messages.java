@@ -51,4 +51,7 @@ public class Messages {
     public static final String CONGRESS_CREATED = "Congreso creado";
     public static final String CONGRESS_UPDATED = "Congreso actualizado";
     public static final String MOVED_TO_CONGRESS = "Movimiento a congreso exitoso";
+    public static final String CONCLUDE_PHASE_REQUESTED = "Solicitud para avanzar de fase realizada";
+    public static final String CONCLUDE_PHASE_CANCELLED = "Solicitud para avanzar de fase cancelada";
+    public static final String PHASE_CONCLUDED = "Fase concluída";
 }

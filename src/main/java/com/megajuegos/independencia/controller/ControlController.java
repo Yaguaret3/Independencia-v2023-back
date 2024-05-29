@@ -162,9 +162,9 @@ public class ControlController {
     }
 
     @PostMapping("/conclude-phase")
-    public ResponseEntity<Void> concludePhase(){
-        service.concludePhase();
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> concludePhase(){
+
+        return ResponseEntity.ok(service.concludePhase());
     }
 
 }
