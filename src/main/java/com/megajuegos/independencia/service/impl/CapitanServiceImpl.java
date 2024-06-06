@@ -44,6 +44,7 @@ public class CapitanServiceImpl implements CapitanService {
     private final ArmyRepository armyRepository;
     private final GameIdUtil gameIdUtil;
     private final LogRepository logRepository;
+    private final ActionRepository actionRepository;
 
     @Override
     public CapitanResponse getData() {
@@ -67,7 +68,8 @@ public class CapitanServiceImpl implements CapitanService {
                 .findFirst()
                 .orElseThrow(PriceNotFoundException::new);
 
-        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), priceEnum))) throw new PaymentNotPossibleException();
+        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), priceEnum)))
+            throw new PaymentNotPossibleException();
 
         ActionTypeEnum actionType = ActionTypeEnum.fromName(priceEnum.name());
         Card card = ActionCard.builder()
@@ -99,7 +101,8 @@ public class CapitanServiceImpl implements CapitanService {
                 .findFirst()
                 .orElseThrow(PriceNotFoundException::new);
 
-        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), priceEnum))) throw new PaymentNotPossibleException();
+        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), priceEnum)))
+            throw new PaymentNotPossibleException();
 
         BattleTypeEnum battleType = BattleTypeEnum.fromName(priceEnum.name());
 
@@ -134,22 +137,25 @@ public class CapitanServiceImpl implements CapitanService {
                         .equals(request.getCardId()))
                 .findFirst().orElseThrow(() -> new CardNotFoundException(request.getCardId()));
 
-        if(!(card instanceof ActionCard)){
+        if (!(card instanceof ActionCard)) {
             throw new IncorrectCardTypeException();
         }
 
         ActionCard actionCard = (ActionCard) card;
 
-        if(Arrays.asList(ActionTypeEnum.ACAMPE, ActionTypeEnum.MOVIMIENTO, ActionTypeEnum.REACCION).contains(actionCard.getTipoAccion())){
+        if (Arrays.asList(ActionTypeEnum.ACAMPE, ActionTypeEnum.MOVIMIENTO, ActionTypeEnum.REACCION).contains(actionCard.getTipoAccion())) {
             throw new IncorrectPhaseException();
         }
 
-        switch(actionCard.getTipoAccion()){
+        GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getSubregionId())
+                .orElseThrow(() -> new SubRegionNotFoundException(request.getSubregionId()));
+
+        switch (actionCard.getTipoAccion()) {
             case DESPLIEGUE:
-                deploy(request.getSubregionId(), capitanData);
+                deploy(gameSubRegion, capitanData);
                 break;
             case ATAQUE:
-                attack(request.getSubregionId(), capitanData);
+                attack(gameSubRegion, capitanData);
                 break;
             case DEFENSA:
                 defend(capitanData);
@@ -161,7 +167,9 @@ public class CapitanServiceImpl implements CapitanService {
         Log log = Log.builder()
                 .turno(capitanData.getGameData().getTurno())
                 .tipo(LogTypeEnum.ENVIADO)
-                .nota(String.format("Jugaste una carta de acción: %s", actionCard.getTipoAccion().getNombre()))
+                .nota(String.format("Jugaste una carta de acción: %s en %s",
+                        actionCard.getTipoAccion().getNombre(),
+                        gameSubRegion.getSubRegionEnum().getNombre()))
                 .player(capitanData)
                 .build();
 
@@ -181,7 +189,7 @@ public class CapitanServiceImpl implements CapitanService {
 
         Card card = capitanData.getCards().stream().filter(c -> c.getId().equals(request.getCardId())).findFirst().orElseThrow(() -> new CardNotFoundException(request.getCardId()));
 
-        if(!(card instanceof ActionCard && ((ActionCard) card).getTipoAccion().equals(REACCION))){
+        if (!(card instanceof ActionCard && ((ActionCard) card).getTipoAccion().equals(REACCION))) {
             throw new IncorrectCardTypeException();
         }
 
@@ -237,7 +245,7 @@ public class CapitanServiceImpl implements CapitanService {
         Card card = capitanData.getCards().stream().filter(c -> c.getId().equals(request.getCardId())).findFirst()
                 .orElseThrow(() -> new CardNotFoundException(request.getCardId()));
 
-        if(!(card instanceof BattleCard)){
+        if (!(card instanceof BattleCard)) {
             throw new IncorrectCardTypeException();
         }
 
@@ -272,7 +280,7 @@ public class CapitanServiceImpl implements CapitanService {
         CapitanData capitanData = getPlayerData();
         Integer turno = capitanData.getGameData().getTurno();
 
-        if(!PhaseEnum.MOVING.equals(capitanData.getGameData().getFase())){
+        if (!PhaseEnum.MOVING.equals(capitanData.getGameData().getFase())) {
             throw new IncorrectPhaseException();
         }
 
@@ -280,24 +288,31 @@ public class CapitanServiceImpl implements CapitanService {
                 .filter(c -> c.getId().equals(request.getCardId()))
                 .findFirst()
                 .orElseThrow(() -> new CardNotFoundException(request.getCardId()));
-        if(!(card instanceof ActionCard)){
+        if (!(card instanceof ActionCard)) {
             throw new IncorrectCardTypeException();
         }
         ActionCard actionCard = (ActionCard) card;
-        if(!ActionTypeEnum.MOVIMIENTO.equals(actionCard.getTipoAccion())){
+        if (!ActionTypeEnum.MOVIMIENTO.equals(actionCard.getTipoAccion())) {
             throw new IncorrectActionTypeException(actionCard.getTipoAccion());
         }
 
-        GameRegion regionTo =  gameRegionRepository.findById(request.getRegionToId())
+        GameRegion regionTo = gameRegionRepository.findById(request.getRegionToId())
                 .orElseThrow(() -> new RegionNotFoundException(request.getRegionToId()));
 
-        if(!capitanData.getCamp().getGameRegion().getRegionEnum().getAdyacentes().contains(regionTo.getRegionEnum())){
+        if (!capitanData.getCamp().getGameRegion().getRegionEnum().getAdyacentes().contains(regionTo.getRegionEnum())) {
             throw new RegionNotAdjacentException(capitanData.getCamp().getGameRegion().getRegionEnum(), regionTo.getRegionEnum());
         }
 
         actionCard.setTurnWhenPlayed(turno);
         actionCard.setAlreadyPlayed(true);
         cardRepository.save(actionCard);
+
+        actionRepository.save(Action.builder()
+                .capitanId(capitanData)
+                .actionType(ActionTypeEnum.DESPLIEGUE)
+                .solved(false)
+                .gameRegion(regionTo)
+                .build());
 
         Log log = Log.builder()
                 .turno(capitanData.getGameData().getTurno())
@@ -314,7 +329,7 @@ public class CapitanServiceImpl implements CapitanService {
         CapitanData capitanData = getPlayerData();
         Integer turno = capitanData.getGameData().getTurno();
 
-        if(!PhaseEnum.MOVING.equals(capitanData.getGameData().getFase())){
+        if (!PhaseEnum.MOVING.equals(capitanData.getGameData().getFase())) {
             throw new IncorrectPhaseException();
         }
 
@@ -323,12 +338,12 @@ public class CapitanServiceImpl implements CapitanService {
                 .findFirst()
                 .orElseThrow(() -> new CardNotFoundException(request.getCampCardId()));
 
-        if(!(card instanceof ActionCard)){
+        if (!(card instanceof ActionCard)) {
             throw new IncorrectCardTypeException();
         }
 
         ActionCard actionCard = (ActionCard) card;
-        if(!ActionTypeEnum.ACAMPE.equals(actionCard.getTipoAccion())){
+        if (!ActionTypeEnum.ACAMPE.equals(actionCard.getTipoAccion())) {
             throw new IncorrectActionTypeException(actionCard.getTipoAccion());
         }
 
@@ -352,35 +367,37 @@ public class CapitanServiceImpl implements CapitanService {
         logRepository.save(log);
     }
 
-    private void deploy(Long subregionId, CapitanData capitanData){
-        GameSubRegion gameSubRegionDeploy = gameSubRegionRepository.findById(subregionId)
-                .orElseThrow(() -> new SubRegionNotFoundException(subregionId));
-        gameSubRegionDeploy.getEjercitos().add(Army.builder()
-                .capitanData(capitanData)
+    private void deploy(GameSubRegion gameSubRegionDeploy, CapitanData capitanData) {
+
+        actionRepository.save(Action.builder()
+                .capitanId(capitanData)
+                .actionType(ActionTypeEnum.DESPLIEGUE)
+                .solved(false)
                 .subregion(gameSubRegionDeploy)
                 .build());
-        gameSubRegionRepository.save(gameSubRegionDeploy);
     }
-    private void attack(Long subregionId, CapitanData capitanData){
-        GameSubRegion gameSubRegionAttack = gameSubRegionRepository.findById(subregionId)
-                .orElseThrow(() -> new SubRegionNotFoundException(subregionId));
-        gameSubRegionAttack.getAttackActions().add(Action.builder()
+
+    private void attack(GameSubRegion gameSubRegionAttack, CapitanData capitanData) {
+
+        actionRepository.save(Action.builder()
                 .capitanId(capitanData)
                 .actionType(ActionTypeEnum.ATAQUE)
                 .solved(false)
+                .subregion(gameSubRegionAttack)
                 .build());
-        gameSubRegionRepository.save(gameSubRegionAttack);
     }
-    private void defend(CapitanData capitanData){
+
+    private void defend(CapitanData capitanData) {
         GameRegion gameRegion = capitanData.getCamp().getGameRegion();
-        gameRegion.getDefenseActions().add(Action.builder()
+        actionRepository.save(Action.builder()
                 .capitanId(capitanData)
-                .actionType(ActionTypeEnum.DEFENSA)
+                .actionType(DEFENSA)
                 .solved(false)
+                .gameRegion(gameRegion)
                 .build());
-        gameRegionRepository.save(gameRegion);
     }
-    private CapitanData getPlayerData(){
+
+    private CapitanData getPlayerData() {
         Long playerId = userUtil.getCurrentUser().getPlayerDataList().stream()
                 .filter(p -> Objects.equals(gameIdUtil.currentGameId(), p.getGameData().getId()))
                 .findFirst()
