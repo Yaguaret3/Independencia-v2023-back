@@ -494,7 +494,7 @@ public class ControlServiceImpl implements ControlService {
         });
 
         //Ordena para hacer coincidir los ejércitos que atacan con los dados mayores
-        ejercitosInvolucrados.sort(Comparator.comparing(Army::isAtaque).thenComparing(Army::getIniciativa));
+        ejercitosInvolucrados.sort(Comparator.comparing(Army::isAtaque, Comparator.reverseOrder()).thenComparing(Army::getIniciativa));
         valoresAzar.sort(Comparator.reverseOrder());
 
         //Asigna valores
@@ -507,7 +507,7 @@ public class ControlServiceImpl implements ControlService {
         }
 
         battleRepository.save(battle);
-        return BATTLE_CREATED;
+        return BATTLE_VALUES_ASSIGNED;
     }
 
     @Override
@@ -765,10 +765,7 @@ public class ControlServiceImpl implements ControlService {
             });
 
             //Se descartan las cartas jugadas
-            army.getCartasJugadas().forEach(c -> {
-                c.setAlreadyPlayed(true);
-                c.setTurnWhenPlayed(controlData.getGameData().getTurno());
-            });
+            cardRepository.deleteAll(army.getCartasJugadas());
         });
 
         //Desactiva la batalla
