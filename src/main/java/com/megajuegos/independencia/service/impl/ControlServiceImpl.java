@@ -728,9 +728,7 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String solveBattle(SolveBattleRequest request) {
 
-        ControlData controlData = getControlDataFromLoggedUser();
-
-        Battle battle = battleRepository.findById(request.getBattleId()).orElseThrow(() -> new BattleNotFoundException(request.getBattleId()));
+       Battle battle = battleRepository.findById(request.getBattleId()).orElseThrow(() -> new BattleNotFoundException(request.getBattleId()));
         GameSubRegion gameSubRegion = battle.getSubregion();
 
         List<Army> ejercitos = battle.getCombatientes();
@@ -791,6 +789,10 @@ public class ControlServiceImpl implements ControlService {
         gameData.setTurno(gameData.getTurno() + 1);
         gameData.setNextEndOfTurn(newTurnInMillis);
 
+        if(gameData.getTurno().equals(0)){
+            gameDataRepository.save(gameData);
+            return;
+        }
         //Gobernadores TODO Leyes políticas impositivas
         recolectarImpuestosRecuperarRepresentacionYMercados(gameData);
         //Mercaderes TODO Leyes comerciales
@@ -802,8 +804,6 @@ public class ControlServiceImpl implements ControlService {
 
         //Verificar que se están grabando las cartas de los jugadores
         playerDataRepository.saveAll(gameData.getPlayers());
-
-
         gameDataRepository.save(gameData);
     }
 
