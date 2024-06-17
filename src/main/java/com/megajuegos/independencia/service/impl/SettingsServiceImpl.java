@@ -7,6 +7,7 @@ import com.megajuegos.independencia.dto.response.settings.SettingsCityResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsGameDataResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsUserResponse;
 import com.megajuegos.independencia.entities.*;
+import com.megajuegos.independencia.entities.card.ActionCard;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.card.MarketCard;
 import com.megajuegos.independencia.entities.card.RepresentationCard;
@@ -176,7 +177,7 @@ public class SettingsServiceImpl implements SettingsService {
                 .flatMap(p -> p.getRoutes().stream())
                 .collect(Collectors.toList());
 
-        if(playerData instanceof CapitanData){
+        if (playerData instanceof CapitanData) {
             Camp camp = ((CapitanData) playerData).getCamp();
             campRepository.delete(camp);
         }
@@ -384,6 +385,12 @@ public class SettingsServiceImpl implements SettingsService {
                     .build());
 
             ((CapitanData) playerData).setCamp(camp);
+
+            cardRepository.saveAll(Arrays.asList(
+                    ActionCard.builder().tipoAccion(ActionTypeEnum.DESPLIEGUE).playerData(playerData).build(),
+                    ActionCard.builder().tipoAccion(ActionTypeEnum.DESPLIEGUE).playerData(playerData).build(),
+                    ActionCard.builder().tipoAccion(ActionTypeEnum.DEFENSA).playerData(playerData).build(),
+                    ActionCard.builder().tipoAccion(ActionTypeEnum.ATAQUE).playerData(playerData).build()));
         }
     }
 

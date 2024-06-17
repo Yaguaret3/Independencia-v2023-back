@@ -2,6 +2,7 @@ package com.megajuegos.independencia.enums;
 
 import com.megajuegos.independencia.entities.PersonalPrice;
 import com.megajuegos.independencia.entities.data.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.management.InstanceNotFoundException;
@@ -9,6 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
+@AllArgsConstructor
 public enum RoleEnum {
 
 
@@ -53,20 +55,12 @@ public enum RoleEnum {
 
             List<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
                     .filter(p -> p.getRol().equals(this))
-                    .map(p -> PersonalPrice.builder()
-                            .agropecuaria(0)
-                            .textil(0)
-                            .plata(0)
-                            .metalmecanica(0)
-                            .construccion(0)
-                            .comercial(0)
-                            .name(p)
-                            .build())
+                    .map(p -> p.getPersonalPrice().name(p))
                     .collect(Collectors.toList());
 
             return GobernadorData.builder()
                     .milicia(0)
-                    .plata(0)
+                    .plata(10)
                     .prices(prices)
                     .build();
         }
@@ -84,15 +78,7 @@ public enum RoleEnum {
         public PlayerData createPlayerData() {
             List<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
                     .filter(p -> p.getRol().equals(this))
-                    .map(p -> PersonalPrice.builder()
-                            .comercial(0)
-                            .construccion(0)
-                            .metalmecanica(0)
-                            .textil(0)
-                            .agropecuaria(0)
-                            .plata(0)
-                            .name(p)
-                            .build())
+                    .map(p -> p.getPersonalPrice().name(p))
                     .collect(Collectors.toList());
 
             return CapitanData.builder()
@@ -114,17 +100,13 @@ public enum RoleEnum {
         public PlayerData createPlayerData() {
             List<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
                     .filter(p -> p.getRol().equals(this))
-                    .map(p -> PersonalPrice.builder()
-                            .plata(0)
-                            .puntajeComercial(0)
-                            .name(p)
-                            .build())
+                    .map(p -> p.getPersonalPrice().name(p))
                     .collect(Collectors.toList());
 
             return MercaderData.builder()
                     .prices(prices)
-                    .puntajeComercial(0)
-                    .puntajeComercialAcumulado(0)
+                    .puntajeComercial(7)
+                    .puntajeComercialAcumulado(7)
                     .build();
         }
 
@@ -154,19 +136,6 @@ public enum RoleEnum {
     },;
 
     private final Integer id;
-
-    RoleEnum(Integer id){
-        this.id = id;
-    }
-
-    public RoleEnum fromId(Integer id) throws InstanceNotFoundException {
-        for(RoleEnum r : RoleEnum.values()){
-            if(Objects.equals(r.getId(), id)){
-                return r;
-            }
-        }
-        throw new InstanceNotFoundException("No existe un rol con esa id");
-    }
 
     public abstract PlayerData createPlayerData();
     public abstract PlayerData removePlayerData(PlayerData currentPlayerData);

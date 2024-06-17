@@ -86,21 +86,21 @@ public class PaymentServiceImpl implements PaymentService {
 
         List<ResourceCard> resources = cardRepository.findResourceCardByIdIn(request.getResourcesIds());
 
-        Long textilEnviado = resources.stream().filter(r -> r.getResourceTypeEnum()==ResourceTypeEnum.TEXTIL).count();
-        Long textilAPagar = priceToPay.getTextil() == null ? 0L : Long.valueOf(priceToPay.getTextil());
-        Long textilActual = 0L;
-        Long agropecuariaEnviada = resources.stream().filter(r -> r.getResourceTypeEnum()==ResourceTypeEnum.AGROPECUARIA).count();
-        Long agropecuariaAPagar = priceToPay.getAgropecuaria() == null ? 0L : Long.valueOf(priceToPay.getAgropecuaria());
-        Long agropecuariaActual = 0L;
-        Long metalmecanicaEnviada = resources.stream().filter(r -> r.getResourceTypeEnum()==ResourceTypeEnum.METALMECANICA).count();
-        Long metalmecanicaAPagar = priceToPay.getMetalmecanica() == null ? 0L : Long.valueOf(priceToPay.getMetalmecanica());
-        Long metalmecanicaActual = 0L;
-        Long construccionEnviada = resources.stream().filter(r -> r.getResourceTypeEnum()==ResourceTypeEnum.CONSTRUCCION).count();
-        Long construccionAPagar = priceToPay.getConstruccion() == null ? 0L : Long.valueOf(priceToPay.getConstruccion());
-        Long construccionActual = 0L;
-        Long comercialEnviada = resources.stream().filter(r -> r.getResourceTypeEnum()==ResourceTypeEnum.COMERCIAL).count();
-        Long comercialAPagar = priceToPay.getComercial() == null ? 0L : Long.valueOf(priceToPay.getComercial());
-        Long comercialActual = 0L;
+        long textilEnviado = resources.stream().filter(r -> r.getResourceTypeEnum()==ResourceTypeEnum.TEXTIL).count();
+        long textilAPagar = priceToPay.getTextil();
+        long textilActual = 0L;
+        long agropecuariaEnviada = resources.stream().filter(r -> r.getResourceTypeEnum()==ResourceTypeEnum.AGROPECUARIA).count();
+        long agropecuariaAPagar = priceToPay.getAgropecuaria();
+        long agropecuariaActual = 0L;
+        long metalmecanicaEnviada = resources.stream().filter(r -> r.getResourceTypeEnum()==ResourceTypeEnum.METALMECANICA).count();
+        long metalmecanicaAPagar = priceToPay.getMetalmecanica();
+        long metalmecanicaActual = 0L;
+        long construccionEnviada = resources.stream().filter(r -> r.getResourceTypeEnum()==ResourceTypeEnum.CONSTRUCCION).count();
+        long construccionAPagar = priceToPay.getConstruccion();
+        long construccionActual = 0L;
+        long comercialEnviada = resources.stream().filter(r -> r.getResourceTypeEnum()==ResourceTypeEnum.COMERCIAL).count();
+        long comercialAPagar = priceToPay.getComercial();
+        long comercialActual = 0L;
 
         for(Card card : playerData.getCards()){
             if(card instanceof ResourceCard

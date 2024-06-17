@@ -19,11 +19,16 @@ public class PersonalPrice {
     private PersonalPricesEnum name;
     @ManyToOne
     private PlayerData playerData; // owning side
-    private Integer plata;
-    private Integer textil;
-    private Integer agropecuaria;
-    private Integer metalmecanica;
-    private Integer construccion;
-    private Integer comercial;
-    private Integer puntajeComercial;
+    private int plata;
+    private int textil;
+    private int agropecuaria;
+    private int metalmecanica;
+    private int construccion;
+    private int comercial;
+    private int puntajeComercial;
+
+    public PersonalPrice name(PersonalPricesEnum enumm){
+        this.name = enumm;
+        return this;
+    }
 }

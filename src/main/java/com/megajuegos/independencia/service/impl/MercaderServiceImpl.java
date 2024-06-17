@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.InstanceNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -138,12 +139,12 @@ public class MercaderServiceImpl implements MercaderService {
     }
 
     @Override
-    public void upgradePrices(PricesRequest request) {
+    public void upgradePrices(PricesRequest request) throws InstanceNotFoundException {
 
         Integer disminucionDePrecio = 0;
         MercaderData mercaderData = getPlayerData();
 
-        if (Boolean.FALSE.equals(paymentService.succesfulPay(mercaderData, request.getPayment(), PersonalPricesEnum.TRADER_PRICES))) throw new PaymentNotPossibleException();
+        if (Boolean.FALSE.equals(paymentService.succesfulPay(mercaderData, request.getPayment(), PersonalPricesEnum.fromId(request.getResourceType())))) throw new PaymentNotPossibleException();
 
         for(PersonalPrice price : mercaderData.getPrices()){
             if(Objects.equals(request.getResourceType(), ResourceTypeEnum.TEXTIL.getId())){

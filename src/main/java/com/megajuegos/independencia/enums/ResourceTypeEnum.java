@@ -19,13 +19,4 @@ public enum ResourceTypeEnum {
     ResourceTypeEnum(Integer id) {
         this.id = id;
     }
-
-    public static ResourceTypeEnum fromId(Integer id) throws InstanceNotFoundException {
-        for(ResourceTypeEnum e : ResourceTypeEnum.values()){
-            if(Objects.equals(e.getId(), id)){
-                return e;
-            }
-        }
-        throw new InstanceNotFoundException("No existe un recurso con esa id");
-    }
 }
