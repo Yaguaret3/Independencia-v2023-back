@@ -19,10 +19,10 @@ public class CapitanPricesResponse {
     public static CapitanPricesResponse toDtoResponse(List<PersonalPrice> entities){
 
         List<PersonalPrice> actionCardPrices = entities.stream()
-                .filter(p -> p.getName().getIsActionOrder())
+                .filter(p -> p.getName().isActionOrder())
                 .collect(Collectors.toList());
         List<PersonalPrice> battleCardPrices = entities.stream()
-                .filter(p -> p.getName().getIsBattleOrder())
+                .filter(p -> p.getName().isBattleOrder())
                 .collect(Collectors.toList());
 
         return CapitanPricesResponse.builder()

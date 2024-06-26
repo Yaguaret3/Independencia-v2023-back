@@ -22,7 +22,7 @@ public class GobernadorPricesResponse {
 
         return GobernadorPricesResponse.builder()
                 .buildingPrices(entities.stream()
-                        .filter(e -> e.getName().getIsBuilding())
+                        .filter(e -> e.getName().isBuilding())
                         .map(PersonalPriceResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .marketPrice(entities.stream()
