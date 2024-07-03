@@ -25,6 +25,7 @@ public class ActionResponse {
         return ActionResponse.builder()
                 .id(entity.getId())
                 .capitanId(entity.getCapitanId().getId())
+                .capitanName(entity.getCapitanId().getUser().getUsername())
                 .actionType(entity.getActionType().getNombre())
                 .gameRegionId(entity.getGameRegion() != null ? entity.getGameRegion().getId() : null)
                 .gameRegionName(entity.getGameRegion() != null ? entity.getGameRegion().getRegionEnum().getNombre() : null)
