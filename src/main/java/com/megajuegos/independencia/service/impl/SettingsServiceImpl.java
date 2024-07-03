@@ -122,6 +122,7 @@ public class SettingsServiceImpl implements SettingsService {
         PlayerData playerData = request.getRole().createPlayerData();
         playerData.setUser(user);
         playerData.setRol(request.getRole());
+        playerDataRepository.save(playerData); //Persistencia primaria
 
         //setByRole
         setRevolucionarioData(playerData);
@@ -135,8 +136,7 @@ public class SettingsServiceImpl implements SettingsService {
 
         setPrecios(playerData);
 
-        playerDataRepository.save(playerData);
-
+        playerDataRepository.save(playerData); //Persistencia editada
         user.getPlayerDataList().add(playerData);
         userRepository.save(user);
 
