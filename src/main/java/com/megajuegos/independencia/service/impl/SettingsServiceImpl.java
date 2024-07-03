@@ -114,7 +114,7 @@ public class SettingsServiceImpl implements SettingsService {
                 .orElseThrow(() -> new UserIndependenciaNotFound(request.getId()));
 
         if ((RoleEnum.ADMIN.equals(request.getRole()) || RoleEnum.USER.equals(request.getRole()))
-                && user.getRoles().contains(request.getRole())) {
+                || user.getRoles().contains(request.getRole())) {
             throw new WrongRoleException();
         }
 
@@ -397,7 +397,7 @@ public class SettingsServiceImpl implements SettingsService {
     private void setPrecios(PlayerData playerData) {
 
         if (!(playerData instanceof ControlData)) {
-            List<PersonalPrice> prices = playerData.getPrices();
+            List<PersonalPrice> prices = playerData.getRol().getInitialPrices();
             prices.forEach(p -> p.setPlayerData(playerData));
             personalPriceRepository.saveAll(prices);
         }

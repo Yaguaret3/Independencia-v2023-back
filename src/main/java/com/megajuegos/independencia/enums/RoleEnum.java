@@ -24,6 +24,11 @@ public enum RoleEnum {
         public PlayerData removePlayerData(PlayerData currentPlayerData) {
             return null;
         }
+
+        @Override
+        public List<PersonalPrice> getInitialPrices() {
+            return null;
+        }
     },
     USER(2){
         @Override
@@ -33,6 +38,11 @@ public enum RoleEnum {
 
         @Override
         public PlayerData removePlayerData(PlayerData currentPlayerData) {
+            return null;
+        }
+
+        @Override
+        public List<PersonalPrice> getInitialPrices() {
             return null;
         }
     },
@@ -48,20 +58,19 @@ public enum RoleEnum {
         public PlayerData removePlayerData(PlayerData currentPlayerData) {
             return null;
         }
+
+        @Override
+        public List<PersonalPrice> getInitialPrices() {
+            return null;
+        }
     },
     GOBERNADOR(4){
         @Override
         public PlayerData createPlayerData() {
 
-            List<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
-                    .filter(p -> p.getRol().equals(this))
-                    .map(p -> p.getPersonalPrice().name(p))
-                    .collect(Collectors.toList());
-
             return GobernadorData.builder()
                     .milicia(0)
                     .plata(10)
-                    .prices(prices)
                     .build();
         }
 
@@ -72,17 +81,19 @@ public enum RoleEnum {
             }
             return currentPlayerData;
         }
+
+        @Override
+        public List<PersonalPrice> getInitialPrices() {
+            return Arrays.stream(PersonalPricesEnum.values())
+                    .filter(p -> p.getRol().equals(this))
+                    .map(p -> p.getInitialPrices().name(p))
+                    .collect(Collectors.toList());
+        }
     },
     CAPITAN(5){
         @Override
         public PlayerData createPlayerData() {
-            List<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
-                    .filter(p -> p.getRol().equals(this))
-                    .map(p -> p.getPersonalPrice().name(p))
-                    .collect(Collectors.toList());
-
             return CapitanData.builder()
-                    .prices(prices)
                     .reserva(0)
                     .build();
         }
@@ -94,17 +105,19 @@ public enum RoleEnum {
             }
             return currentPlayerData;
         }
+
+        @Override
+        public List<PersonalPrice> getInitialPrices() {
+            return Arrays.stream(PersonalPricesEnum.values())
+                    .filter(p -> p.getRol().equals(this))
+                    .map(p -> p.getInitialPrices().name(p))
+                    .collect(Collectors.toList());
+        }
     },
     MERCADER(6){
         @Override
         public PlayerData createPlayerData() {
-            List<PersonalPrice> prices = Arrays.stream(PersonalPricesEnum.values())
-                    .filter(p -> p.getRol().equals(this))
-                    .map(p -> p.getPersonalPrice().name(p))
-                    .collect(Collectors.toList());
-
             return MercaderData.builder()
-                    .prices(prices)
                     .puntajeComercial(7)
                     .puntajeComercialAcumulado(7)
                     .build();
@@ -116,6 +129,14 @@ public enum RoleEnum {
                 return null;
             }
             return currentPlayerData;
+        }
+
+        @Override
+        public List<PersonalPrice> getInitialPrices() {
+            return Arrays.stream(PersonalPricesEnum.values())
+                    .filter(p -> p.getRol().equals(this))
+                    .map(p -> p.getInitialPrices().name(p))
+                    .collect(Collectors.toList());
         }
     },
     REVOLUCIONARIO(7){
@@ -133,10 +154,17 @@ public enum RoleEnum {
             }
             return currentPlayerData;
         }
+
+        @Override
+        public List<PersonalPrice> getInitialPrices() {
+            return null;
+        }
     },;
 
     private final Integer id;
 
     public abstract PlayerData createPlayerData();
     public abstract PlayerData removePlayerData(PlayerData currentPlayerData);
+
+    public abstract List<PersonalPrice> getInitialPrices();
 }
