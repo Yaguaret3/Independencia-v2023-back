@@ -157,7 +157,7 @@ public enum RoleEnum {
 
         @Override
         public List<PersonalPrice> getInitialPrices() {
-            return null;
+            return Collections.emptyList();
         }
     },;
 
