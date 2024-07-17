@@ -33,11 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
         PersonalPrice priceToPay = currentPrices.stream().filter(p -> p.getName() == toBuy).findFirst()
                 .orElseThrow(() -> new PriceNotFoundException());
 
-        if(!paymentIsValid(playerData, request, priceToPay)){
-            return false;
-        }
-
-        return true;
+        return paymentIsValid(playerData, request, priceToPay);
     }
 
     private Boolean paymentIsValid(PlayerData playerData,
