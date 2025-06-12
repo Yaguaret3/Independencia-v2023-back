@@ -3,6 +3,7 @@ package com.megajuegos.independencia.config.auth.filter;
 import com.megajuegos.independencia.config.auth.security.CustomUserDetailsService;
 import com.megajuegos.independencia.config.auth.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String AUTHORIZACION_FOR_HEADER = "Authorization";
@@ -33,6 +35,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain)
                                     throws ServletException, IOException {
+
+        String path = request.getServletPath();
+        log.info("Request path: {}", path);
+        if (path.startsWith("/assets/") || path.equals("/") || path.equals("/vite.svg")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         final String authHeader = request.getHeader(AUTHORIZACION_FOR_HEADER);
         final String jwt;

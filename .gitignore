@@ -3,3 +3,4 @@
 /src/main/resources/static
 /Dockerfile
 .idea/
+.env*
