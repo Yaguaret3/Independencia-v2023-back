@@ -37,7 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     throws ServletException, IOException {
 
         String path = request.getServletPath();
-        log.info("Request path: {}", path);
         if (path.startsWith("/assets/") || path.equals("/") || path.equals("/vite.svg")) {
             filterChain.doFilter(request, response);
             return;
