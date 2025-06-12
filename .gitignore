@@ -4,3 +4,4 @@
 /Dockerfile
 .idea/
 .env*
+/push-to-dockerhub.ps1
