@@ -1,6 +1,9 @@
 package com.megajuegos.independencia.exceptions;
 
-public class PriceNotFoundException extends RuntimeException{
+import com.megajuegos.independencia.exceptions.common.CustomRuntimeException;
 
-    //TODO Con precisión
+public class PriceNotFoundException extends CustomRuntimeException {
+    public PriceNotFoundException() {
+        super("No se puede acceder al precio del objeto solicitado");
+    }
 }

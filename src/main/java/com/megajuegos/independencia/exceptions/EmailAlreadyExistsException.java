@@ -1,6 +1,8 @@
 package com.megajuegos.independencia.exceptions;
 
-public class EmailAlreadyExistsException extends RuntimeException{
+import com.megajuegos.independencia.exceptions.common.CustomRuntimeException;
+
+public class EmailAlreadyExistsException extends CustomRuntimeException {
 
     private static final String message = "El correo '%s' ya está asignado a un usuario.";
 

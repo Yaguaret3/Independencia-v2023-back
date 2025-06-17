@@ -1,6 +1,8 @@
 package com.megajuegos.independencia.exceptions;
 
-public class VotationNotFoundException extends GenericNotFoundException{
+import com.megajuegos.independencia.exceptions.common.GenericNotFoundException;
+
+public class VotationNotFoundException extends GenericNotFoundException {
     public VotationNotFoundException(Long id) {
         super(id, "una votación");
     }

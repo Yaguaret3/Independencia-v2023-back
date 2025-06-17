@@ -1,6 +1,8 @@
 package com.megajuegos.independencia.exceptions;
 
-public class CityNotFoundException extends GenericNotFoundException{
+import com.megajuegos.independencia.exceptions.common.GenericNotFoundException;
+
+public class CityNotFoundException extends GenericNotFoundException {
     public CityNotFoundException(String city) {
         super(0L, String.format("la ciudad %s", city));
     }

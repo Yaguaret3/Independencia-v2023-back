@@ -1,6 +1,8 @@
 package com.megajuegos.independencia.exceptions;
 
-public class BattleNotFoundException extends GenericNotFoundException{
+import com.megajuegos.independencia.exceptions.common.GenericNotFoundException;
+
+public class BattleNotFoundException extends GenericNotFoundException {
 
     public BattleNotFoundException(Long id){
         super(id, "una batalla");

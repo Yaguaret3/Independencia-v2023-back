@@ -1,6 +1,8 @@
 package com.megajuegos.independencia.exceptions;
 
-public class VotationStillActiveException extends RuntimeException{
+import com.megajuegos.independencia.exceptions.common.CustomRuntimeException;
+
+public class VotationStillActiveException extends CustomRuntimeException {
 
     public VotationStillActiveException(){
         super("Hay una votación todavía activa");

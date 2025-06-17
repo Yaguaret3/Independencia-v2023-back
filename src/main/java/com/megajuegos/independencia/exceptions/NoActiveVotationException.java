@@ -1,6 +1,8 @@
 package com.megajuegos.independencia.exceptions;
 
-public class NoActiveVotationException extends RuntimeException{
+import com.megajuegos.independencia.exceptions.common.CustomRuntimeException;
+
+public class NoActiveVotationException extends CustomRuntimeException {
 
     public NoActiveVotationException(){
         super("No hay ninguna votación activa");

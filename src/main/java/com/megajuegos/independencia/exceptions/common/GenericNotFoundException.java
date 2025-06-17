@@ -1,4 +1,4 @@
-package com.megajuegos.independencia.exceptions;
+package com.megajuegos.independencia.exceptions.common;
 
 public class GenericNotFoundException extends RuntimeException{
 
