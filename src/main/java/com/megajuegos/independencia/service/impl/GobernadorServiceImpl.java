@@ -171,7 +171,7 @@ public class GobernadorServiceImpl implements GobernadorService {
         BuildingTypeEnum buildingType = BuildingTypeEnum.valueOf(priceEnum.name());
 
         if (maxTypeOfBuildingReached(buildingType.getId(), gobernadorData)) throw new MaxNumberOfBuildingTypeReachedException(buildingType.name());
-        if (!paymentService.succesfulPay(gobernadorData, request.getPayment(), priceEnum)) throw new PaymentNotPossibleException();
+        if (!paymentService.isPaymentSuccessful(gobernadorData, request.getPayment(), priceEnum)) throw new PaymentNotPossibleException();
 
         City city = gobernadorData.getCity();
 
@@ -197,7 +197,7 @@ public class GobernadorServiceImpl implements GobernadorService {
 
         GobernadorData gobernadorData = getPlayerData();
 
-        if (!paymentService.succesfulPay(gobernadorData, request, PersonalPricesEnum.MARKET)) throw new PaymentNotPossibleException();
+        if (!paymentService.isPaymentSuccessful(gobernadorData, request, PersonalPricesEnum.MARKET)) throw new PaymentNotPossibleException();
 
         gobernadorData.getCity().setMarketLevel(gobernadorData.getCity().getMarketLevel()+1);
 
@@ -274,7 +274,7 @@ public class GobernadorServiceImpl implements GobernadorService {
 
         GobernadorData gobernadorData = getPlayerData();
 
-        if (!paymentService.succesfulPay(gobernadorData, request, PersonalPricesEnum.MILICIA)) throw new PaymentNotPossibleException();
+        if (!paymentService.isPaymentSuccessful(gobernadorData, request, PersonalPricesEnum.MILICIA)) throw new PaymentNotPossibleException();
 
         gobernadorData.setMilicia(gobernadorData.getMilicia()+cantidadMilicias);
 

@@ -118,7 +118,7 @@ public class MercaderServiceImpl implements MercaderService {
                 .findAny()
                 .orElseThrow(() -> new PriceNotFoundException());
 
-        if (Boolean.FALSE.equals(paymentService.succesfulPay(mercaderData, request.getPayment(), priceEnum))) throw new PaymentNotPossibleException();
+        if (Boolean.FALSE.equals(paymentService.isPaymentSuccessful(mercaderData, request.getPayment(), priceEnum))) throw new PaymentNotPossibleException();
 
         mercaderData.setPuntajeComercial(mercaderData.getPuntajeComercial() - request.getPayment().getPuntajeComercial());
 
@@ -147,7 +147,7 @@ public class MercaderServiceImpl implements MercaderService {
         Integer disminucionDePrecio = 0;
         MercaderData mercaderData = getPlayerData();
 
-        if (Boolean.FALSE.equals(paymentService.succesfulPay(mercaderData, request.getPayment(), PersonalPricesEnum.fromId(request.getResourceType())))) throw new PaymentNotPossibleException();
+        if (Boolean.FALSE.equals(paymentService.isPaymentSuccessful(mercaderData, request.getPayment(), PersonalPricesEnum.fromId(request.getResourceType())))) throw new PaymentNotPossibleException();
 
         for(PersonalPrice price : mercaderData.getPrices()){
             if(Objects.equals(request.getResourceType(), ResourceTypeEnum.TEXTIL.getId())){

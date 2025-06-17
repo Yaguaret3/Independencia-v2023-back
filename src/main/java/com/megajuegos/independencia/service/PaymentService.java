@@ -6,5 +6,5 @@ import com.megajuegos.independencia.service.util.PaymentRequestUtil;
 
 public interface PaymentService {
 
-    Boolean succesfulPay(PlayerData playerData, PaymentRequestUtil request, PersonalPricesEnum toBuy);
+    Boolean isPaymentSuccessful(PlayerData playerData, PaymentRequestUtil request, PersonalPricesEnum toBuy);
 }

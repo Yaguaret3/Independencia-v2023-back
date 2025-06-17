@@ -3,13 +3,11 @@ package com.megajuegos.independencia.service.impl;
 import com.megajuegos.independencia.dto.request.capitan.*;
 import com.megajuegos.independencia.dto.response.CapitanResponse;
 import com.megajuegos.independencia.dto.response.tiny.GameDataTinyCapitanResponse;
-import com.megajuegos.independencia.dto.response.tiny.GameDataTinyResponse;
 import com.megajuegos.independencia.entities.*;
 import com.megajuegos.independencia.entities.card.ActionCard;
 import com.megajuegos.independencia.entities.card.BattleCard;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.data.CapitanData;
-import com.megajuegos.independencia.entities.data.MercaderData;
 import com.megajuegos.independencia.entities.data.PlayerData;
 import com.megajuegos.independencia.enums.*;
 import com.megajuegos.independencia.exceptions.*;
@@ -68,7 +66,7 @@ public class CapitanServiceImpl implements CapitanService {
                 .findFirst()
                 .orElseThrow(PriceNotFoundException::new);
 
-        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), priceEnum)))
+        if (Boolean.FALSE.equals(paymentService.isPaymentSuccessful(capitanData, request.getPayment(), priceEnum)))
             throw new PaymentNotPossibleException();
 
         ActionTypeEnum actionType = ActionTypeEnum.fromName(priceEnum.name());
@@ -101,7 +99,7 @@ public class CapitanServiceImpl implements CapitanService {
                 .findFirst()
                 .orElseThrow(PriceNotFoundException::new);
 
-        if (Boolean.FALSE.equals(paymentService.succesfulPay(capitanData, request.getPayment(), priceEnum)))
+        if (Boolean.FALSE.equals(paymentService.isPaymentSuccessful(capitanData, request.getPayment(), priceEnum)))
             throw new PaymentNotPossibleException();
 
         BattleTypeEnum battleType = BattleTypeEnum.fromName(priceEnum.name());

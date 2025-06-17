@@ -1,7 +1,6 @@
 package com.megajuegos.independencia.service.impl;
 
 import com.megajuegos.independencia.entities.PersonalPrice;
-import com.megajuegos.independencia.entities.UserIndependencia;
 import com.megajuegos.independencia.entities.card.Card;
 import com.megajuegos.independencia.entities.card.ResourceCard;
 import com.megajuegos.independencia.entities.data.*;
@@ -9,6 +8,7 @@ import com.megajuegos.independencia.enums.PersonalPricesEnum;
 import com.megajuegos.independencia.enums.ResourceTypeEnum;
 import com.megajuegos.independencia.exceptions.PriceNotFoundException;
 import com.megajuegos.independencia.repository.CardRepository;
+import com.megajuegos.independencia.repository.data.PlayerDataRepository;
 import com.megajuegos.independencia.service.PaymentService;
 import com.megajuegos.independencia.service.util.PaymentRequestUtil;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -24,38 +23,43 @@ import java.util.Set;
 public class PaymentServiceImpl implements PaymentService {
 
     private final CardRepository cardRepository;
+    private final PlayerDataRepository playerDataRepository;
 
     @Override
-    public Boolean succesfulPay(PlayerData playerData, PaymentRequestUtil request, PersonalPricesEnum toBuy) {
+    public Boolean isPaymentSuccessful(PlayerData playerData, PaymentRequestUtil request, PersonalPricesEnum toBuy) {
 
         List<PersonalPrice> currentPrices = playerData.getPrices();
 
         PersonalPrice priceToPay = currentPrices.stream().filter(p -> p.getName() == toBuy).findFirst()
                 .orElseThrow(() -> new PriceNotFoundException());
 
-        return paymentIsValid(playerData, request, priceToPay);
+        if(!isPaymentValid(playerData, request, priceToPay)) {
+            return false;
+        }
+        pay(playerData, request, priceToPay);
+        return true;
     }
 
-    private Boolean paymentIsValid(PlayerData playerData,
+    private Boolean isPaymentValid(PlayerData playerData,
                                    PaymentRequestUtil request,
                                    PersonalPrice priceToPay) {
 
         if(playerData instanceof GobernadorData
-                && !gobernadorPaymentIsValid((GobernadorData) playerData, request, priceToPay)){
+                && !isGobernadorPaymentValid((GobernadorData) playerData, request, priceToPay)){
             return false;
         }
         if(playerData instanceof MercaderData
-                && !mercaderPaymentIsValid((MercaderData) playerData, request, priceToPay)){
+                && !isMercaderPaymentValid((MercaderData) playerData, request, priceToPay)){
             return false;
         }
         if(playerData instanceof RevolucionarioData
-                && !revolucionarioPaymentIsValid((RevolucionarioData) playerData, request, priceToPay)){
+                && !isRevolucionarioPaymentValid((RevolucionarioData) playerData, request, priceToPay)){
             return false;
         }
-        return generalPaymentIsValid(playerData, request, priceToPay);
+        return isGeneralPaymentValid(playerData, request, priceToPay);
     }
 
-    private Boolean gobernadorPaymentIsValid(GobernadorData gobernadorData,
+    private Boolean isGobernadorPaymentValid(GobernadorData gobernadorData,
                                              PaymentRequestUtil request,
                                              PersonalPrice priceToPay){
 
@@ -63,20 +67,20 @@ public class PaymentServiceImpl implements PaymentService {
                 && request.getPlata() >= priceToPay.getPlata();
     }
 
-    private Boolean mercaderPaymentIsValid(MercaderData mercaderData,
+    private Boolean isMercaderPaymentValid(MercaderData mercaderData,
                                            PaymentRequestUtil request,
                                            PersonalPrice priceToPay){
         return request.getPuntajeComercial() <= mercaderData.getPuntajeComercial()
                 && request.getPuntajeComercial() >= priceToPay.getPuntajeComercial();
     }
 
-    private Boolean revolucionarioPaymentIsValid(RevolucionarioData revolucionarioData,
+    private Boolean isRevolucionarioPaymentValid(RevolucionarioData revolucionarioData,
                                                  PaymentRequestUtil request,
                                                  PersonalPrice priceToPay){
         return true;
     }
 
-    private Boolean generalPaymentIsValid(PlayerData playerData,
+    private Boolean isGeneralPaymentValid(PlayerData playerData,
                                           PaymentRequestUtil request,
                                           PersonalPrice priceToPay){
 
@@ -140,5 +144,51 @@ public class PaymentServiceImpl implements PaymentService {
 
                 && comercialEnviada <= comercialActual
                 && comercialEnviada >= comercialAPagar;
+    }
+
+    private void pay(PlayerData playerData, PaymentRequestUtil request, PersonalPrice priceToPay) {
+
+        if(playerData instanceof GobernadorData){
+            GobernadorData gobernadorData = (GobernadorData) playerData;
+            gobernadorData.setPlata(gobernadorData.getPlata()-priceToPay.getPlata());
+        }
+        if(playerData instanceof MercaderData){
+            MercaderData mercaderData = (MercaderData) playerData;
+            mercaderData.setPuntajeComercial(mercaderData.getPuntajeComercial()-priceToPay.getPuntajeComercial());
+        }
+        List<ResourceCard> resources = cardRepository.findResourceCardByIdIn(request.getResourcesIds());
+
+        long textilPagado = 0L;
+        long agropecuariaPagada = 0L;
+        long metalmecanicaPagada= 0L;
+        long construccionPagada = 0L;
+        long comercialPagada = 0L;
+
+        for(ResourceCard card : resources){
+            ResourceTypeEnum type = card.getResourceTypeEnum();
+            if(type == ResourceTypeEnum.TEXTIL && textilPagado < priceToPay.getTextil()){
+                textilPagado++;
+                card.setAlreadyPlayed(true);
+            }
+            if(type == ResourceTypeEnum.AGROPECUARIA && agropecuariaPagada < priceToPay.getAgropecuaria()){
+                agropecuariaPagada++;
+                card.setAlreadyPlayed(true);
+            }
+            if(type == ResourceTypeEnum.METALMECANICA && metalmecanicaPagada < priceToPay.getMetalmecanica()){
+                metalmecanicaPagada++;
+                card.setAlreadyPlayed(true);
+            }
+            if(type == ResourceTypeEnum.CONSTRUCCION && construccionPagada < priceToPay.getConstruccion()){
+                construccionPagada++;
+                card.setAlreadyPlayed(true);
+            }
+            if(type == ResourceTypeEnum.COMERCIAL && comercialPagada < priceToPay.getComercial()){
+                comercialPagada++;
+                card.setAlreadyPlayed(true);
+            }
+        }
+        playerDataRepository.save(playerData);
+        cardRepository.saveAll(resources);
+
     }
 }
