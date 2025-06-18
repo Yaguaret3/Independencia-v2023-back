@@ -1,6 +1,5 @@
 package com.megajuegos.independencia.controller;
 
-import com.megajuegos.independencia.dto.request.revolucionario.CloseVotationRequest;
 import com.megajuegos.independencia.dto.request.revolucionario.VoteProposalRequest;
 import com.megajuegos.independencia.dto.request.revolucionario.VoteRequest;
 import com.megajuegos.independencia.dto.response.CongresoResponse;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.management.InstanceNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
