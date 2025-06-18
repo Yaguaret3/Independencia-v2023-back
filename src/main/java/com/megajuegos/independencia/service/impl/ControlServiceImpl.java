@@ -675,11 +675,15 @@ public class ControlServiceImpl implements ControlService {
                 .orElseThrow(() -> new CityNotFoundException(request.getSedeId()));
         List<RevolucionarioData> revolucionarios = revolucionarioRepository.findAllById(request.getDiputadosIds());
 
+        GameData gameData = gameDataRepository.findFirstByOrderByIdDesc()
+                .orElseThrow(GameDataNotFoundException::new);
+
         Congreso congreso = Congreso.builder()
                 .sede(sede)
                 .revolucionarios(revolucionarios)
                 .plata(request.getPlata())
                 .milicia(request.getMilicia())
+                .gameData(gameData)
                 .build();
 
         sede.setSedeDelCongreso(congreso);
@@ -689,17 +693,9 @@ public class ControlServiceImpl implements ControlService {
         cityRepository.save(sede);
 
         congresoRepository.save(congreso);
-        congreso.getRevolucionarios().forEach(r -> {
-            if (r.getId().equals(request.getPresidenteId())) {
-                r.setPresidente(true);
-            } else {
-                r.setPresidente(false);
-            }
-        });
+        congreso.getRevolucionarios().forEach(r -> r.setPresidente(r.getId().equals(request.getPresidenteId())));
         revolucionarioRepository.saveAll(revolucionarios);
 
-        GameData gameData = gameDataRepository.findFirstByOrderByIdDesc()
-                .orElseThrow(GameDataNotFoundException::new);
         gameData.getCongresos().add(congreso);
         gameDataRepository.save(gameData);
         return CONGRESS_CREATED;
