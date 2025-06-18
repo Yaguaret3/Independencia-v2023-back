@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
@@ -54,22 +55,27 @@ public class PlayerDataFullResponse {
                 .rol(entity.getRol().name())
                 .mercados(util.getMarketCardList()
                         .stream()
+                        .filter(r -> !r.isAlreadyPlayed())
                         .map(MarketCardResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .recursos(util.getResourceCardList()
                         .stream()
+                        .filter(r -> !r.isAlreadyPlayed())
                         .map(ResourceCardResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .extras(util.getExtraCardList()
                         .stream()
+                        .filter(r -> !r.isAlreadyPlayed())
                         .map(ExtraCardResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .representacion(util.getRepresentationCardList()
                         .stream()
+                        .filter(r -> !r.isAlreadyPlayed())
                         .map(RepresentationCardResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .actionCards(util.getActionCardList()
                         .stream()
+                        .filter(r -> !r.isAlreadyPlayed())
                         .map(ActionCardResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .battleCards(util.getBattleCardList()
@@ -102,6 +108,7 @@ public class PlayerDataFullResponse {
                 response.setPuntajeComercial(mercaderData.getPuntajeComercial());
                 response.setPuntajeComercialAcumulado(mercaderData.getPuntajeComercialAcumulado());
                 response.setRoutes(mercaderData.getRoutes().stream()
+                        .filter(r -> Objects.equals(r.getTurn(), mercaderData.getGameData().getTurno()))
                         .map(RouteResponse::toDto)
                         .collect(Collectors.toList()));
                 break;
