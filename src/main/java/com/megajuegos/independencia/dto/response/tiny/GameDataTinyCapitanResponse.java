@@ -1,6 +1,7 @@
 package com.megajuegos.independencia.dto.response.tiny;
 
 import com.megajuegos.independencia.dto.response.BattleFullResponse;
+import com.megajuegos.independencia.entities.Battle;
 import com.megajuegos.independencia.entities.GameRegion;
 import com.megajuegos.independencia.entities.GameSubRegion;
 import com.megajuegos.independencia.entities.data.CapitanData;
@@ -38,6 +39,7 @@ public class GameDataTinyCapitanResponse {
                 .gameRegion(GameRegionTinyResponse.toTinyResponse(gameRegion))
                 .ownBattles(gameRegion.getSubRegions().stream()
                                 .flatMap(sr -> sr.getBatallas().stream())
+                                .filter(Battle::getActive)
                                 .filter(b -> (
                                         b.getCombatientes().stream()
                                             .anyMatch(e -> capitanData.equals(e.getCapitanData()))))
