@@ -223,7 +223,7 @@ public class CapitanServiceImpl implements CapitanService {
         Log log = Log.builder()
                 .turno(capitanData.getGameData().getTurno())
                 .tipo(LogTypeEnum.ENVIADO)
-                .nota(String.format("Asignaste %s milicias a la batalla en ", milicia, battle.getSubregion().getNombre()))
+                .nota(String.format("Asignaste %s milicias a la batalla en %s", milicia, battle.getSubregion().getNombre()))
                 .player(capitanData)
                 .build();
 
