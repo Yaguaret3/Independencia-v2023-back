@@ -120,8 +120,6 @@ public class MercaderServiceImpl implements MercaderService {
 
         if (Boolean.FALSE.equals(paymentService.isPaymentSuccessful(mercaderData, request.getPayment(), priceEnum))) throw new PaymentNotPossibleException();
 
-        mercaderData.setPuntajeComercial(mercaderData.getPuntajeComercial() - request.getPayment().getPuntajeComercial());
-
         Card card = ResourceCard.builder()
                 .resourceTypeEnum(ResourceTypeEnum.valueOf(priceEnum.name()))
                 .alreadyPlayed(false)
