@@ -794,6 +794,7 @@ public class ControlServiceImpl implements ControlService {
             return;
         }
         //Gobernadores TODO Leyes políticas impositivas
+        deshabilitarMercadosNoUsados(gameData);
         recolectarImpuestosRecuperarRepresentacionYMercados(gameData);
         //Mercaderes TODO Leyes comerciales
         sumarPuntajeComercialAcumulado(gameData);
@@ -805,6 +806,21 @@ public class ControlServiceImpl implements ControlService {
         //Verificar que se están grabando las cartas de los jugadores
         playerDataRepository.saveAll(gameData.getPlayers());
         gameDataRepository.save(gameData);
+    }
+
+    private void deshabilitarMercadosNoUsados(GameData gameData) {
+
+        List<MarketCard> markets = gameData.getPlayers()
+                .stream()
+                .flatMap(p -> p.getCards().stream())
+                .filter(MarketCard.class::isInstance)
+                .map(MarketCard.class::cast)
+                .collect(Collectors.toList());
+
+        markets.forEach(m -> m.setAlreadyPlayed(true));
+
+        cardRepository.saveAll(markets);
+
     }
 
     private void recolectarImpuestosRecuperarRepresentacionYMercados(GameData gameData) {

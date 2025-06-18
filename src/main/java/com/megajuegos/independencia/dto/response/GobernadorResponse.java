@@ -56,6 +56,7 @@ public class GobernadorResponse {
                 .representacion(representationUtil)
                 .mercados(util.getMarketCardList()
                         .stream()
+                        .filter(r -> !r.isAlreadyPlayed())
                         .map(MarketCardResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .recursos(util.getResourceCardList()
