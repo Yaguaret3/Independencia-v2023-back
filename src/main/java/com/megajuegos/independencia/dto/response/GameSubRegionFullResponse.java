@@ -45,6 +45,7 @@ public class GameSubRegionFullResponse {
                         .map(BattleFullResponse::toFullResponse)
                         .collect(Collectors.toList()))
                 .accionesMilitares(entity.getAttackActions().stream()
+                        .filter(a -> !a.isSolved())
                         .map(ActionResponse::toDto)
                         .collect(Collectors.toList()))
 

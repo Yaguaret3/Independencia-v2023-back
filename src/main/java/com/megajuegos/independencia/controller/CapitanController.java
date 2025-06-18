@@ -57,6 +57,7 @@ public class CapitanController {
         service.playBattleCards(request);
     }
 
+    // Lo de abajo no se está usando desde la UI
     @PostMapping("/make-camp")
     public void makeCamp(@RequestBody @Valid CampRequest request){
         service.makeCamp(request);

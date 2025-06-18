@@ -16,6 +16,7 @@ import com.megajuegos.independencia.service.util.GameIdUtil;
 import com.megajuegos.independencia.service.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ import static com.megajuegos.independencia.util.Messages.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ControlServiceImpl implements ControlService {
 
     private final GameDataRepository gameDataRepository;
@@ -53,6 +55,7 @@ public class ControlServiceImpl implements ControlService {
     private final GameSubRegionRepository gameSubRegionRepository;
     private final GameIdUtil gameIdUtil;
     private final BuildingRepository buildingRepository;
+    private final ActionRepository actionRepository;
 
     private static Random random = new Random();
     private static final int DADO_CUATRO_MAX = 5;
@@ -800,6 +803,7 @@ public class ControlServiceImpl implements ControlService {
         //Revolucionarios
         limpiarRepresentacion(gameData);
         //Capitanes
+        limpiarAccionesEnRegiones(gameData);
         // ???
 
         //Verificar que se están grabando las cartas de los jugadores
@@ -898,6 +902,25 @@ public class ControlServiceImpl implements ControlService {
         ));
 
         cardRepository.saveAll(representationCard);
+    }
+
+    private void limpiarAccionesEnRegiones(GameData gameData) {
+
+        List<GameRegion> gameRegions = gameData.getGameRegions();
+        List<GameSubRegion> gameSubRegions = gameRegions.stream().flatMap(
+                gr -> gr.getSubRegions().stream()
+        ).collect(Collectors.toList());
+
+        List<Action> actions = gameRegions.stream()
+                .flatMap(gr -> gr.getDefenseActions().stream())
+                .collect(Collectors.toList());
+        actions.addAll(
+                gameSubRegions.stream()
+                        .flatMap(gsr -> gsr.getAttackActions().stream())
+                        .collect(Collectors.toList()));
+
+        actions.forEach(a -> a.setSolved(true));
+        actionRepository.saveAll(actions);
     }
 
     private ControlData getControlDataFromLoggedUser() {
