@@ -637,6 +637,9 @@ public class ControlServiceImpl implements ControlService {
         revolucionarios.forEach(r -> r.setCongreso(null));
         sede.setSedeDelCongreso(null);
 
+        List<Votation> votaciones = congreso.getVotations();
+        votaciones.forEach(v -> v.setCongreso(null));
+
         revolucionarioRepository.saveAll(revolucionarios);
         cityRepository.save(sede);
 
