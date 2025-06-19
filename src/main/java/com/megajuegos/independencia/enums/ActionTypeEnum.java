@@ -15,8 +15,8 @@ public enum ActionTypeEnum {
     DEFENSA(3, "Defensa", "Defendés un ataque en una región", 0, ""),
     REACCION(4, "Reaccion", "Interceptás a un ejército enemigo que mueve su campamento a otra región", 0, ""),
     DESPLIEGUE(5, "Despliegue", "Desplegás un ejército en una subregión", 0, ""),
-    ACAMPE(6, "Acampar", "Movés tu campamento a otra subregión de esta región", 0, ""),
-    NADA(7, "Nada", "0", 0, "");
+    ACAMPE(6, "Acampar", "Movés tu campamento a otra subregión de esta región", 0, "");
+    //NADA(7, "Nada", "0", 0, "");
 
     private Integer id;
     private String nombre;

@@ -215,6 +215,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
+    /*
     NADA(24, RoleEnum.CAPITAN,false, true, false) {
         @Override
         public PersonalPrice getInitialPrices() {
@@ -222,6 +223,8 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
+
+     */
     // BattleCards
     CARGA_DE_INFANTERIA(25, RoleEnum.CAPITAN,false, false, true) {
         @Override
