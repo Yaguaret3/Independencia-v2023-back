@@ -39,7 +39,7 @@ public class CapitanController {
     }
 
     @PostMapping("/move")
-    public void move(@RequestBody MovementRequest request){
+    public void move(@RequestBody @Valid MovementRequest request){
         service.move(request);
     }
 
