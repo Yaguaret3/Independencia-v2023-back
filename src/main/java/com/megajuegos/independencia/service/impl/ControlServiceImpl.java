@@ -814,16 +814,15 @@ public class ControlServiceImpl implements ControlService {
             gameDataRepository.save(gameData);
             return;
         }
+        //Revolucionarios
+        limpiarRepresentacion();
+        //Capitanes
+        limpiarAccionesEnRegiones(gameData);
         //Gobernadores TODO Leyes políticas impositivas
         deshabilitarMercadosNoUsados(gameData);
         recolectarImpuestosRecuperarRepresentacionYMercados(gameData);
         //Mercaderes TODO Leyes comerciales
         sumarPuntajeComercialAcumulado(gameData);
-        //Revolucionarios
-        limpiarRepresentacion(gameData);
-        //Capitanes
-        limpiarAccionesEnRegiones(gameData);
-        // ???
 
         //Verificar que se están grabando las cartas de los jugadores
         playerDataRepository.saveAll(gameData.getPlayers());
@@ -901,26 +900,15 @@ public class ControlServiceImpl implements ControlService {
         });
     }
 
-    private void limpiarRepresentacion(GameData gameData) {
-        List<RevolucionarioData> revolucionarios = gameData.getPlayers().stream()
-                .filter(RevolucionarioData.class::isInstance)
-                .map(RevolucionarioData.class::cast)
-                .collect(Collectors.toList());
+    private void limpiarRepresentacion() {
 
-        List<RepresentationCard> representationCard = revolucionarios.stream()
-                .map(PlayerData::getCards)
-                .filter(RepresentationCard.class::isInstance)
-                .map(RepresentationCard.class::cast)
-                .collect(Collectors.toList());
+        List<RepresentationCard> representationCards = cardRepository.findRepresentationCardByNotPlayed();
+        representationCards.forEach(c -> c.setAlreadyPlayed(true));
+        cardRepository.saveAll(representationCards);
 
-        representationCard.forEach(c -> c.setPlayerData(null));
-
-        revolucionarios.forEach(r -> r.setCards(r.getCards().stream()
-                .filter(c -> !(c instanceof RepresentationCard))
-                .collect(Collectors.toList())
-        ));
-
-        cardRepository.saveAll(representationCard);
+        List<City> cities = cityRepository.findAll();
+        cities.forEach(c -> c.setDiputado(null));
+        cityRepository.saveAll(cities);
     }
 
     private void limpiarAccionesEnRegiones(GameData gameData) {

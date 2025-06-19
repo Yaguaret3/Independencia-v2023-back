@@ -32,7 +32,7 @@ public class PlayerDataCardsUtil {
             if(card instanceof MarketCard){
                 this.marketCardList.add((MarketCard) card);
             }
-            if(card instanceof RepresentationCard){
+            if(card instanceof RepresentationCard && !card.isAlreadyPlayed()){
                 this.representationCardList.add((RepresentationCard) card);
             }
             if(card instanceof ResourceCard){

@@ -1,12 +1,13 @@
 package com.megajuegos.independencia.entities.card;
 
-import com.megajuegos.independencia.entities.data.GameData;
 import com.megajuegos.independencia.entities.data.PlayerData;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter

@@ -18,4 +18,7 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     @Query(value = "SELECT r FROM RepresentationCard r WHERE r.representacion = :representationEnum")
     List<RepresentationCard> findRepresentationCardByCity(RepresentationEnum representationEnum);
+
+    @Query(value = "SELECT r FROM RepresentationCard r WHERE r.alreadyPlayed = false")
+    List<RepresentationCard> findRepresentationCardByNotPlayed();
 }
