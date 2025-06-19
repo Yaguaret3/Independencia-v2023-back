@@ -6,6 +6,7 @@ import com.megajuegos.independencia.dto.response.GameDataFullResponse;
 import com.megajuegos.independencia.entities.*;
 import com.megajuegos.independencia.entities.card.*;
 import com.megajuegos.independencia.entities.data.*;
+import com.megajuegos.independencia.enums.LogTypeEnum;
 import com.megajuegos.independencia.enums.PhaseEnum;
 import com.megajuegos.independencia.enums.RepresentationEnum;
 import com.megajuegos.independencia.exceptions.*;
@@ -56,6 +57,7 @@ public class ControlServiceImpl implements ControlService {
     private final GameIdUtil gameIdUtil;
     private final BuildingRepository buildingRepository;
     private final ActionRepository actionRepository;
+    private final LogRepository logRepository;
 
     private static Random random = new Random();
     private static final int DADO_CUATRO_MAX = 5;
@@ -730,7 +732,7 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String solveBattle(SolveBattleRequest request) {
 
-       Battle battle = battleRepository.findById(request.getBattleId()).orElseThrow(() -> new BattleNotFoundException(request.getBattleId()));
+        Battle battle = battleRepository.findById(request.getBattleId()).orElseThrow(() -> new BattleNotFoundException(request.getBattleId()));
         GameSubRegion gameSubRegion = battle.getSubregion();
 
         List<Army> ejercitos = battle.getCombatientes();
@@ -739,10 +741,11 @@ public class ControlServiceImpl implements ControlService {
 
             request.getResultados().forEach(r -> {
 
-                if (Objects.equals(army.getId(), r.getArmyId()) && r.isDestruido()) {
 
+                CapitanData capitanData = army.getCapitanData();
+
+                if (Objects.equals(army.getId(), r.getArmyId()) && r.isDestruido()) {
                     //Si el ejército fue derrotado...
-                    CapitanData capitanData = army.getCapitanData();
                     //Resta milicias a la reserva del capitán.
                     capitanData.setReserva(capitanData.getReserva() - r.getMiliciasPerdidas());
                     //Quita el ejército de la subregión (y del capitán)
@@ -751,6 +754,14 @@ public class ControlServiceImpl implements ControlService {
                     // Borra cartas asociadas al ejército (orphan removal)
                     cardRepository.deleteAll(army.getCartasJugadas());
                     armyRepository.delete(army);
+
+                    Log log = Log.builder()
+                            .turno(battle.getTurnoDeJuego())
+                            .tipo(LogTypeEnum.RECIBIDO)
+                            .nota(String.format("Fuiste derrotado en la batalla de %s", battle.getSubregion().getNombre()))
+                            .player(capitanData)
+                            .build();
+                    logRepository.save(log);
 
                 }
                 if (Objects.equals(army.getId(), r.getArmyId()) && !r.isDestruido()) {
@@ -761,6 +772,14 @@ public class ControlServiceImpl implements ControlService {
                     army.setValorAzar(0);
                     army.setValorProvisorio(0);
                     army.setCartasJugadas(new ArrayList<>());
+
+                    Log log = Log.builder()
+                            .turno(battle.getTurnoDeJuego())
+                            .tipo(LogTypeEnum.RECIBIDO)
+                            .nota(String.format("Venciste en la batalla de %s", battle.getSubregion().getNombre()))
+                            .player(capitanData)
+                            .build();
+                    logRepository.save(log);
                 }
             });
 
