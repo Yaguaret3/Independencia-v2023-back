@@ -233,6 +233,64 @@ public enum PersonalPricesEnum {
                     .metalmecanica(1)
                     .build();
         }
+    },
+
+    FUEGO_DE_ARTILLERIA(26, RoleEnum.CAPITAN, false, false, true) {
+        @Override
+        public PersonalPrice getInitialPrices() {
+            return PersonalPrice.builder()
+                    .metalmecanica(1)
+                    .build();
+        }
+    },
+    FLANQUEO_DE_CABALLERIA(27, RoleEnum.CAPITAN, false, false, true) {
+        @Override
+        public PersonalPrice getInitialPrices() {
+            return PersonalPrice.builder()
+                    .metalmecanica(1)
+                    .build();
+        }
+    },
+    //ANULA EFECTO
+    MOVIMIENTO_EN_PINZAS(28, RoleEnum.CAPITAN, false, false, true) {
+        @Override
+        public PersonalPrice getInitialPrices() {
+            return PersonalPrice.builder()
+                    .metalmecanica(1)
+                    .build();
+        }
+    },
+    FALSA_RETIRADA(29, RoleEnum.CAPITAN, false, false, true) {
+        @Override
+        public PersonalPrice getInitialPrices() {
+            return PersonalPrice.builder()
+                    .metalmecanica(1)
+                    .build();
+        }
+    },
+    REAGRUPAMIENTO(30, RoleEnum.CAPITAN, false, false, true) {
+        @Override
+        public PersonalPrice getInitialPrices() {
+            return PersonalPrice.builder()
+                    .metalmecanica(1)
+                    .build();
+        }
+    },
+    ADAPTACION(31, RoleEnum.CAPITAN, false, false, true) {
+        @Override
+        public PersonalPrice getInitialPrices() {
+            return PersonalPrice.builder()
+                    .metalmecanica(1)
+                    .build();
+        }
+    },
+    RETIRADA_ORDENADA(32, RoleEnum.CAPITAN, false, false, true) {
+        @Override
+        public PersonalPrice getInitialPrices() {
+            return PersonalPrice.builder()
+                    .metalmecanica(1)
+                    .build();
+        }
     };
 
     private final int id;
