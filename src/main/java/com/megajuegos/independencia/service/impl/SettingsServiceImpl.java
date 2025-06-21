@@ -7,10 +7,7 @@ import com.megajuegos.independencia.dto.response.settings.SettingsCityResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsGameDataResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsUserResponse;
 import com.megajuegos.independencia.entities.*;
-import com.megajuegos.independencia.entities.card.ActionCard;
-import com.megajuegos.independencia.entities.card.Card;
-import com.megajuegos.independencia.entities.card.MarketCard;
-import com.megajuegos.independencia.entities.card.RepresentationCard;
+import com.megajuegos.independencia.entities.card.*;
 import com.megajuegos.independencia.entities.data.*;
 import com.megajuegos.independencia.enums.*;
 import com.megajuegos.independencia.exceptions.*;
@@ -387,6 +384,8 @@ public class SettingsServiceImpl implements SettingsService {
             ((CapitanData) playerData).setCamp(camp);
 
             cardRepository.saveAll(Arrays.asList(
+                    ResourceCard.builder().resourceTypeEnum(ResourceTypeEnum.METALMECANICA).build(),
+                    ResourceCard.builder().resourceTypeEnum(ResourceTypeEnum.METALMECANICA).build(),
                     ActionCard.builder().tipoAccion(ActionTypeEnum.DESPLIEGUE).playerData(playerData).build(),
                     ActionCard.builder().tipoAccion(ActionTypeEnum.DESPLIEGUE).playerData(playerData).build(),
                     ActionCard.builder().tipoAccion(ActionTypeEnum.DEFENSA).playerData(playerData).build(),

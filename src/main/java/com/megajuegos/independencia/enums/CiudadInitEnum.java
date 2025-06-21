@@ -9,25 +9,25 @@ import java.util.List;
 @Getter
 public enum CiudadInitEnum {
 
-    BUENOS_AIRES("Buenos Aires", 0, 5, 5, 1,
+    BUENOS_AIRES("Buenos Aires", 0, 5, 3, 1,
             new ArrayList<>()),
-    MONTEVIDEO("Montevideo", 0, 5, 5, 1,
+    MONTEVIDEO("Montevideo", 0, 5, 3, 1,
             new ArrayList<>()),
-    CORRIENTES("Corrientes", 0, 5, 5, 1,
+    CORRIENTES("Corrientes", 0, 5, 3, 1,
             new ArrayList<>()),
-    ASUNCION("Asunción", 0, 5, 5, 1,
+    ASUNCION("Asunción", 0, 5, 3, 1,
             new ArrayList<>()),
-    CORDOBA("Córdoba", 0, 5, 5, 1,
+    CORDOBA("Córdoba", 0, 5, 3, 1,
             new ArrayList<>()),
-    MENDOZA("Mendoza", 0, 5, 5, 1,
+    MENDOZA("Mendoza", 0, 5, 3, 1,
             new ArrayList<>()),
-    TUCUMAN("Tucumán", 0, 5, 5, 1,
+    TUCUMAN("Tucumán", 0, 5, 3, 1,
             new ArrayList<>()),
-    SALTA("Salta", 0, 5, 5, 1,
+    SALTA("Salta", 0, 5, 3, 1,
             new ArrayList<>()),
-    POTOSI("Potosí", 0, 5, 5, 1,
+    POTOSI("Potosí", 0, 5, 3, 1,
             new ArrayList<>()),
-    LA_PAZ("La Paz", 0, 5, 5, 1,
+    LA_PAZ("La Paz", 0, 5, 3, 1,
             new ArrayList<>());
 
     private final String nombre;

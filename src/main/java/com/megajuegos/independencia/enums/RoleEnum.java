@@ -70,7 +70,7 @@ public enum RoleEnum {
 
             return GobernadorData.builder()
                     .milicia(0)
-                    .plata(10)
+                    .plata(20)
                     .build();
         }
 
@@ -94,7 +94,7 @@ public enum RoleEnum {
         @Override
         public PlayerData createPlayerData() {
             return CapitanData.builder()
-                    .reserva(0)
+                    .reserva(3)
                     .build();
         }
 
