@@ -7,14 +7,15 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
@@ -26,15 +27,13 @@ public class JwtTokenProvider {
     private int jwtExpirationMs;
 
     public String generateToken(UserIndependencia userDetails) {
-
-        return generateToken(new HashMap<>(), userDetails);
-    }
-
-    public String generateToken(Map<String, Object> extraClaims,
-                                UserIndependencia userDetails) {
+        Map<String, Object> authorities = new HashMap<>();
+        authorities.put("authorities", userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
 
         return Jwts.builder()
-                .setClaims(extraClaims)
+                .setClaims(authorities)
                 .setSubject(userDetails.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+jwtExpirationMs))
@@ -54,6 +53,14 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
     }
+    public Collection<? extends GrantedAuthority> extractAuthorities(String token) {
+        Claims claims = extractAllClaims(token);
+        List<?> authorities = (List<?>) claims.get("authorities");
+        return authorities.stream()
+                .map(String.class::cast)
+                .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
+                .collect(Collectors.toList());
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -63,6 +70,9 @@ public class JwtTokenProvider {
 
         final String email = extractUsername(token);
         return email.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
+    public boolean isTokenValid(String token){
+        return  token != null && !token.isEmpty() && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token){

@@ -1,13 +1,11 @@
 package com.megajuegos.independencia.config.auth.filter;
 
-import com.megajuegos.independencia.config.auth.security.CustomUserDetailsService;
 import com.megajuegos.independencia.config.auth.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,17 +16,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.megajuegos.independencia.util.ConstantsUtil.*;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String AUTHORIZACION_FOR_HEADER = "Authorization";
-    private static final String STARTS_WITH_BEARER = "Bearer ";
-    private static final int BEARER_PART_LENGHT = 7;
-
     private final JwtTokenProvider jwtTokenProvider;
-    private final CustomUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -54,13 +49,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
 
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
-
-            if(jwtTokenProvider.isTokenValid(jwt, userDetails)){
+            if(jwtTokenProvider.isTokenValid(jwt)){
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
+                        email,
                         null,
-                        userDetails.getAuthorities()
+                        jwtTokenProvider.extractAuthorities(jwt)
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource()
                         .buildDetails(request));

@@ -1,6 +1,7 @@
 package com.megajuegos.independencia.controller.exceptions;
 
 import com.megajuegos.independencia.exceptions.common.CustomRuntimeException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomRuntimeException.class)
     public ResponseEntity<Map<String, Object>> handleException(CustomRuntimeException ex) {
+        log.error(ex.getMessage(), ex);
+
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", ZonedDateTime.now());
         body.put("status", HttpStatus.BAD_REQUEST.value());
@@ -28,6 +32,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
+        log.error(ex.getMessage(), ex);
+
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", ZonedDateTime.now());
         body.put("status", HttpStatus.BAD_REQUEST.value());
