@@ -116,7 +116,7 @@ public enum PersonalPricesEnum {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
-                    .construccion(1)
+                    .textil(1)
                     .plata(4)
                     .build();
         }
