@@ -25,14 +25,11 @@ public class WebSocketSessionTrackingService {
         return true;
     }
 
-    public synchronized void unregisterSession(String userId, String sessionId) {
-        Set<String> sessions = userSessions.get(userId);
-        if (sessions != null) {
+    public synchronized void unregisterSession(String sessionId) {
+        userSessions.forEach((userId, sessions) -> {
             sessions.remove(sessionId);
-            if (sessions.isEmpty()) {
-                userSessions.remove(userId);
-            }
-        }
+        });
+        userSessions.entrySet().removeIf(entry -> entry.getValue().isEmpty());
     }
 
     public synchronized int getSessionCount(String userId) {
