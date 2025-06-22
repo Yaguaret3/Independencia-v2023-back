@@ -13,7 +13,7 @@ import java.util.Objects;
 public enum PersonalPricesEnum {
 
     // GOBERNADOR
-    CUARTEL(1, RoleEnum.GOBERNADOR,true, false, false) {
+    CUARTEL(1, "Cuartel", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -22,7 +22,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    MARKET(2, RoleEnum.GOBERNADOR,false, false, false) {
+    MARKET(2, "Mercado", RoleEnum.GOBERNADOR,false, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -31,7 +31,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    ADMINISTRACION(3, RoleEnum.GOBERNADOR,true, false, false) {
+    ADMINISTRACION(3, "Administración", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -40,7 +40,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    IGLESIA(4, RoleEnum.GOBERNADOR,true, false, false) {
+    IGLESIA(4, "Iglesia", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -49,7 +49,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    ACUEDUCTO(5, RoleEnum.GOBERNADOR,true, false, false) {
+    ACUEDUCTO(5, "Acueducto", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -58,7 +58,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    ESCUELA(6, RoleEnum.GOBERNADOR,true, false, false) {
+    ESCUELA(6, "Escuela", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -67,7 +67,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    HOSPITAL(7, RoleEnum.GOBERNADOR,true, false, false) {
+    HOSPITAL(7, "Hospital", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -76,7 +76,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    MONUMENTO(8, RoleEnum.GOBERNADOR,true, false, false) {
+    MONUMENTO(8, "Monumento", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -85,7 +85,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    CIRCO(9, RoleEnum.GOBERNADOR,true, false, false) {
+    CIRCO(9, "Circo", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -94,7 +94,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    RECAUDADOR(10, RoleEnum.GOBERNADOR,true, false, false) {
+    RECAUDADOR(10, "Recaudador", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -103,7 +103,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    MURO(11, RoleEnum.GOBERNADOR,true, false, false) {
+    MURO(11, "Muro", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -112,7 +112,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    MILICIA(12, RoleEnum.GOBERNADOR,false, false, false) {
+    MILICIA(12, "Milicia", RoleEnum.GOBERNADOR,false, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -123,7 +123,7 @@ public enum PersonalPricesEnum {
     },
 
     // MERCADER
-    TEXTIL(13, RoleEnum.MERCADER,false, false, false) {
+    TEXTIL(13, "Textil", RoleEnum.MERCADER,false, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -131,7 +131,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    AGROPECUARIA(14, RoleEnum.MERCADER,false, false, false) {
+    AGROPECUARIA(14, "Agropecuaria", RoleEnum.MERCADER,false, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -139,7 +139,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    METALMECANICA(15, RoleEnum.MERCADER,false, false, false) {
+    METALMECANICA(15, "Metalmecánica", RoleEnum.MERCADER,false, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -147,7 +147,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    CONSTRUCCION(16, RoleEnum.MERCADER,false, false, false) {
+    CONSTRUCCION(16, "Construcción", RoleEnum.MERCADER,false, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -155,7 +155,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    COMERCIAL(17, RoleEnum.MERCADER,false, false, false) {
+    COMERCIAL(17, "Comercial", RoleEnum.MERCADER,false, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -167,7 +167,7 @@ public enum PersonalPricesEnum {
 
     // CAPITÁN
     // ActionCards
-    MOVIMIENTO(18, RoleEnum.CAPITAN,false, true, false) {
+    MOVIMIENTO(18, "Movimiento", RoleEnum.CAPITAN,false, true, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -175,7 +175,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    ATAQUE(19, RoleEnum.CAPITAN,false, true, false) {
+    ATAQUE(19, "Ataque", RoleEnum.CAPITAN,false, true, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -183,7 +183,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    DEFENSA(20, RoleEnum.CAPITAN,false, true, false) {
+    DEFENSA(20, "Defensa", RoleEnum.CAPITAN,false, true, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -191,7 +191,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    REACCION(21, RoleEnum.CAPITAN,false, true, false) {
+    REACCION(21, "Reacción", RoleEnum.CAPITAN,false, true, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -199,7 +199,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    DESPLIEGUE(22, RoleEnum.CAPITAN,false, true, false) {
+    DESPLIEGUE(22, "Despliegue", RoleEnum.CAPITAN,false, true, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -207,7 +207,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    ACAMPE(23, RoleEnum.CAPITAN,false, true, false) {
+    ACAMPE(23, "Acampe", RoleEnum.CAPITAN,false, true, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -226,7 +226,7 @@ public enum PersonalPricesEnum {
 
      */
     // BattleCards
-    CARGA_DE_INFANTERIA(25, RoleEnum.CAPITAN,false, false, true) {
+    CARGA_DE_INFANTERIA(25, "Carga de infantería", RoleEnum.CAPITAN,false, false, true) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -235,7 +235,7 @@ public enum PersonalPricesEnum {
         }
     },
 
-    FUEGO_DE_ARTILLERIA(26, RoleEnum.CAPITAN, false, false, true) {
+    FUEGO_DE_ARTILLERIA(26, "Fuego de artillería", RoleEnum.CAPITAN, false, false, true) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -243,7 +243,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    FLANQUEO_DE_CABALLERIA(27, RoleEnum.CAPITAN, false, false, true) {
+    FLANQUEO_DE_CABALLERIA(27, "Flanqueo de caballería", RoleEnum.CAPITAN, false, false, true) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -252,7 +252,7 @@ public enum PersonalPricesEnum {
         }
     },
     //ANULA EFECTO
-    MOVIMIENTO_EN_PINZAS(28, RoleEnum.CAPITAN, false, false, true) {
+    MOVIMIENTO_EN_PINZAS(28, "Movimiento de pinzas", RoleEnum.CAPITAN, false, false, true) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -260,7 +260,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    FALSA_RETIRADA(29, RoleEnum.CAPITAN, false, false, true) {
+    FALSA_RETIRADA(29, "Falsa retirada", RoleEnum.CAPITAN, false, false, true) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -268,7 +268,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    REAGRUPAMIENTO(30, RoleEnum.CAPITAN, false, false, true) {
+    REAGRUPAMIENTO(30, "Reagrupamiento", RoleEnum.CAPITAN, false, false, true) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -276,7 +276,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    ADAPTACION(31, RoleEnum.CAPITAN, false, false, true) {
+    ADAPTACION(31, "Adaptación", RoleEnum.CAPITAN, false, false, true) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -284,7 +284,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    RETIRADA_ORDENADA(32, RoleEnum.CAPITAN, false, false, true) {
+    RETIRADA_ORDENADA(32, "Retirada ordenada", RoleEnum.CAPITAN, false, false, true) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
@@ -294,6 +294,7 @@ public enum PersonalPricesEnum {
     };
 
     private final int id;
+    private final String nameToShow;
     private final RoleEnum rol;
     private final boolean isBuilding;
     private final boolean isActionOrder;
