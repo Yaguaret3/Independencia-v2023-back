@@ -13,12 +13,14 @@ public class BattleCardFullResponse {
     private Integer turnWhenPlayed;
     private Long playerId;
     private String battleOrderType;
+    private String descripcion;
 
     public static BattleCardFullResponse toFullResponse(BattleCard entity){
 
         return BattleCardFullResponse.builder()
                 .id(entity.getId())
                 .nombre(entity.getTipoOrdenDeBatalla().getNombre())
+                .descripcion(entity.getTipoOrdenDeBatalla().getEfecto())
                 .playerId(entity.getPlayerData().getId())
                 .alreadyPlayed(entity.isAlreadyPlayed())
                 .turnWhenPlayed(entity.getTurnWhenPlayed())
