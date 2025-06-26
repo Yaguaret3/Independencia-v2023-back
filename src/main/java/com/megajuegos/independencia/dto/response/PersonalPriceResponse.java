@@ -1,8 +1,10 @@
 package com.megajuegos.independencia.dto.response;
 
 import com.megajuegos.independencia.entities.PersonalPrice;
+import com.megajuegos.independencia.enums.ActionTypeEnum;
 import com.megajuegos.independencia.enums.BattleTypeEnum;
 import com.megajuegos.independencia.enums.BuildingTypeEnum;
+import com.megajuegos.independencia.enums.PersonalPricesEnum;
 import lombok.Builder;
 import lombok.Data;
 
@@ -28,6 +30,14 @@ public class PersonalPriceResponse {
 
     public static PersonalPriceResponse toDtoResponse(PersonalPrice entity){
 
+        String descripcion = "";
+        if(entity.getName().isActionOrder()){
+            descripcion = ActionTypeEnum.valueOf(entity.getName().name()).getDescripcion();
+        }
+        if (entity.getName().isBattleOrder()){
+            descripcion = BattleTypeEnum.valueOf(entity.getName().name()).getEfecto();
+        }
+
         return PersonalPriceResponse.builder()
                 .id(entity.getId())
                 .name(entity.getName().name())
@@ -37,11 +47,7 @@ public class PersonalPriceResponse {
                                 .filter(bEnum -> bEnum.name().equals(entity.getName().name()))
                                 .map(BuildingTypeEnum::getBonificacion)
                                 .findFirst().orElse(""))
-                .descripcion(
-                        Arrays.stream(BattleTypeEnum.values())
-                                .filter(bEnum -> bEnum.name().equals(entity.getName().name()))
-                                .map(BattleTypeEnum::getEfecto)
-                                .findFirst().orElse(""))
+                .descripcion(descripcion)
                 .plata(entity.getPlata())
                 .textil(entity.getTextil())
                 .agropecuaria(entity.getAgropecuaria())

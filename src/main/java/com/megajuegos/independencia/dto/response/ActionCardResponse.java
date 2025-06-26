@@ -12,6 +12,7 @@ public class ActionCardResponse {
     private Boolean alreadyPlayed;
     private Integer turnWhenPlayed;
     private String actionType;
+    private String descripcion;
 
     public static ActionCardResponse toDtoResponse(ActionCard entity){
 
@@ -21,6 +22,7 @@ public class ActionCardResponse {
                 .alreadyPlayed(entity.isAlreadyPlayed())
                 .turnWhenPlayed(entity.getTurnWhenPlayed())
                 .actionType(entity.getTipoAccion().name())
+                .descripcion(entity.getTipoAccion().getDescripcion())
                 .build();
     }
 }

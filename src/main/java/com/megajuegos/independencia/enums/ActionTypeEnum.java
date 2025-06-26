@@ -10,11 +10,11 @@ import java.util.Objects;
 @AllArgsConstructor
 public enum ActionTypeEnum {
 
-    MOVIMIENTO(1, "Movimiento", "Movés tu campamento a otra región", 0, ""),
-    ATAQUE(2, "Ataque", "Atacás a un ejército enemigo en una subregión que compartan", 0, ""),
+    MOVIMIENTO(1, "Movimiento", "Movés tu campamento a otra región adyacente a una subregión que ocupes", 0, ""),
+    ATAQUE(2, "Ataque", "Atacás a un ejército enemigo en una subregión que ocupes", 0, ""),
     DEFENSA(3, "Defensa", "Defendés un ataque en una región", 0, ""),
-    REACCION(4, "Reaccion", "Interceptás a un ejército enemigo que mueve su campamento a otra región", 0, ""),
-    DESPLIEGUE(5, "Despliegue", "Desplegás un ejército en una subregión", 0, ""),
+    REACCION(4, "Reaccion", "Interceptás a un ejército enemigo que mueve su campamento a otra región e iniciás una batalla", 0, ""),
+    DESPLIEGUE(5, "Despliegue", "Ocupás con un ejército una subregión adyacente a una que ya ocupes o a tu campamento", 0, ""),
     ACAMPE(6, "Acampar", "Movés tu campamento a otra subregión de esta región", 0, "");
     //NADA(7, "Nada", "0", 0, "");
 
