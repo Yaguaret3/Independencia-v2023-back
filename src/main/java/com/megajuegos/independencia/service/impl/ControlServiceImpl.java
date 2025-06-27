@@ -535,6 +535,8 @@ public class ControlServiceImpl implements ControlService {
     @Override
     public String deleteArmy(Long armyId) {
         Army army = armyRepository.findById(armyId).orElseThrow(() -> new ArmyNotFoundException(armyId));
+        List<BattleCard> cards = army.getCartasJugadas();
+        cards.forEach(c -> c.setArmy(null));
 
         CapitanData capitanData = army.getCapitanData();
         capitanData.getEjercito().remove(army);
