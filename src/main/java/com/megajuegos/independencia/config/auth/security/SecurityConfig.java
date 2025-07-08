@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/").permitAll()
                 .antMatchers(HttpMethod.GET, "/src/assets/img/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/assets/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/img/**").permitAll()
                 //LOGIN
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/register").permitAll()
