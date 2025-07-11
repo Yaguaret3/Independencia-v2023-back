@@ -18,7 +18,7 @@ public class GameDataTinyResponse {
     private List<GameRegionTinyResponse> gameRegions;
     private Integer turno;
     private Long nextEndOfTurn;
-    private PhaseEnum fase;
+    private String fase;
 
     public static GameDataTinyResponse toTinyResponse(GameData entity){
         return GameDataTinyResponse.builder()
@@ -33,7 +33,7 @@ public class GameDataTinyResponse {
                         .collect(Collectors.toList()))
                 .turno(entity.getTurno())
                 .nextEndOfTurn(entity.getNextEndOfTurn())
-                .fase(entity.getFase())
+                .fase(entity.getFase().getNombre())
                 .build();
     }
 }

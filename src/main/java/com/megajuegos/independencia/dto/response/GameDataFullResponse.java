@@ -45,7 +45,7 @@ public class GameDataFullResponse {
                         .collect(Collectors.toList()))
                 .turno(entity.getTurno())
                 .nextEndOfTurn(entity.getNextEndOfTurn())
-                .fase(entity.getFase().name())
+                .fase(entity.getFase().getNombre())
                 .edificios(Arrays.stream(BuildingTypeEnum.values())
                         .map(b -> BuildingResponse.builder()
                                 .id(b.getId().longValue())

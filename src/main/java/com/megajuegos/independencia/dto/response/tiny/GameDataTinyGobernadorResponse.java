@@ -26,7 +26,7 @@ public class GameDataTinyGobernadorResponse {
                         .collect(Collectors.toList()))
                 .turno(entity.getTurno())
                 .nextEndOfTurn(entity.getNextEndOfTurn())
-                .fase(entity.getFase().name())
+                .fase(entity.getFase().getNombre())
                 .build();
     }
 }

@@ -24,7 +24,7 @@ public class GameDataTinyCapitanResponse {
     private List<GameRegionVeryTinyResponse> gameRegionsTiny;
     private Integer turno;
     private Long nextEndOfTurn;
-    private PhaseEnum fase;
+    private String fase;
 
     public static GameDataTinyCapitanResponse toDtoResponse(CapitanData capitanData){
 
@@ -48,7 +48,7 @@ public class GameDataTinyCapitanResponse {
 
                 .turno(gameData.getTurno())
                 .nextEndOfTurn(gameData.getNextEndOfTurn())
-                .fase(gameData.getFase())
+                .fase(gameData.getFase().getNombre())
                 .gameRegionsTiny(gameData.getGameRegions().stream()
                         .map(GameRegionVeryTinyResponse::toVeryTinyDto)
                         .collect(Collectors.toList()))
