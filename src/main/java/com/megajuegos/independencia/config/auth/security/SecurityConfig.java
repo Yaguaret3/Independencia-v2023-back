@@ -38,6 +38,11 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/src/assets/img/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/assets/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/img/**").permitAll()
+
+                //ACTUATOR
+                .antMatchers("/actuator/**").permitAll()
+
+
                 //LOGIN
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/register").permitAll()
