@@ -270,7 +270,7 @@ public class GobernadorServiceImpl implements GobernadorService {
     public void recruitMilitia(PaymentRequestUtil request) {
 
         /** CANTIDAD MILICIA = 3?*/
-        int cantidadMilicias= 1;
+        int cantidadMilicias= 3;
 
         GobernadorData gobernadorData = getPlayerData();
 
