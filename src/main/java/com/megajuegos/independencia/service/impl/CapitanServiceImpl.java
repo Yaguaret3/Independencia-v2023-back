@@ -141,6 +141,10 @@ public class CapitanServiceImpl implements CapitanService {
 
         ActionCard actionCard = (ActionCard) card;
 
+        if (PhaseEnum.REVEALING.equals(capitanData.getGameData().getFase())) {
+            throw new IncorrectPhaseException();
+        }
+        
         if (Arrays.asList(ActionTypeEnum.ACAMPE, ActionTypeEnum.MOVIMIENTO, ActionTypeEnum.REACCION).contains(actionCard.getTipoAccion())) {
             throw new IncorrectPhaseException();
         }
