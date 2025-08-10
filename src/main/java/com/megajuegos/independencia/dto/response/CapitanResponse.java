@@ -53,6 +53,7 @@ public class CapitanResponse {
                         .collect(Collectors.toList()))
                 .recursos((util.getResourceCardList()
                         .stream()
+                        .filter(a -> !a.isAlreadyPlayed())
                         .map(ResourceCardResponse::toDtoResponse)
                         .collect(Collectors.toList())))
                 .prices(CapitanPricesResponse.toDtoResponse(entity.getPrices()))
