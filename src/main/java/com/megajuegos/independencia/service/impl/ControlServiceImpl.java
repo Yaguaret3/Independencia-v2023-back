@@ -743,7 +743,6 @@ public class ControlServiceImpl implements ControlService {
 
             request.getResultados().forEach(r -> {
 
-
                 CapitanData capitanData = army.getCapitanData();
 
                 if (Objects.equals(army.getId(), r.getArmyId()) && r.isDestruido()) {

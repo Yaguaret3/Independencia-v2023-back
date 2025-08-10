@@ -9,6 +9,7 @@ public class CampResponse {
 
     private Long id;
     private Long capitanId;
+    private String capitanName;
     private Integer nivel;
     private Long gameSubregionId;
     private String gameSubregionName;
@@ -19,6 +20,7 @@ public class CampResponse {
         return CampResponse.builder()
                 .id(entity.getId())
                 .capitanId(entity.getCapitanData().getId())
+                .capitanName(entity.getCapitanData().getUser().getUsername())
                 .nivel(entity.getNivel())
                 .gameSubregionId(entity.getSubregion().getId())
                 .gameSubregionName(entity.getSubregion().getNombre())
