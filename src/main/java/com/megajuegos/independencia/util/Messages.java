@@ -6,7 +6,7 @@ public class Messages {
         throw new IllegalStateException("Utility class");
     }
 
-    public static final String USERNAME_ALREADY_EXISTS = "El nombre de usuario ya existe. Por favor, elegí otro";
+    public static final String USERNAME_ALREADY_EXISTS = "El nombre de usuario ya existe. Por favor, elegí otro.";
     public static final String TOO_MANY_SOCKET_CONNECTIONS = "Conexiones en tiempo real permitidas superadas. Esta pantalla no se actualizará automáticamente.";
     public static final String USER_NOT_FOUND_BY_EMAIL = "No existe un usuario con ese email";
     public static final String USER_NOT_FOUND_BY_ID = "No existe un usuario con esa id";
