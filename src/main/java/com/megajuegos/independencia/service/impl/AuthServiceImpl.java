@@ -43,8 +43,12 @@ public class AuthServiceImpl implements AuthService {
     public AuthenticateResponse register(RegisterRequest request) {
 
         userRepository.findAll().forEach(u -> {
+
             if(u.getEmail().equalsIgnoreCase(request.getEmail())){
                 throw new EmailAlreadyExistsException(request.getEmail());
+            }
+            if(u.getUsername().equalsIgnoreCase(request.getUsername())){
+                throw new CredentialsException(USERNAME_ALREADY_EXISTS);
             }
         });
 
