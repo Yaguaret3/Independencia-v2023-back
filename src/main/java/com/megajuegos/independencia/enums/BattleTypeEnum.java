@@ -10,11 +10,11 @@ public enum BattleTypeEnum {
 
     //VALOR DE ATAQUE
     CARGA_DE_INFANTERIA(1, "Carga de infantería", "Suma una vez más el valor de las milicias involucradas al ejército"),
-    FUEGO_DE_ARTILLERIA(2, "Movimiento en pinzas", "Suma una vez más el doble del valor de las milicias involucradas al ejército"),
+    FUEGO_DE_ARTILLERIA(2, "Fuego de artillería", "Suma una vez más el doble del valor de las milicias involucradas al ejército"),
     FLANQUEO_DE_CABALLERIA(3, "Flanqueo de caballería", "Reduce a la mitad el valor del ejército rival"),
 
     //ANULA EFECTO
-    MOVIMIENTO_EN_PINZAS(4, "Fuego de artillería", "Anula el efecto de la anterior carta rival"),
+    MOVIMIENTO_EN_PINZAS(4, "Movimiento en pinzas", "Anula el efecto de la anterior carta rival"),
     FALSA_RETIRADA(5, "Falsa retirada", "Anula el efecto de la siguiente carta rival"),
 
     //CAMBIOS AL FINAL

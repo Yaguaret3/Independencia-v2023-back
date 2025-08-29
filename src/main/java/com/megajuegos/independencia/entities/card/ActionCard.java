@@ -5,6 +5,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Entity
 @Getter
@@ -14,5 +16,6 @@ import javax.persistence.Entity;
 @SuperBuilder
 public class ActionCard extends Card {
 
+    @Enumerated(EnumType.STRING)
     private ActionTypeEnum tipoAccion;
 }

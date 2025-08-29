@@ -16,6 +16,7 @@ import javax.persistence.*;
 @SuperBuilder
 public class BattleCard extends Card {
 
+    @Enumerated(EnumType.STRING)
     private BattleTypeEnum tipoOrdenDeBatalla;
     @ManyToOne
     private Army army; // owning side

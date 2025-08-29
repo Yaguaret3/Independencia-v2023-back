@@ -18,11 +18,13 @@ import com.megajuegos.independencia.service.PaymentService;
 import com.megajuegos.independencia.service.util.GameIdUtil;
 import com.megajuegos.independencia.service.util.UserUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.InstanceNotFoundException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static com.megajuegos.independencia.enums.ActionTypeEnum.*;
@@ -30,6 +32,7 @@ import static com.megajuegos.independencia.enums.ActionTypeEnum.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CapitanServiceImpl implements CapitanService {
 
     private final GameSubRegionRepository gameSubRegionRepository;
@@ -93,7 +96,12 @@ public class CapitanServiceImpl implements CapitanService {
     public void buyBattleCards(BuyRequest request) throws InstanceNotFoundException {
 
         CapitanData capitanData = getPlayerData();
-        PersonalPricesEnum priceEnum = capitanData.getPrices().stream()
+        List<PersonalPrice> personalPrices = capitanData.getPrices();
+
+        log.info("Request Card Id: {}", request.getCardTypeId());
+        personalPrices.forEach(pp -> log.info("Personal Price Id: {}, Name: {}", pp.getId(), pp.getName().name()));
+
+        PersonalPricesEnum priceEnum = personalPrices.stream()
                 .filter(p -> request.getCardTypeId().equals(p.getId()))
                 .map(PersonalPrice::getName)
                 .findFirst()
@@ -102,7 +110,13 @@ public class CapitanServiceImpl implements CapitanService {
         if (Boolean.FALSE.equals(paymentService.isPaymentSuccessful(capitanData, request.getPayment(), priceEnum)))
             throw new PaymentNotPossibleException();
 
+        log.info("priceEnum: {}", priceEnum.name());
+        log.info("battleTypes:");
+        for(BattleTypeEnum b : BattleTypeEnum.values()){
+            log.info("Id: {}, Name: {}", b.getId(), b.name());
+        }
         BattleTypeEnum battleType = BattleTypeEnum.fromName(priceEnum.name());
+        log.info("BattleTypeEnum: {}", battleType.getNombre());
 
         Card card = BattleCard.builder()
                 .tipoOrdenDeBatalla(battleType)

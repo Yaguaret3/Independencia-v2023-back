@@ -16,6 +16,7 @@ public class PersonalPrice {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
     private PersonalPricesEnum name;
     @ManyToOne
     private PlayerData playerData; // owning side
