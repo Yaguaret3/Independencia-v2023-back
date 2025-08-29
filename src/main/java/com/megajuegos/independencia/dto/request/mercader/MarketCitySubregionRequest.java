@@ -7,6 +7,7 @@ import org.springframework.lang.Nullable;
 public class MarketCitySubregionRequest {
 
     private Long id;
+    private String name;
     @Nullable
     private Long cityMarketCardId;
     private Long position;

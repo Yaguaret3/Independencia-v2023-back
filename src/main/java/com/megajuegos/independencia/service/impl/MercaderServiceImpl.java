@@ -95,12 +95,20 @@ public class MercaderServiceImpl implements MercaderService {
         mercaderData.getRoutes().add(route);
         playerDataRepository.save(mercaderData);
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("Planificaste una ruta comercial por: ");
+        for(int i = 0; i<roads.size(); i++){
+            sb.append(roads.get(i).getName());
+            if(i<roads.size()-1){
+                sb.append(" -> ");
+            } else {
+                sb.append(".");
+            }
+        }
         Log log = Log.builder()
                 .turno(mercaderData.getGameData().getTurno())
                 .tipo(LogTypeEnum.ENVIADO)
-                .nota(String.format("Creaste una ruta comercial que atraviesa %s subregiones y %s ciudades",
-                        route.getSubregions().size(),
-                        route.getSubregions().stream().filter(s -> s.getCity() != null).count()))
+                .nota(sb.toString())
                 .player(mercaderData)
                 .build();
 
