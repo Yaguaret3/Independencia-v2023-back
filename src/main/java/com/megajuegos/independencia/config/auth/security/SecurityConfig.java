@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/assets/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/img/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/sounds/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/sol_de_mayo.svg").permitAll()
 
                 //ACTUATOR
                 .antMatchers("/actuator/**").permitAll()
