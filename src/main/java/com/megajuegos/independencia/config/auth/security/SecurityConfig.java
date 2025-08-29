@@ -35,9 +35,9 @@ public class SecurityConfig {
 
                 //PUBLIC
                 .antMatchers(HttpMethod.GET, "/").permitAll()
-                .antMatchers(HttpMethod.GET, "/src/assets/img/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/assets/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/img/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/sounds/**").permitAll()
 
                 //ACTUATOR
                 .antMatchers("/actuator/**").permitAll()
