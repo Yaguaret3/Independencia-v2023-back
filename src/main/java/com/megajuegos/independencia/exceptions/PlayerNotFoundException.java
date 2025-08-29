@@ -9,4 +9,8 @@ public class PlayerNotFoundException extends GenericNotFoundException {
     public PlayerNotFoundException() {
         super(0L, "el jugador logueado");
     }
+
+    public PlayerNotFoundException(String message) {
+        super(message);
+    }
 }

@@ -16,6 +16,7 @@ import com.megajuegos.independencia.repository.data.GobernadorDataRepository;
 import com.megajuegos.independencia.repository.data.PlayerDataRepository;
 import com.megajuegos.independencia.service.SettingsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ import static com.megajuegos.independencia.util.Messages.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class SettingsServiceImpl implements SettingsService {
 
     private final UserIndependenciaRepository userRepository;
@@ -143,11 +145,14 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public String removeRoles(ManageRolesRequest request) {
 
-        PlayerData playerData = playerDataRepository.findById(request.getId())
+        UserIndependencia user = userRepository.findById(request.getId())
                 .orElseThrow(() -> new UserIndependenciaNotFound(request.getId()));
+
+        PlayerData playerData = user.getPlayerDataList().stream().findFirst()
+                .orElseThrow(() -> new PlayerNotFoundException(String.format(NO_PLAYER_DATA_FOR_USER, user.getUsername())));
         Long gameDataId = playerData.getGameData().getId();
 
-        UserIndependencia user = playerData.getUser();
+        user.getRoles().forEach(r -> log.info(r.name()));
 
         if (!user.getRoles().contains(request.getRole())) {
             throw new WrongRoleException();

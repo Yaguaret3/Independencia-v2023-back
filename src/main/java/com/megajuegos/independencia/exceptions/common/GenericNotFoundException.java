@@ -5,4 +5,7 @@ public class GenericNotFoundException extends RuntimeException{
     public GenericNotFoundException(Long id, String element){
         super(String.format("No se encuentra %s con id: %s", element, id));
     }
+    public GenericNotFoundException(String message){
+        super(message);
+    }
 }

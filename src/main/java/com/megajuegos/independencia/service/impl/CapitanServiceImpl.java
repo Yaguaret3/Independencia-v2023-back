@@ -98,9 +98,6 @@ public class CapitanServiceImpl implements CapitanService {
         CapitanData capitanData = getPlayerData();
         List<PersonalPrice> personalPrices = capitanData.getPrices();
 
-        log.info("Request Card Id: {}", request.getCardTypeId());
-        personalPrices.forEach(pp -> log.info("Personal Price Id: {}, Name: {}", pp.getId(), pp.getName().name()));
-
         PersonalPricesEnum priceEnum = personalPrices.stream()
                 .filter(p -> request.getCardTypeId().equals(p.getId()))
                 .map(PersonalPrice::getName)
@@ -110,13 +107,7 @@ public class CapitanServiceImpl implements CapitanService {
         if (Boolean.FALSE.equals(paymentService.isPaymentSuccessful(capitanData, request.getPayment(), priceEnum)))
             throw new PaymentNotPossibleException();
 
-        log.info("priceEnum: {}", priceEnum.name());
-        log.info("battleTypes:");
-        for(BattleTypeEnum b : BattleTypeEnum.values()){
-            log.info("Id: {}, Name: {}", b.getId(), b.name());
-        }
         BattleTypeEnum battleType = BattleTypeEnum.fromName(priceEnum.name());
-        log.info("BattleTypeEnum: {}", battleType.getNombre());
 
         Card card = BattleCard.builder()
                 .tipoOrdenDeBatalla(battleType)
