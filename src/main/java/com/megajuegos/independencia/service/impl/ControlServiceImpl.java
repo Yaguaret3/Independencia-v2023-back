@@ -375,12 +375,12 @@ public class ControlServiceImpl implements ControlService {
         route.setComentario(request.getComentario());
         routeRepository.save(route);
 
-        return TRADESCORE_ASSIGNED;
+        return TRADESCORE_UPDATED;
     }
 
     @Override
     public String updatePrices(Long priceId, Map<String, Integer> request) {
-        PersonalPrice price = priceRepository.findById(priceId).orElseThrow(() -> new PriceNotFoundException());
+        PersonalPrice price = priceRepository.findById(priceId).orElseThrow(PriceNotFoundException::new);
         request.forEach((key, value) -> {
 
             Field field = ReflectionUtils.findField(PersonalPrice.class, key);
@@ -389,6 +389,17 @@ public class ControlServiceImpl implements ControlService {
         });
         priceRepository.save(price);
         return PRICE_UPDATED;
+    }
+
+    @Override
+    public String updateTradeScore(Long playerId, SoleValueRequest request) {
+        PlayerData playerData = playerDataRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException(playerId));
+        if (playerData instanceof MercaderData) {
+            MercaderData mercaderData = (MercaderData) playerData;
+            mercaderData.setPuntajeComercial(request.getNewValue());
+            playerDataRepository.save(mercaderData);
+        }
+        return TRADESCORE_ASSIGNED;
     }
 
     @Override

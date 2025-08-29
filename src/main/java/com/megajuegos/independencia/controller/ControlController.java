@@ -98,6 +98,11 @@ public class ControlController {
                                                @RequestBody Map<String, Integer> request){
         return ResponseEntity.ok(service.updatePrices(priceId, request));
     }
+    @PostMapping("/{playerId}/update-trade-score")
+    public ResponseEntity<String> updateTradeScore(@PathVariable Long playerId,
+                                               @RequestBody SoleValueRequest request){
+        return ResponseEntity.ok(service.updateTradeScore(playerId, request));
+    }
 
     @PostMapping("/{votationId}/update-votation")
     public ResponseEntity<String> updateVotation(@PathVariable Long votationId, @RequestBody UpdateVotationRequest request){

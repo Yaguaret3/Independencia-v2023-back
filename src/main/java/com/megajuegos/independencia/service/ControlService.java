@@ -10,13 +10,21 @@ import java.util.Map;
 public interface ControlService {
 
     String createAndGiveResourceCard(Long playerDataId, NewResourceCardRequest request);
+
     String moveCard(Long from, Long to, Long carta);
+
     String removeCard(Long idCard);
+
     GameDataFullResponse getFullData();
+
     String solveBattle(SolveBattleRequest request);
+
     String createAndGiveRepresentationCard(Long playerDataId, NewRepresentationCardRequest request) throws InstanceNotFoundException;
+
     String createAndGiveMarketCard(Long playerId, NewMarketCardRequest request);
+
     String createAndAssignPersonalPrice(Long playerDataId);
+
     String assignCongressPresident(Long revolucionarioId);
 
     String concludePhase();
@@ -32,6 +40,8 @@ public interface ControlService {
     String updateRoute(Long routeId, AssignRouteValueRequest request);
 
     String updatePrices(Long priceId, Map<String, Integer> request);
+
+    String updateTradeScore(Long playerId, SoleValueRequest request);
 
     String updateVotation(Long votationId, UpdateVotationRequest request);
 
@@ -68,5 +78,7 @@ public interface ControlService {
     String createAndGiveActionCard(Long playerId, NewActionCardRequest request);
 
     String createAndGiveBattleCard(Long playerId, NewBattleCardRequest request);
+
+
 }
 
