@@ -6,6 +6,7 @@ public class Messages {
         throw new IllegalStateException("Utility class");
     }
 
+    public static final String USERNAME_UPDATED = "Nombre de usuario actualizado con éxito";
     public static final String USERNAME_ALREADY_EXISTS = "El nombre de usuario ya existe. Por favor, elegí otro.";
     public static final String NO_PLAYER_DATA_FOR_USER = "No hay datos de jugador para el usuario %s";
     public static final String TOO_MANY_SOCKET_CONNECTIONS = "Conexiones en tiempo real permitidas superadas. Esta pantalla no se actualizará automáticamente.";

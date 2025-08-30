@@ -3,6 +3,7 @@ package com.megajuegos.independencia.controller;
 import com.megajuegos.independencia.dto.request.settings.AssignCityRequest;
 import com.megajuegos.independencia.dto.request.settings.CreateGameRequest;
 import com.megajuegos.independencia.dto.request.settings.ManageRolesRequest;
+import com.megajuegos.independencia.dto.request.settings.UpdateUsernameRequest;
 import com.megajuegos.independencia.dto.response.settings.SettingsCityResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsGameDataResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsUserResponse;
@@ -35,6 +36,11 @@ public class SettingsController {
     @PostMapping("/remove-role")
     public ResponseEntity<String> removeRole(@RequestBody ManageRolesRequest request){
         return ResponseEntity.ok(service.removeRoles(request));
+    }
+
+    @PostMapping("/update-username")
+    public ResponseEntity<String> updateUsername(@RequestBody UpdateUsernameRequest request){
+        return ResponseEntity.ok(service.updateUsername(request));
     }
 
     @GetMapping("/get-city")

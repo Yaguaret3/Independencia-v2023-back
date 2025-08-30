@@ -3,6 +3,7 @@ package com.megajuegos.independencia.service.impl;
 import com.megajuegos.independencia.dto.request.settings.AssignCityRequest;
 import com.megajuegos.independencia.dto.request.settings.CreateGameRequest;
 import com.megajuegos.independencia.dto.request.settings.ManageRolesRequest;
+import com.megajuegos.independencia.dto.request.settings.UpdateUsernameRequest;
 import com.megajuegos.independencia.dto.response.settings.SettingsCityResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsGameDataResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsUserResponse;
@@ -294,6 +295,15 @@ public class SettingsServiceImpl implements SettingsService {
                 .filter(Objects::nonNull)
                 .map(SettingsCityResponse::toSettingsReponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String updateUsername(UpdateUsernameRequest request) {
+        UserIndependencia user = userRepository.findById(request.getId())
+                .orElseThrow(() -> new UserIndependenciaNotFound(request.getId()));
+        user.setUsername(request.getUsername());
+        userRepository.save(user);
+        return USERNAME_UPDATED;
     }
 
     /*

@@ -3,6 +3,7 @@ package com.megajuegos.independencia.service;
 import com.megajuegos.independencia.dto.request.settings.AssignCityRequest;
 import com.megajuegos.independencia.dto.request.settings.CreateGameRequest;
 import com.megajuegos.independencia.dto.request.settings.ManageRolesRequest;
+import com.megajuegos.independencia.dto.request.settings.UpdateUsernameRequest;
 import com.megajuegos.independencia.dto.response.settings.SettingsCityResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsGameDataResponse;
 import com.megajuegos.independencia.dto.response.settings.SettingsUserResponse;
@@ -24,4 +25,6 @@ public interface SettingsService {
     List<SettingsUserResponse> getUsers();
 
     List<SettingsCityResponse> getCities();
+
+    String updateUsername(UpdateUsernameRequest request);
 }
