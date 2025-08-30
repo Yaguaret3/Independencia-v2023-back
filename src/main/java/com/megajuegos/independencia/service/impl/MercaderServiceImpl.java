@@ -227,6 +227,11 @@ public class MercaderServiceImpl implements MercaderService {
     private Route savedRoute(SingleTradeRouteRequest request, MercaderData mercaderData) {
 
         List<GameSubRegion> subregions = subregionRepository.findAllById(request.getSubregions().stream().map(MarketCitySubregionRequest::getId).collect(Collectors.toList()));
+        Map<Long, GameSubRegion> subregionMap = subregions.stream().collect(Collectors.toMap(GameSubRegion::getId, sr -> sr));
+        List<GameSubRegion> sortedSubregions = request.getSubregions().stream()
+                .sorted(Comparator.comparing(MarketCitySubregionRequest::getPosition))
+                .map(marketSubregion -> subregionMap.get(marketSubregion.getId()))
+                .collect(Collectors.toList());
         Long provisionTradeScore = request.getSubregions().stream()
                 .filter(marketSubregion -> marketSubregion.getCityMarketCardId() != null)
                 .map(marketSubregion -> (MarketCard) cardRepository.findById(marketSubregion.getCityMarketCardId()).orElseThrow(() -> new CardNotFoundException(marketSubregion.getCityMarketCardId())))
@@ -236,7 +241,7 @@ public class MercaderServiceImpl implements MercaderService {
         removeCards(request.getSubregions(), mercaderData);
 
         return Route.builder()
-                .subregions(subregions)
+                .subregions(sortedSubregions)
                 .tradeScore(provisionTradeScore)
                 .turn(mercaderData.getGameData().getTurno())
                 .mercader(mercaderData)
