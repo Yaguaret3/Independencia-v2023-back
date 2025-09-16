@@ -94,7 +94,7 @@ public enum PersonalPricesEnum {
                     .build();
         }
     },
-    RECAUDADOR(10, "Recaudador", RoleEnum.GOBERNADOR,true, false, false) {
+    SECRETARIA_DE_FINANZAS(10, "Secretaría de finanzas", RoleEnum.GOBERNADOR,true, false, false) {
         @Override
         public PersonalPrice getInitialPrices() {
             return PersonalPrice.builder()
