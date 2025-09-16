@@ -316,7 +316,7 @@ public class CapitanServiceImpl implements CapitanService {
 
         actionRepository.save(Action.builder()
                 .capitanId(capitanData)
-                .actionType(ActionTypeEnum.DESPLIEGUE)
+                .actionType(ActionTypeEnum.MOVIMIENTO)
                 .solved(false)
                 .gameRegion(regionTo)
                 .build());
