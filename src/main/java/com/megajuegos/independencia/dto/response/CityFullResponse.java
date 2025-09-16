@@ -23,6 +23,7 @@ public class CityFullResponse {
     private Integer taxesLevel;
     private Integer prestige;
     private Long gobernadorId;
+    private String gobernadorName;
     private List<BuildingResponse> buildings;
 
     public static CityFullResponse toDtoResponse(City entity){
@@ -35,6 +36,7 @@ public class CityFullResponse {
                 .taxesLevel(entity.getTaxesLevel())
                 .prestige(entity.getPrestige())
                 .gobernadorId(entity.getGobernadorData() == null ? null : entity.getGobernadorData().getId())
+                .gobernadorName(entity.getGobernadorData() == null ? null : entity.getGobernadorData().getUser().getUsername())
                 .buildings(entity.getBuildings().stream()
                         .map(edificio -> new BuildingResponse().toDtoResponse(edificio))
                         .collect(Collectors.toList()))
