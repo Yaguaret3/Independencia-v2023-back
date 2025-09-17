@@ -46,6 +46,7 @@ public class SettingsServiceImpl implements SettingsService {
     private final LogRepository logRepository;
     private final CardRepository cardRepository;
     private final RouteRepository routeRepository;
+    private final ArmyRepository armyRepository;
 
     @Override
     public String createGame(CreateGameRequest request) {
@@ -183,6 +184,8 @@ public class SettingsServiceImpl implements SettingsService {
         if (playerData instanceof CapitanData) {
             Camp camp = ((CapitanData) playerData).getCamp();
             campRepository.delete(camp);
+            List<Army> armies = ((CapitanData) playerData).getEjercito();
+            armyRepository.deleteAll(armies);
         }
         personalPriceRepository.deleteAll(prices);
         logRepository.deleteAll(logs);
