@@ -80,6 +80,15 @@ public class ControlServiceImpl implements ControlService {
 
         playerData.getCards().add(card);
         playerDataRepository.save(playerData);
+
+        Log log = Log.builder()
+                .turno(playerData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste y diste una carta de %s a %s", request.getResourceType().name(), playerData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CARD_CREATED_GIVEN;
     }
 
@@ -98,6 +107,15 @@ public class ControlServiceImpl implements ControlService {
         playerData.getCards().add(card);
 
         playerDataRepository.save(playerData);
+
+        Log log = Log.builder()
+                .turno(playerData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste y diste una carta de representación de la ciudad de %s a %s", request.getCityName(), playerData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CARD_CREATED_GIVEN;
     }
 
@@ -121,6 +139,15 @@ public class ControlServiceImpl implements ControlService {
         playerData.getCards().add(card);
 
         playerDataRepository.save(playerData);
+
+        Log log = Log.builder()
+                .turno(playerData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste y diste una carta de mercado de %s de nivel %s a %s", request.getCityName(), request.getLevel(), playerData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CARD_CREATED_GIVEN;
     }
 
@@ -142,6 +169,15 @@ public class ControlServiceImpl implements ControlService {
         playerData.getCards().add(card);
 
         playerDataRepository.save(playerData);
+
+        Log log = Log.builder()
+                .turno(playerData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste y diste una carta extra a %s", playerData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CARD_CREATED_GIVEN;
     }
 
@@ -158,6 +194,15 @@ public class ControlServiceImpl implements ControlService {
         cardRepository.save(card);
         playerData.getCards().add(card);
         playerDataRepository.save(playerData);
+
+        Log log = Log.builder()
+                .turno(playerData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste y diste una carta de %s a %s", request.getActionType().name(), playerData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CARD_CREATED_GIVEN;
     }
 
@@ -174,6 +219,15 @@ public class ControlServiceImpl implements ControlService {
         cardRepository.save(card);
         playerData.getCards().add(card);
         playerDataRepository.save(playerData);
+
+        Log log = Log.builder()
+                .turno(playerData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste y diste una carta de %s a %s", request.getBattleType().name(), playerData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CARD_CREATED_GIVEN;
     }
 
@@ -195,6 +249,15 @@ public class ControlServiceImpl implements ControlService {
         );
         playerData.getPrices().add(price);
         playerDataRepository.save(playerData);
+
+        Log log = Log.builder()
+                .turno(playerData.getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste y diste precios de %s", playerData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return PERSONAL_PRICE_ASSIGNED;
     }
 
@@ -219,6 +282,14 @@ public class ControlServiceImpl implements ControlService {
 
         revolucionarioRepository.saveAll(congreso.getRevolucionarios());
 
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Asignaste como Presidente del Congreso de %s a %s", congreso.getSede().getName(), revolucionario.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CONGRESS_PRESIDENT_ASSIGNED;
     }
 
@@ -230,6 +301,15 @@ public class ControlServiceImpl implements ControlService {
         if (controlData.getSiguienteFaseSolicitada()) {
             controlData.setSiguienteFaseSolicitada(false);
             controlDataRepository.save(controlData);
+
+            Log log = Log.builder()
+                    .turno(controlData.getGameData().getTurno())
+                    .tipo(LogTypeEnum.ENVIADO)
+                    .nota("Cancelaste la solicitud de cambio de fase")
+                    .player(controlData)
+                    .build();
+            logRepository.save(log);
+
             return CONCLUDE_PHASE_CANCELLED;
         }
 
@@ -264,6 +344,15 @@ public class ControlServiceImpl implements ControlService {
         }
 
         controlDataRepository.save(controlData);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota("Solicitaste el cambio de fase")
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CONCLUDE_PHASE_REQUESTED;
     }
 
@@ -289,6 +378,14 @@ public class ControlServiceImpl implements ControlService {
         playerDataRepository.save(from);
         playerDataRepository.save(to);
 
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Le diste una carta de %s a %s", from.getUser().getUsername(), to.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CARD_MOVED;
     }
 
@@ -299,6 +396,15 @@ public class ControlServiceImpl implements ControlService {
         playerData.getCards().remove(card);
         playerDataRepository.save(playerData);
         cardRepository.delete(card);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Quitaste una carta a %s", playerData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CARD_REMOVED;
     }
 
@@ -334,6 +440,15 @@ public class ControlServiceImpl implements ControlService {
             ReflectionUtils.setField(field, city, value);
         });
         cityRepository.save(city);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Actualizaste la ciudad %s", city.getName()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CITY_UPDATED;
     }
 
@@ -346,6 +461,14 @@ public class ControlServiceImpl implements ControlService {
         city.getBuildings().remove(building);
         cityRepository.save(city);
         buildingRepository.delete(building);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Quitaste un edificio [%s] de %s", building.getBuildingType().name(), city.getName()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
 
         return BUILDING_REMOVED;
     }
@@ -364,6 +487,13 @@ public class ControlServiceImpl implements ControlService {
         city.getBuildings().add(building);
         cityRepository.save(city);
 
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Asignaste un edificio [%s] a %s", building.getBuildingType(), city.getName()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
 
         return BUILDING_CREATED;
     }
@@ -374,6 +504,14 @@ public class ControlServiceImpl implements ControlService {
         route.setTradeScore(request.getFinalValue());
         route.setComentario(request.getComentario());
         routeRepository.save(route);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Actualizaste una ruta comercial de %s", route.getMercader().getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
 
         return TRADESCORE_UPDATED;
     }
@@ -388,6 +526,15 @@ public class ControlServiceImpl implements ControlService {
             ReflectionUtils.setField(field, price, value);
         });
         priceRepository.save(price);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Actualizaste los precios de %s", price.getPlayerData().getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return PRICE_UPDATED;
     }
 
@@ -399,6 +546,15 @@ public class ControlServiceImpl implements ControlService {
             mercaderData.setPuntajeComercial(request.getNewValue());
             playerDataRepository.save(mercaderData);
         }
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Actualizaste el valor de la ruta comercial de %s", playerData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return TRADESCORE_ASSIGNED;
     }
 
@@ -411,6 +567,15 @@ public class ControlServiceImpl implements ControlService {
         if (request.getActive() != null) {
             votation.setActive(request.getActive());
         }
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Actualizaste la votación del Congreso de %s", votation.getCongreso().getSede().getName()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return VOTATION_UPDATED;
     }
 
@@ -430,6 +595,15 @@ public class ControlServiceImpl implements ControlService {
         voteRepository.save(vote);
         votation.getVotes().add(vote);
         votationRepository.save(votation);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Agregaste un voto %s a la votación del Congreso de %s", vote.getVoteType().getLabel(), votation.getCongreso().getSede().getName()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return VOTE_ADDED;
     }
 
@@ -438,6 +612,15 @@ public class ControlServiceImpl implements ControlService {
         Vote vote = voteRepository.findById(voteId).orElseThrow(() -> new VoteNotFoundException(voteId));
         vote.setVoteType(request.getVoteType());
         voteRepository.save(vote);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Actualizaste un voto de%s a %s", vote.getRevolucionarioData().getUser().getUsername(), vote.getVoteType()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return VOTE_UPDATED;
     }
 
@@ -491,6 +674,14 @@ public class ControlServiceImpl implements ControlService {
 
         armyRepository.saveAll(ejercitosInvolucrados);
 
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste una batalla en %s con %s", gameSubRegionInvolucrada.getNombre(), ejercitosInvolucrados.stream().map(e -> e.getCapitanData().getUser().getUsername()).collect(Collectors.joining(", "))))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return BATTLE_CREATED;
     }
 
@@ -523,6 +714,15 @@ public class ControlServiceImpl implements ControlService {
         }
 
         battleRepository.save(battle);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Asignaste valores random a la batalla de %s", battle.getSubregion().getNombre()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return BATTLE_VALUES_ASSIGNED;
     }
 
@@ -540,6 +740,14 @@ public class ControlServiceImpl implements ControlService {
             playerDataRepository.save(gobernadorData);
         }
 
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Asignaste %s unidades de milicia a %s", militia, playerData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return RESERVE_ASSIGNED;
     }
 
@@ -554,6 +762,14 @@ public class ControlServiceImpl implements ControlService {
 
         capitanRepository.save(capitanData);
         armyRepository.deleteById(armyId);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Eliminaste el ejército de %s", capitanData.getUser().getUsername()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
 
         return ARMY_DELETED;
     }
@@ -572,6 +788,15 @@ public class ControlServiceImpl implements ControlService {
         armyRepository.save(army);
         capitanData.getEjercito().add(army);
         capitanRepository.save(capitanData);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste un ejército de %s en %s", capitanData.getUser().getUsername(), gameSubRegion.getNombre()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return ARMY_CREATED;
     }
 
@@ -591,6 +816,15 @@ public class ControlServiceImpl implements ControlService {
         camp.setGameRegion(gameSubRegion.getGameRegion());
 
         capitanRepository.save(capitanData);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Moviste el campamento de %s hacia %s", capitanData.getUser().getUsername(), gameSubRegion.getNombre()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CAMP_MOVED;
     }
 
@@ -624,6 +858,14 @@ public class ControlServiceImpl implements ControlService {
         playerDataRepository.save(actualPlayer);
         playerDataRepository.save(revolucionarioData);
 
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Asignaste a %s como diputado de %s", revolucionarioData.getUser().getUsername(), city.getName()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return NEW_DIPUTADO_ASSIGNED;
     }
 
@@ -642,6 +884,15 @@ public class ControlServiceImpl implements ControlService {
             revolucionarioData.setPlata(plata);
             playerDataRepository.save(revolucionarioData);
         }
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Actualizaste la plata de %s a %s", playerData.getUser().getUsername(), plata))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return PLATA_ASSIGNED;
     }
 
@@ -662,6 +913,15 @@ public class ControlServiceImpl implements ControlService {
         cityRepository.save(sede);
 
         congresoRepository.deleteById(congresoId);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Eliminaste el congreso de %s", sede.getName()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CONGRESS_REMOVED;
     }
 
@@ -685,6 +945,14 @@ public class ControlServiceImpl implements ControlService {
             }
         });
         revolucionarioRepository.saveAll(congreso.getRevolucionarios());
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Actualizaste el Congreso de %s", congreso.getSede().getName()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
 
         return CONGRESS_UPDATED;
     }
@@ -719,6 +987,15 @@ public class ControlServiceImpl implements ControlService {
 
         gameData.getCongresos().add(congreso);
         gameDataRepository.save(gameData);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Creaste un nuevo Congreso en %s", sede.getName()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
+
         return CONGRESS_CREATED;
     }
 
@@ -738,6 +1015,14 @@ public class ControlServiceImpl implements ControlService {
 
         congresoRepository.saveAll(Arrays.asList(congreso, congresoOld));
         revolucionarioRepository.save(revolucionarioData);
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Moviste a %s al Congreso de %s", revolucionarioData.getUser().getUsername(), congreso.getSede().getName()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
 
         return MOVED_TO_CONGRESS;
     }
@@ -810,6 +1095,14 @@ public class ControlServiceImpl implements ControlService {
         playerDataRepository.saveAll(battle.getCombatientes().stream()
                 .map(Army::getCapitanData)
                 .collect(Collectors.toList()));
+
+        Log log = Log.builder()
+                .turno(getControlDataFromLoggedUser().getGameData().getTurno())
+                .tipo(LogTypeEnum.ENVIADO)
+                .nota(String.format("Resolviste la batalla de %s", gameSubRegion.getNombre()))
+                .player(getControlDataFromLoggedUser())
+                .build();
+        logRepository.save(log);
 
         return BATTLE_SOLVED;
     }
