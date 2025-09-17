@@ -56,7 +56,7 @@ public enum BuildingTypeEnum {
 
         }
     },
-    SECRETARIA_DE_FINANZAS(9, "+1 a la recaudación de impuestos"){
+    RECAUDADOR(9, "+1 a la recaudación de impuestos"){
         @Override
         public void action() {
 
