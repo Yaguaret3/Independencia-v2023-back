@@ -133,7 +133,10 @@ public class CapitanServiceImpl implements CapitanService {
     public void playActionRequest(ActionRequest request) {
 
         CapitanData capitanData = getPlayerData();
-        Integer turno = capitanData.getGameData().getTurno();
+
+        if (!PhaseEnum.PLANNING.equals(capitanData.getGameData().getFase())) {
+            throw new IncorrectPhaseException();
+        }
 
         Card card = capitanData.getCards().stream()
                 .filter(c -> c.getId()
@@ -145,10 +148,6 @@ public class CapitanServiceImpl implements CapitanService {
         }
 
         ActionCard actionCard = (ActionCard) card;
-
-        if (PhaseEnum.REVEALING.equals(capitanData.getGameData().getFase())) {
-            throw new IncorrectPhaseException();
-        }
 
         if (Arrays.asList(ActionTypeEnum.ACAMPE, ActionTypeEnum.MOVIMIENTO, ActionTypeEnum.REACCION).contains(actionCard.getTipoAccion())) {
             throw new IncorrectPhaseException();
@@ -171,8 +170,9 @@ public class CapitanServiceImpl implements CapitanService {
                 throw new IncorrectActionTypeException(actionCard.getTipoAccion());
         }
 
+        Integer turno = capitanData.getGameData().getTurno();
         Log log = Log.builder()
-                .turno(capitanData.getGameData().getTurno())
+                .turno(turno)
                 .tipo(LogTypeEnum.ENVIADO)
                 .nota(String.format("Jugaste una carta de acción: %s en %s",
                         actionCard.getTipoAccion().getNombre(),
