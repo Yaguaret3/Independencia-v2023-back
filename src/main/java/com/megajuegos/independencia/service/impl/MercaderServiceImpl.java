@@ -83,7 +83,15 @@ public class MercaderServiceImpl implements MercaderService {
     @Override
     public void playTradeRoutes(SingleTradeRouteRequest request) {
 
+        if(request.getSubregions().stream().filter(s -> s.getCityMarketCardId() != null).count() < 2){
+            throw new PlayTradeScoreBadRequest();
+        }
+
         MercaderData mercaderData = getPlayerData();
+
+        if (PhaseEnum.REVEALING.equals(mercaderData.getGameData().getFase())) {
+            throw new IncorrectPhaseException();
+        }
 
         List<MarketCitySubregionRequest> roads = request.getSubregions();
         roads.sort(Comparator.comparing(MarketCitySubregionRequest::getPosition));
@@ -232,31 +240,33 @@ public class MercaderServiceImpl implements MercaderService {
                 .sorted(Comparator.comparing(MarketCitySubregionRequest::getPosition))
                 .map(marketSubregion -> subregionMap.get(marketSubregion.getId()))
                 .collect(Collectors.toList());
-        Long provisionTradeScore = request.getSubregions().stream()
-                .filter(marketSubregion -> marketSubregion.getCityMarketCardId() != null)
-                .map(marketSubregion -> (MarketCard) cardRepository.findById(marketSubregion.getCityMarketCardId()).orElseThrow(() -> new CardNotFoundException(marketSubregion.getCityMarketCardId())))
-                .mapToLong(MarketCard::getLevel)
-                .sum();
 
-        removeCards(request.getSubregions(), mercaderData);
+        List<MarketCitySubregionRequest> marketCities = request.getSubregions().stream().filter(marketSubregion -> marketSubregion.getCityMarketCardId() != null).collect(Collectors.toList());
+        List<MarketCard> marketCards = marketCities.stream().map(marketCity -> (MarketCard) cardRepository.findById(marketCity.getCityMarketCardId()).orElseThrow(() -> new CardNotFoundException(marketCity.getCityMarketCardId())))
+                .collect(Collectors.toList());
+        Long provisionTradeScore = marketCards.stream().mapToLong(MarketCard::getLevel).sum();
+
+        removeCardsFromMercader(request.getSubregions(), mercaderData);
 
         return Route.builder()
                 .subregions(sortedSubregions)
                 .tradeScore(provisionTradeScore)
                 .turn(mercaderData.getGameData().getTurno())
                 .mercader(mercaderData)
+                .markets(marketCards)
                 .build();
     }
 
-    private void removeCards(List<MarketCitySubregionRequest> marketSubregion, MercaderData mercaderData) {
+    private void removeCardsFromMercader(List<MarketCitySubregionRequest> marketSubregion, MercaderData mercaderData) {
 
         List<Card> cards = cardRepository.findAllById(marketSubregion.stream()
                         .map(MarketCitySubregionRequest::getCityMarketCardId)
                         .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
 
+        cards.forEach(card -> card.setAlreadyPlayed(true));
         cards.forEach(mercaderData.getCards()::remove);
-        cardRepository.deleteAll(cards);
+        cardRepository.saveAll(cards);
     }
     private MercaderData getPlayerData(){
         Long playerId = userUtil.getCurrentUser().getPlayerDataList().stream()

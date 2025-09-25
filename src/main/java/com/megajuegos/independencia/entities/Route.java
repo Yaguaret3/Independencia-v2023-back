@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.entities;
 
+import com.megajuegos.independencia.entities.card.MarketCard;
 import com.megajuegos.independencia.entities.data.MercaderData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,5 +26,7 @@ public class Route {
     private String comentario;
     @ManyToOne // owning side
     private MercaderData mercader;
+    @OneToMany
+    private List<MarketCard> markets;
 
 }

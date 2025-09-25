@@ -40,6 +40,7 @@ public class MercaderResponse {
                 .puntajeComercialAcumulado(entity.getPuntajeComercialAcumulado())
                 .mercados(util.getMarketCardList()
                         .stream()
+                        .filter(card -> !card.isAlreadyPlayed())
                         .map(MarketCardResponse::toDtoResponse)
                         .collect(Collectors.toList()))
                 .recursos(util.getResourceCardList()

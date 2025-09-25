@@ -22,6 +22,7 @@ public class GameSubRegionTinyResponse {
     private List<ArmyTinyResponse> ejercitos;
     private List<CampTinyResponse> campamentos;
     private List<BattleTinyResponse> batallas;
+    private Integer tradeScore;
     //private List<PlayerDataTinyResponse> merchants;
 
     public static GameSubRegionTinyResponse toTinyResponse(GameSubRegion entity){
@@ -47,6 +48,10 @@ public class GameSubRegionTinyResponse {
                         .map(BattleTinyResponse::toTinyResponse)
                         .collect(Collectors.toList()))
                 .build();
+    }
+    public GameSubRegionTinyResponse addTradeScore(Integer score){
+        this.tradeScore = score;
+        return this;
     }
 
     /*public GameSubRegionTinyResponse reveal(List<MercaderData> merchants){

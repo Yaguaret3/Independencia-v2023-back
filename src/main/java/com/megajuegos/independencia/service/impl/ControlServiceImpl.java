@@ -1146,7 +1146,6 @@ public class ControlServiceImpl implements ControlService {
         markets.forEach(m -> m.setAlreadyPlayed(true));
 
         cardRepository.saveAll(markets);
-
     }
 
     private void recolectarImpuestosRecuperarRepresentacionYMercados(GameData gameData) {
