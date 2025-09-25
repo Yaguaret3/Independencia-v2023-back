@@ -194,16 +194,30 @@ public class CapitanServiceImpl implements CapitanService {
         CapitanData capitanData = getPlayerData();
         Integer turno = capitanData.getGameData().getTurno();
 
+        if (!PhaseEnum.MOVING.equals(capitanData.getGameData().getFase())) {
+            throw new IncorrectPhaseException();
+        }
+
         Card card = capitanData.getCards().stream().filter(c -> c.getId().equals(request.getCardId())).findFirst().orElseThrow(() -> new CardNotFoundException(request.getCardId()));
 
         if (!(card instanceof ActionCard && ((ActionCard) card).getTipoAccion().equals(REACCION))) {
             throw new IncorrectCardTypeException();
         }
 
+        GameSubRegion gameSubRegionRush = gameSubRegionRepository.findById(request.getSubregionId())
+                .orElseThrow(() -> new SubRegionNotFoundException(request.getSubregionId()));
+
+        actionRepository.save(Action.builder()
+                .capitanId(capitanData)
+                .actionType(ActionTypeEnum.REACCION)
+                .solved(false)
+                .subregion(gameSubRegionRush)
+                .build());
+
         Log log = Log.builder()
                 .turno(capitanData.getGameData().getTurno())
                 .tipo(LogTypeEnum.ENVIADO)
-                .nota(String.format("Jugaste una carta de acción: %s", REACCION))
+                .nota("Te preparaste para interceptar caudillos que trasladan su campamento")
                 .player(capitanData)
                 .build();
 
@@ -354,10 +368,15 @@ public class CapitanServiceImpl implements CapitanService {
             throw new IncorrectActionTypeException(actionCard.getTipoAccion());
         }
 
-        GameSubRegion gameSubRegion = gameSubRegionRepository.findById(request.getNewAreaId())
+        GameSubRegion gameSubRegionMove = gameSubRegionRepository.findById(request.getNewAreaId())
                 .orElseThrow(() -> new SubRegionNotFoundException(request.getNewAreaId()));
 
-        capitanData.getCamp().setSubregion(gameSubRegion);
+        actionRepository.save(Action.builder()
+                .capitanId(capitanData)
+                .actionType(ActionTypeEnum.ACAMPE)
+                .solved(false)
+                .subregion(gameSubRegionMove)
+                .build());
 
         actionCard.setTurnWhenPlayed(turno);
         actionCard.setAlreadyPlayed(true);
@@ -367,7 +386,7 @@ public class CapitanServiceImpl implements CapitanService {
         Log log = Log.builder()
                 .turno(capitanData.getGameData().getTurno())
                 .tipo(LogTypeEnum.ENVIADO)
-                .nota(String.format("Jugaste la carta de acción de %s", ACAMPE))
+                .nota(String.format("Jugaste la carta de acción de %s en %s", ACAMPE, gameSubRegionMove.getNombre()))
                 .player(capitanData)
                 .build();
 
