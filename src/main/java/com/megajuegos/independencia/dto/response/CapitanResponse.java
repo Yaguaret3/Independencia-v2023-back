@@ -20,6 +20,7 @@ public class CapitanResponse {
     private List<ActionCardResponse> actionCards;
     private List<BattleCardFullResponse> battleCards;
     private List<ResourceCardResponse> recursos;
+    private List<ExtraCardResponse> extras;
     private CapitanPricesResponse prices;
     private List<LogResponse> historial;
 
@@ -55,6 +56,11 @@ public class CapitanResponse {
                         .stream()
                         .filter(a -> !a.isAlreadyPlayed())
                         .map(ResourceCardResponse::toDtoResponse)
+                        .collect(Collectors.toList())))
+                .extras((util.getExtraCardList()
+                        .stream()
+                        .filter(a -> !a.isAlreadyPlayed())
+                        .map(ExtraCardResponse::toDtoResponse)
                         .collect(Collectors.toList())))
                 .prices(CapitanPricesResponse.toDtoResponse(entity.getPrices()))
                 .historial(historial)
