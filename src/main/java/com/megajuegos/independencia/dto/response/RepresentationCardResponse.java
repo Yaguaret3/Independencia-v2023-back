@@ -17,12 +17,14 @@ public class RepresentationCardResponse {
 
     private Long id;
     private String ciudad;
+    private Integer prestigio;
     private Integer poblacion;
 
     public static RepresentationCardResponse toDtoResponse(RepresentationCard entity){
         return RepresentationCardResponse.builder()
                 .id(entity.getId())
                 .ciudad(entity.getRepresentacion().getNombre())
+                .prestigio(entity.getCity() != null ? entity.getCity().getPrestige() : 0)
                 .poblacion(entity.getRepresentacion().getPoblacion())
                 .build();
     }

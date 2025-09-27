@@ -242,6 +242,7 @@ public class SettingsServiceImpl implements SettingsService {
         cards.add(RepresentationCard.builder()
                 .representacion(RepresentationEnum.byNombre(city.getName()))
                 .playerData(to)
+                .city(city)
                 .build());
         for (int i = 1; i <= city.getMarketLevel(); i++) {
             cards.add(MarketCard.builder()

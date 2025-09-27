@@ -97,9 +97,15 @@ public class ControlServiceImpl implements ControlService {
         PlayerData playerData = playerDataRepository.findById(playerId)
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_BY_ID));
 
+        City city = null;
+        if(request.getCityId() != null) {
+             city = cityRepository.findById(request.getCityId()).orElseThrow(() -> new CityNotFoundException(request.getCityId()));
+        }
+
         Card card = RepresentationCard.builder()
                 .representacion(RepresentationEnum.byNombre(request.getCityName()))
                 .playerData(playerData)
+                .city(city)
                 .build();
 
         cardRepository.save(card);
@@ -1152,6 +1158,7 @@ public class ControlServiceImpl implements ControlService {
                 RepresentationCard representationCard = RepresentationCard.builder()
                         .representacion(RepresentationEnum.byNombre(g.getCity().getName()))
                         .playerData(g)
+                        .city(g.getCity())
                         .build();
                 cardRepository.save(representationCard);
                 g.getCards().add(representationCard);

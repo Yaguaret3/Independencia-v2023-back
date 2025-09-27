@@ -1,5 +1,6 @@
 package com.megajuegos.independencia.entities.card;
 
+import com.megajuegos.independencia.entities.City;
 import com.megajuegos.independencia.entities.Vote;
 import com.megajuegos.independencia.enums.RepresentationEnum;
 import lombok.*;
@@ -17,6 +18,8 @@ import java.util.List;
 public class RepresentationCard extends Card {
 
     private RepresentationEnum representacion;
+    @ManyToOne
+    private City city; //owning side
 
     @ManyToMany
     private List<Vote> votes; // owning side
