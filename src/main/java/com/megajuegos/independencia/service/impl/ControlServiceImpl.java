@@ -325,21 +325,7 @@ public class ControlServiceImpl implements ControlService {
                 .collect(Collectors.toList());
 
         if (controlesQueFaltanTerminar.isEmpty()) {
-            switch (gameData.getFase()) {
-                case MOVING:
-                    gameData.setFase(PhaseEnum.PLANNING);
-                    break;
-                case PLANNING:
-                    gameData.setFase(PhaseEnum.REVEALING);
-                    break;
-                case REVEALING:
-                    advanceTurn(gameData);
-                    gameData.setFase(PhaseEnum.MOVING);
-                    break;
-            }
-            gameDataRepository.save(gameData);
-            controles.forEach(c -> c.setSiguienteFaseSolicitada(false));
-            controlDataRepository.saveAll(controles);
+            doConcludePhase(gameData, controles);
             return PHASE_CONCLUDED;
         }
 
@@ -1242,5 +1228,23 @@ public class ControlServiceImpl implements ControlService {
                 .orElseThrow(PlayerNotFoundException::new);
         return controlDataRepository.findById(playerId)
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
+    }
+
+    public void doConcludePhase(GameData gameData, List<ControlData> controles){
+        switch (gameData.getFase()) {
+            case MOVING:
+                gameData.setFase(PhaseEnum.PLANNING);
+                break;
+            case PLANNING:
+                gameData.setFase(PhaseEnum.REVEALING);
+                break;
+            case REVEALING:
+                advanceTurn(gameData);
+                gameData.setFase(PhaseEnum.MOVING);
+                break;
+        }
+        gameDataRepository.save(gameData);
+        controles.forEach(c -> c.setSiguienteFaseSolicitada(false));
+        controlDataRepository.saveAll(controles);
     }
 }

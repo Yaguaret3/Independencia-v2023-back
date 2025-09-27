@@ -23,8 +23,8 @@ public interface SettingsService {
     String deactivateGame(Long id);
     String deleteGame(Long id);
     List<SettingsUserResponse> getUsers();
-
     List<SettingsCityResponse> getCities();
-
     String updateUsername(UpdateUsernameRequest request);
+    String forceConcludePhase();
+
 }

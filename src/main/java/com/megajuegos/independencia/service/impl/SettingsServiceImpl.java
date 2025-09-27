@@ -47,6 +47,7 @@ public class SettingsServiceImpl implements SettingsService {
     private final CardRepository cardRepository;
     private final RouteRepository routeRepository;
     private final ArmyRepository armyRepository;
+    private final ControlServiceImpl controlServiceImpl;
 
     @Override
     public String createGame(CreateGameRequest request) {
@@ -307,6 +308,17 @@ public class SettingsServiceImpl implements SettingsService {
         user.setUsername(request.getUsername());
         userRepository.save(user);
         return USERNAME_UPDATED;
+    }
+
+    @Override
+    public String forceConcludePhase() {
+        GameData gameData = gameDataRepository.findFirstByOrderByIdDesc().orElseThrow(GameDataNotFoundException::new);
+        List<ControlData> controles = gameData.getPlayers().stream()
+                .filter(c -> c instanceof ControlData)
+                .map(ControlData.class::cast)
+                .collect(Collectors.toList());
+        controlServiceImpl.doConcludePhase(gameData, controles);
+        return PHASE_CONCLUDED;
     }
 
     /*

@@ -72,4 +72,8 @@ public class SettingsController {
     public ResponseEntity<List<SettingsCityResponse>> getCities(){
         return ResponseEntity.ok(service.getCities());
     }
+    @PostMapping("/force-conclude-phase")
+    public ResponseEntity<String> forceConcludePhase(){
+        return ResponseEntity.ok(service.forceConcludePhase());
+    }
 }
